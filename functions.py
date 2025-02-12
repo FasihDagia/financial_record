@@ -402,3 +402,27 @@ def load_transactions(table_inventory,table_account_receivble,new_transactions,i
             sale.get('remaining_stock','')
         ))
         i += 1
+
+def save(transactions,account,inventorys):
+
+
+    confirm = messagebox.askyesno("Confirm", f"Once the transactions are saved you wont be able to cahnge them\nAre you sure you want to save transactions?")
+    if confirm:
+        #uploading data to the database
+        for transaction in transactions.values():
+            account.insert_one(transaction)
+
+        #updating stock in inventory
+        for inventory_update in inventorys.values():
+            item = inventory_update.get('item','')
+            inventory_item = inventory[item]
+            inventory_item.insert_one(inventory_update)
+        messagebox.showinfo("success","Transactions Saved!")
+
+        #deleting data from the temprory dictionary
+        for j in range(len(transactions)):
+            del transactions[j+1]
+
+        #deleting data from the temporary dictionary
+        for i in range(len(inventorys)):
+            del inventorys[i+1]
