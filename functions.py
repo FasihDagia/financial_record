@@ -356,3 +356,49 @@ def generate_invoice(root,sale_transaction,account,inventory_sale,operator,invoi
     button_frame.pack(pady=10)
     tk.Button(button_frame, text="Back", width=10, command=lambda:window(root)).grid(row=1, column=0,padx=5)
     tk.Button(button_frame, text="Exit", width=10, command=root.quit).grid(row=1, column=1,padx=5)
+
+def load_transactions(table_inventory,table_account_receivble,new_transactions,inventory):
+    #removing existing data from cheque table
+    for row in table_account_receivble.get_children():
+        table_account_receivble.delete(row)
+    
+    for row in table_inventory.get_children():
+        table_inventory.delete(row)
+
+    #displaying new data
+    j = 1
+    for transaction in new_transactions.values():
+            # "GST","Further Tax","Total Amount"
+        table_account_receivble.insert("", tk.END, values=(
+            j,
+            transaction.get('date', ''),
+            transaction.get('invoice_no',''),
+            transaction.get('account_receivable', ''),
+            transaction.get('item', ''),
+            transaction.get('quantity', ''),
+            transaction.get('unit',''),
+            transaction.get('description', ''),
+            transaction.get('rate', ''),
+            transaction.get('amount', ''),
+            transaction.get('gst', ''),
+            transaction.get('gst_amount',''),
+            transaction.get('further_tax', ''),
+            transaction.get('further_tax_amount',''),
+            transaction.get('total_amount', ''),
+            transaction.get('balance', '')
+                ))
+        j += 1
+    i = 1
+    for sale in inventory.values():
+        table_inventory.insert("", tk.END, values=(
+            i,
+            sale.get('date', ''),
+            sale.get('invoice_no',''),
+            sale.get('item', ''),
+            sale.get('quantity', ''),
+            sale.get('unit',''),
+            sale.get('rate', ''),
+            sale.get('amount', ''),
+            sale.get('remaining_stock','')
+        ))
+        i += 1
