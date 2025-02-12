@@ -17,10 +17,10 @@ purchase_transaction = {}
 
 def back(root,window,invoices,inventorys):
 
-    if len(sale_transaction) == 0 and len(purchase_transaction) == 0 and len(inventory_sale) == 0:
+    if len(inventorys) == 0 and len(invoices) == 0:
         window(root)
     else:
-        confirm = messagebox.askyesno("Confirm", f"You have not saved the transaction are you sure you want to go back?")
+        confirm = messagebox.askyesno("Confirm", f"You have not saved the Invoices yet!\n Are you sure you want to go back?")
         if confirm:
             #deleting data from the temprory dictionary
             for j in range(len(invoices)):
