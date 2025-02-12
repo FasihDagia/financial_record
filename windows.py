@@ -3,6 +3,7 @@ from tkinter import *
 from tkinter import ttk
 import pymongo as pm
 
+from functions import generate_invoice, save, load_transactions ,table, back
 #data base set up
 client = pm.MongoClient("mongodb://localhost:27017/")
 db = client["financial_records"]
@@ -57,7 +58,7 @@ def sale_invoice_window(root):
     
     tk.Button(button_frame,text='Generate Invoice', width=15,command=lambda:generate_invoice(root,sale_transaction,account,inventory_sale,'-',"Sale",sale_invoice_window)).grid(row=0, column=2,padx=5)
     tk.Button(button_frame, text="Save", width=15, command=lambda:save(sale_transaction,account,inventory_sale)).grid(row=0, column=3,padx=5)
-    tk.Button(button_frame, text="Back", width=15, command=lambda:main_window(root)).grid(row=0, column=4,padx=5)
+    tk.Button(button_frame, text="Back", width=15, command=lambda:back(root,main_window,sale_transaction,inventory_sale)).grid(row=0, column=4,padx=5)
     tk.Button(button_frame, text="Exit", width=15, command=root.quit).grid(row=0, column=5,padx=5)
 
     #to display Cash transaction
@@ -99,7 +100,7 @@ def purchase_invoice_window(root):
 
     tk.Button(button_frame,text='Generate Invoice', width=15,command=lambda:generate_invoice(root,purchase_transaction,account,inventory_sale,"+","Purchase",purchase_invoice_window)).grid(row=0, column=2,padx=5)
     tk.Button(button_frame, text="Save", width=15, command=lambda:save(purchase_transaction,account,inventory_sale)).grid(row=0, column=3,padx=5)
-    tk.Button(button_frame, text="Back", width=15, command=lambda:main_window(root)).grid(row=0, column=4,padx=5)
+    tk.Button(button_frame, text="Back", width=15, command=lambda:back(root,main_window,purchase_transaction,inventory_sale)).grid(row=0, column=4,padx=5)
     tk.Button(button_frame, text="Exit", width=15, command=root.quit).grid(row=0, column=5,padx=5)
 
     #to display Cash transaction
@@ -116,4 +117,4 @@ def purchase_invoice_window(root):
     
     table(table_account_receivable,table_purchase)
 
-    load_transactions(table_purchase,table_account_receivable,purchase_transaction,inventory_sale
+    load_transactions(table_purchase,table_account_receivable,purchase_transaction,inventory_sale)
