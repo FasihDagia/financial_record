@@ -328,8 +328,11 @@ def generate_invoice(root,sale_transaction,account,inventory_sale,operator,invoi
                     last_save_inventory = inventory_item.find_one({'s_no': saved_inventory})
                     remaining_stock = last_save_inventory.get('remaining_stock', 0)
             else:
-                len(inventory_sale)
-                remaining_stock = inventory_sale[len(sale_transaction)]['remaining_stock']
+                remaining_stock = 0
+                for i in inventory_sale.values():
+                    item_for_remaining_stock = i.get('item', '')
+                    if item_for_remaining_stock == item:
+                        remaining_stock = i['remaining_stock']
 
             # Updating inventory
             if operator == '+':    
@@ -426,3 +429,6 @@ def save(transactions,account,inventorys):
         #deleting data from the temporary dictionary
         for i in range(len(inventorys)):
             del inventorys[i+1]
+
+def delete_invoice():
+    pass
