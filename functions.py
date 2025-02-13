@@ -275,7 +275,7 @@ def generate_invoice(root,sale_transaction,account,inventory_sale,operator,invoi
 
         total_amount = float(total_var.get())
 
-        if not date or not description or not amount or not account_recevible or not quantity or not unit or not rate or not gst or not item:
+        if not date or not description or not amount or account_recevible == 'Name' or not quantity or unit == 'Unit' or not rate or not gst or item == 'Product Name':
             messagebox.showerror("Error", "Fields can't be empty")
             return
         else:
