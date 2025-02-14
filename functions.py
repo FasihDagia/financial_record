@@ -1,8 +1,13 @@
 import tkinter as tk
 from tkinter import *
-from tkinter import ttk, messagebox, simpledialog
+from tkinter import ttk, messagebox, simpledialog,filedialog
 import pymongo as pm
 from datetime import datetime
+from reportlab.lib.pagesizes import A4
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
+from reportlab.lib import colors
+from reportlab.lib.styles import getSampleStyleSheet
+
 
 #data base set up
 client = pm.MongoClient("mongodb://localhost:27017/")
@@ -325,8 +330,16 @@ def generate_invoice(root,sale_transaction,account,inventory_sale,operator,invoi
                 if saved_inventory == 0:
                     remaining_stock = 0
                 else:
+                    # Fetch the last saved inventory
                     last_save_inventory = inventory_item.find_one({'s_no': saved_inventory})
-                    remaining_stock = last_save_inventory.get('remaining_stock', 0)
+                    
+                    # Check if last_save_inventory is None
+                    if last_save_inventory is None:
+                        print(f"No inventory found with s_no: {saved_inventory}. Setting remaining_stock to 0.")
+                        remaining_stock = 0
+                    else:
+                        # Safely use .get() to fetch remaining_stock
+                        remaining_stock = last_save_inventory.get('remaining_stock', 0)
             else:
                 remaining_stock = 0
                 for i in inventory_sale.values():
@@ -338,7 +351,7 @@ def generate_invoice(root,sale_transaction,account,inventory_sale,operator,invoi
             if operator == '+':    
                 remaining_stock += quantity
             elif operator == '-': 
-                remaining_stock += quantity
+                remaining_stock -= quantity
             inventory_sale[len(inventory_sale) + 1] = {
                 's_no': sno_inventory,
                 'date': date,
@@ -359,6 +372,135 @@ def generate_invoice(root,sale_transaction,account,inventory_sale,operator,invoi
     button_frame.pack(pady=10)
     tk.Button(button_frame, text="Back", width=10, command=lambda:window(root)).grid(row=1, column=0,padx=5)
     tk.Button(button_frame, text="Exit", width=10, command=root.quit).grid(row=1, column=1,padx=5)
+
+def generate_invoice_pdf(date, invoice_type, invoice_no, account_receviable, description, item, quantity, unit, rate, amount, gst, gst_amount, total_amount, filename="invoice2.pdf"):
+    # Create PDF Document
+    doc = SimpleDocTemplate(filename, pagesize=A4)
+    elements = []
+    styles = getSampleStyleSheet()
+
+    # Company Name
+    company_name = Paragraph("<b><font size=18>ABC Company</font></b>", styles["Title"])
+    elements.append(company_name)
+    elements.append(Spacer(1, 12))  # Add space
+
+    # Invoice Title
+    invoice_title = Paragraph(f"<b><font size=14>{invoice_type} INVOICE</font></b>", styles["Title"])
+    elements.append(invoice_title)
+    elements.append(Spacer(1, 12))
+
+    # Invoice Details Table (Date on Right)
+    details = [
+        [Paragraph("Invoice No:", styles["Normal"]), Paragraph(f"{invoice_no}", styles["Normal"]), 
+         Paragraph("Date:", styles["Normal"]), Paragraph(f"{date}", styles["Normal"])],
+        [Paragraph("Customer:", styles["Normal"]), Paragraph(f"{account_receviable}", styles["Normal"]), 
+         Paragraph("", styles["Normal"]), Paragraph("", styles["Normal"])],
+    ]
+    details_table = Table(details, colWidths=[100, 200, 100, 100])  # Adjust column widths
+    details_table.setStyle(TableStyle([
+        ("FONTNAME", (0, 0), (-1, -1), "Helvetica-Bold"),
+        ("ALIGN", (2, 0), (3, 0), "RIGHT"),  # Align Date to right
+        ("BOTTOMPADDING", (0, 0), (-1, -1), 5),
+    ]))
+    elements.append(details_table)
+    elements.append(Spacer(1, 12))
+
+    # Table Data (Headers + Items)
+    # Wrap all strings in Paragraph objects
+    header_row = [
+        Paragraph("Product", styles["Normal"]),
+        Paragraph("Quantity", styles["Normal"]),
+        Paragraph("Unit", styles["Normal"]),
+        Paragraph("Rate", styles["Normal"]),
+        Paragraph("Amount", styles["Normal"]),
+        Paragraph("GST(%)", styles["Normal"]),
+        Paragraph("GST Amount", styles["Normal"]),
+        Paragraph("Total Amount", styles["Normal"]),
+    ]
+    items_row = [
+        Paragraph(str(item), styles["Normal"]),
+        Paragraph(str(quantity), styles["Normal"]),
+        Paragraph(str(unit), styles["Normal"]),
+        Paragraph(str(rate), styles["Normal"]),
+        Paragraph(str(amount), styles["Normal"]),
+        Paragraph(str(gst), styles["Normal"]),
+        Paragraph(str(gst_amount), styles["Normal"]),
+        Paragraph(str(total_amount), styles["Normal"]),
+    ]
+    data = [header_row, items_row]
+
+    # Create Table
+    table = Table(data, colWidths=[80, 80, 50, 50, 80, 50, 80, 80], rowHeights=[35, 25])
+
+    # Table Styling
+    style = TableStyle([
+        ("BACKGROUND", (0, 0), (-1, 0), colors.black),  # Header background
+        ("TEXTCOLOR", (0, 0), (-1, 0), colors.white),  # Header text color
+        ("ALIGN", (0, 0), (-1, -1), "CENTER"),
+        ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),  # Align text center
+        ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),  # Bold header font
+        ("BACKGROUND", (0, -1), (-1, -1), colors.lightgrey),  # Background for total row
+    ])
+
+    table.setStyle(style)
+    elements.append(table)
+    elements.append(Spacer(1, 20))
+
+    descrip = [
+        [Paragraph("Description:", styles["Normal"])],
+        [Paragraph(f"{description}", styles["Normal"])],
+    ]
+    descrip_table = Table(descrip, colWidths=[100], rowHeights=[30, 20], hAlign='LEFT')  # Adjust column widths
+    descrip_table.setStyle(TableStyle([
+        ("FONTNAME", (0, 0), (-1, -1), "Helvetica-Bold"),
+        ('FONTSIZE', (0, 0), (-1, 0), 16),
+        ("ALIGN", (0, 0), (-1, -1), "LEFT"),  # Align Date to right
+        ("BOTTOMPADDING", (0, 0), (-1, -1), 5),
+        ('FONTSIZE', (0, 1), (-1, 1), 12),
+        ('FONTNAME', (0, 1), (-1, 1), 'Helvetica'),
+    ]))
+    elements.append(descrip_table)
+    elements.append(Spacer(1, 20))
+
+    # Build PDF
+    doc.build(elements)
+
+    print(f"Invoice saved as {filename}")
+
+def print_invoice(invoices,root,invoice_type):
+    invoice_no = simpledialog.askstring("Input", "Enter Invoice NO:", parent=root)
+    current_date = datetime.now()
+    year = current_date.year
+    invoice_no = f"{invoice_no.zfill(5)}/{year}"
+
+    for transaction in invoices.values():
+        if transaction['invoice_no'] == invoice_no:
+            date=transaction.get('date', ''),
+            invoice_number=transaction.get('invoice_no',''),
+            account_receivable = transaction.get('account_receivable', ''),
+            item = transaction.get('item', ''),
+            quant = transaction.get('quantity', ''),
+            unit = transaction.get('unit',''),
+            des = transaction.get('description', ''),
+            rate=transaction.get('rate', ''),
+            amount = transaction.get('amount', ''),
+            gst = transaction.get('gst', ''),
+            gst_amount = transaction.get('gst_amount',''),
+            total_amount = transaction.get('total_amount', '')
+    
+    file_path = filedialog.asksaveasfilename(
+        defaultextension=".pdf",
+        filetypes=[("PDF files", "*.pdf"), ("All files", "*.*")],
+        title="Save Invoice As"
+    )
+
+    if not file_path:
+        messagebox.showwarning("Warning", "No file path selected. Invoice not saved.")
+        return
+        
+    generate_invoice_pdf(date,invoice_type,invoice_number,account_receivable,des,item,quant,unit,rate,amount,gst,gst_amount,total_amount,file_path)
+    messagebox.showinfo("Success", f"Invoice saved successfully at:\n{file_path}")
+
 
 def load_transactions(table_inventory,table_account_receivble,new_transactions,inventory):
     #removing existing data from cheque table
