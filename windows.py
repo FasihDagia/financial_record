@@ -3,7 +3,8 @@ from tkinter import *
 from tkinter import ttk
 import pymongo as pm
 
-from functions import generate_invoice, save, load_transactions ,table, back, delete_invoice,print_invoice
+from functions import generate_invoice ,save, load_transactions ,table, back, delete_invoice,print_invoice
+
 #data base set up
 client = pm.MongoClient("mongodb://localhost:27017/")
 db = client["financial_records"]
@@ -57,7 +58,6 @@ def sale_invoice_window(root):
     button_frame = tk.Frame(root)
     button_frame.pack(pady=10)
 
-    
     tk.Button(button_frame,text='Generate Invoice', width=15,command=lambda:generate_invoice(root,sale_transaction,account,inventory_sale,'-',"Sale",sale_invoice_window)).grid(row=0, column=1,padx=5)
     tk.Button(button_frame, text="Print Invoice", width=15, command=lambda:print_invoice(sale_transaction,root,"SALE")).grid(row=0,column=2,padx=5)
     tk.Button(button_frame, text="Save", width=15, command=lambda:save(sale_transaction,account,inventory_sale)).grid(row=0, column=3,padx=5)
@@ -76,9 +76,9 @@ def sale_invoice_window(root):
     table_sale = ttk.Treeview(root, columns=("S.NO", "Date","Invoice.NO","Item","Quantity","Unit","Rate", "Amount","Remaining Stock"), show="headings")
     table_sale.pack(fill=tk.BOTH, pady=10)
 
-    table(table_account_receivable,table_sale)
+    table(table_account_receivable,table_sale,'sale')
    
-    load_transactions(table_sale,table_account_receivable,sale_transaction,inventory_sale)
+    load_transactions(table_sale,table_account_receivable,sale_transaction,inventory_sale,'sale')
 
 def sale_return_window(root):
     
@@ -146,16 +146,16 @@ def purchase_invoice_window(root):
     display_frame.pack(pady=10)
 
     tk.Label(root,text=f"Account Receivable:",font=("Helvetica", 16)).pack(pady=5,)
-    table_account_receivable = ttk.Treeview(root, columns=("S.NO", "Date","Invoice.NO","Account Receivable","Item","Quantity","Unit", "Description","Rate", "Amount","GST","GST Amount","Further Tax","Further Tax Amount","Total Amount","Balance"), show="headings")
+    table_account_receivable = ttk.Treeview(root, columns=("S.NO", "Date","Voucher.NO","Invoice.NO","Account Receivable","Item","Quantity","Unit", "Description","Rate", "Amount","GST","GST Amount","Further Tax","Further Tax Amount","Total Amount","Balance"), show="headings")
     table_account_receivable.pack(fill=tk.BOTH, pady=10)
 
     tk.Label(root,text=f"Purchase:",font=("Helvetica", 16)).pack(pady=5)
-    table_purchase = ttk.Treeview(root, columns=("S.NO", "Date","Invoice.NO","Item","Quantity","Unit","Rate", "Amount","Remaining Stock"), show="headings")
+    table_purchase = ttk.Treeview(root, columns=("S.NO", "Date","Voucher.NO","Invoice.NO","Item","Quantity","Unit","Rate", "Amount","Remaining Stock"), show="headings")
     table_purchase.pack(fill=tk.BOTH, pady=10)
     
-    table(table_account_receivable,table_purchase)
+    table(table_account_receivable,table_purchase,'purchase')
 
-    load_transactions(table_purchase,table_account_receivable,purchase_transaction,inventory_sale)
+    load_transactions(table_purchase,table_account_receivable,purchase_transaction,inventory_sale,'purchase')
 
 def purchase_return_window(root):
     
