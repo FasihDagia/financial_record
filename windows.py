@@ -3,8 +3,7 @@ from tkinter import *
 from tkinter import ttk
 import pymongo as pm
 
-from functions import generate_invoice, save, load_transactions ,table, back, delete_invoice
-from test import print_invoice
+from functions import generate_invoice, save, load_transactions ,table, back, delete_invoice,print_invoice
 #data base set up
 client = pm.MongoClient("mongodb://localhost:27017/")
 db = client["financial_records"]
