@@ -6,7 +6,8 @@ from datetime import datetime
 from reportlab.lib.pagesizes import A4
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
 from reportlab.lib import colors
-from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.lib.enums import TA_LEFT
 
 
 #data base set up
@@ -373,7 +374,7 @@ def generate_invoice(root,sale_transaction,account,inventory_sale,operator,invoi
     tk.Button(button_frame, text="Back", width=10, command=lambda:window(root)).grid(row=1, column=0,padx=5)
     tk.Button(button_frame, text="Exit", width=10, command=root.quit).grid(row=1, column=1,padx=5)
 
-def generate_invoice_pdf(date, invoice_type, invoice_no, account_receviable, description, item, quantity, unit, rate, amount, gst, gst_amount, total_amount, filename="invoice2.pdf"):
+def generate_invoice_pdf(date, invoice_type, invoice_no, account_receviable,description,item,quantity,unit,rate,amount,gst,gst_amount,total_amount,filename = "invoice2.pdf"):
     # Create PDF Document
     doc = SimpleDocTemplate(filename, pagesize=A4)
     elements = []
@@ -391,10 +392,8 @@ def generate_invoice_pdf(date, invoice_type, invoice_no, account_receviable, des
 
     # Invoice Details Table (Date on Right)
     details = [
-        [Paragraph("Invoice No:", styles["Normal"]), Paragraph(f"{invoice_no}", styles["Normal"]), 
-         Paragraph("Date:", styles["Normal"]), Paragraph(f"{date}", styles["Normal"])],
-        [Paragraph("Customer:", styles["Normal"]), Paragraph(f"{account_receviable}", styles["Normal"]), 
-         Paragraph("", styles["Normal"]), Paragraph("", styles["Normal"])],
+        ["Invoice No:", f"{invoice_no}", "Date:", f"{date}"],  # Date on right
+        ["Customer:", f"{account_receviable}", "", ""],  # Empty cells to keep alignment
     ]
     details_table = Table(details, colWidths=[100, 200, 100, 100])  # Adjust column widths
     details_table.setStyle(TableStyle([
@@ -406,100 +405,103 @@ def generate_invoice_pdf(date, invoice_type, invoice_no, account_receviable, des
     elements.append(Spacer(1, 12))
 
     # Table Data (Headers + Items)
-    # Wrap all strings in Paragraph objects
-    header_row = [
-        Paragraph("Product", styles["Normal"]),
-        Paragraph("Quantity", styles["Normal"]),
-        Paragraph("Unit", styles["Normal"]),
-        Paragraph("Rate", styles["Normal"]),
-        Paragraph("Amount", styles["Normal"]),
-        Paragraph("GST(%)", styles["Normal"]),
-        Paragraph("GST Amount", styles["Normal"]),
-        Paragraph("Total Amount", styles["Normal"]),
-    ]
-    items_row = [
-        Paragraph(str(item), styles["Normal"]),
-        Paragraph(str(quantity), styles["Normal"]),
-        Paragraph(str(unit), styles["Normal"]),
-        Paragraph(str(rate), styles["Normal"]),
-        Paragraph(str(amount), styles["Normal"]),
-        Paragraph(str(gst), styles["Normal"]),
-        Paragraph(str(gst_amount), styles["Normal"]),
-        Paragraph(str(total_amount), styles["Normal"]),
-    ]
-    data = [header_row, items_row]
-
+    # [item,quantity,unit,rate,amount,gst,gst_amount,total_amount]
+    data = [["Product", "Quantity","Unit","Rate","Amount","GST(%)","GST Amount", "Total Amount"],[item,quantity,unit,rate,amount,gst,gst_amount,total_amount]] 
+    
     # Create Table
-    table = Table(data, colWidths=[80, 80, 50, 50, 80, 50, 80, 80], rowHeights=[35, 25])
-
+    table = Table(data, colWidths=[80, 80, 50,50,80,50,80,80], rowHeights=[35,25])
+    
     # Table Styling
     style = TableStyle([
         ("BACKGROUND", (0, 0), (-1, 0), colors.black),  # Header background
         ("TEXTCOLOR", (0, 0), (-1, 0), colors.white),  # Header text color
         ("ALIGN", (0, 0), (-1, -1), "CENTER"),
-        ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),  # Align text center
+        ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),      # Align text center 
         ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),  # Bold header font
         ("BACKGROUND", (0, -1), (-1, -1), colors.lightgrey),  # Background for total row
+        # ('BOX', (0, 0), (-1, -1), 2, colors.black),
     ])
-
+    
     table.setStyle(style)
     elements.append(table)
     elements.append(Spacer(1, 20))
+    
+    left_aligned_style = ParagraphStyle(
+        name="LeftAligned",
+        parent=styles["Normal"],
+        alignment=TA_LEFT  # Align text to the left
+    )
 
-    descrip = [
-        [Paragraph("Description:", styles["Normal"])],
-        [Paragraph(f"{description}", styles["Normal"])],
-    ]
-    descrip_table = Table(descrip, colWidths=[100], rowHeights=[30, 20], hAlign='LEFT')  # Adjust column widths
-    descrip_table.setStyle(TableStyle([
-        ("FONTNAME", (0, 0), (-1, -1), "Helvetica-Bold"),
-        ('FONTSIZE', (0, 0), (-1, 0), 16),
-        ("ALIGN", (0, 0), (-1, -1), "LEFT"),  # Align Date to right
-        ("BOTTOMPADDING", (0, 0), (-1, -1), 5),
-        ('FONTSIZE', (0, 1), (-1, 1), 12),
-        ('FONTNAME', (0, 1), (-1, 1), 'Helvetica'),
-    ]))
-    elements.append(descrip_table)
-    elements.append(Spacer(1, 20))
+    descrip = Paragraph("<b><font size=12>Description:</font></b>", left_aligned_style)
+    elements.append(descrip)
+    elements.append(Spacer(1, 5))
+
+    descript = Paragraph(f"<b><font size=12>{description}</font></b>", left_aligned_style)
+    elements.append(descript)
+    elements.append(Spacer(1, 5))
+    
+
+
 
     # Build PDF
     doc.build(elements)
-
+    
     print(f"Invoice saved as {filename}")
 
 def print_invoice(invoices,root,invoice_type):
-    invoice_no = simpledialog.askstring("Input", "Enter Invoice NO:", parent=root)
-    current_date = datetime.now()
-    year = current_date.year
-    invoice_no = f"{invoice_no.zfill(5)}/{year}"
-
-    for transaction in invoices.values():
-        if transaction['invoice_no'] == invoice_no:
-            date=transaction.get('date', ''),
-            invoice_number=transaction.get('invoice_no',''),
-            account_receivable = transaction.get('account_receivable', ''),
-            item = transaction.get('item', ''),
-            quant = transaction.get('quantity', ''),
-            unit = transaction.get('unit',''),
-            des = transaction.get('description', ''),
-            rate=transaction.get('rate', ''),
-            amount = transaction.get('amount', ''),
-            gst = transaction.get('gst', ''),
-            gst_amount = transaction.get('gst_amount',''),
-            total_amount = transaction.get('total_amount', '')
     
-    file_path = filedialog.asksaveasfilename(
-        defaultextension=".pdf",
-        filetypes=[("PDF files", "*.pdf"), ("All files", "*.*")],
-        title="Save Invoice As"
-    )
+    if len(invoices) == 0:
+        messagebox.showinfo("Error","No invoices to print")
+    else:
 
-    if not file_path:
-        messagebox.showwarning("Warning", "No file path selected. Invoice not saved.")
-        return
+        invoice_no = simpledialog.askstring("Input", "Enter Invoice NO:", parent=root)
+        current_date = datetime.now()
+        year = current_date.year
+        invoice_no = f"{invoice_no.zfill(5)}/{year}"
+
+
+        for transaction in invoices.values():
+            if transaction['invoice_no'] == invoice_no:
+                date = transaction['date'],
+                invoice_number=transaction.get('invoice_no',''),
+                account_receivable = transaction.get('account_receivable', ''),
+                item = transaction.get('item', ''),
+                quant = str(transaction.get('quantity', '')),
+                unit = transaction.get('unit',''),
+                des = transaction.get('description', ''),
+                rate=str(transaction.get('rate', '')),
+                amount = str(transaction.get('amount', '')),
+                gst = str(transaction.get('gst', '')),
+                gst_amount = str(transaction.get('gst_amount','')),
+                total_amount = str(transaction.get('total_amount', ''))
+
+                date = date[0]
+                invoice_number = invoice_number[0]
+                account_receivable = account_receivable[0]
+                item = item[0]
+                quant = quant[0]
+                unit = unit[0]
+                des = des[0]
+                rate = rate[0]
+                amount = amount[0]
+                gst = gst[0]
+                gst_amount = gst_amount[0]
+                # total_amount = total_amount[0]
+                print(total_amount)
         
-    generate_invoice_pdf(date,invoice_type,invoice_number,account_receivable,des,item,quant,unit,rate,amount,gst,gst_amount,total_amount,file_path)
-    messagebox.showinfo("Success", f"Invoice saved successfully at:\n{file_path}")
+        
+        file_path = filedialog.asksaveasfilename(
+            defaultextension=".pdf",
+            filetypes=[("PDF files", "*.pdf"), ("All files", "*.*")],
+            title="Save Invoice As"
+        )
+
+        if not file_path:
+            messagebox.showwarning("Warning", "No file path selected. Invoice not saved.")
+            return
+            
+        generate_invoice_pdf(date,invoice_type,invoice_number,account_receivable,des,item,quant,unit,rate,amount,gst,gst_amount,total_amount,file_path)
+        messagebox.showinfo("Success", f"Invoice saved successfully at:\n{file_path}")
 
 
 def load_transactions(table_inventory,table_account_receivble,new_transactions,inventory):
