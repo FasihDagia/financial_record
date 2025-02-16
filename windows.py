@@ -75,7 +75,7 @@ def purchase_module_window(root):
     btn_frame.pack(fill=X, padx=33, pady=10)
     
     tk.Button(btn_frame,text="Purchase Invoice", font=("Helvetica",10),width=20, command=lambda:purchase_invoice_window(root)).grid(padx=10,pady=10,row=0,column=0)
-    tk.Button(btn_frame,text="Purchase Return",font=("Helvetica",10),width=20,command=lambda:purchase_return_window(root)).grid(padx=10,pady=10,row=0,column=1)
+    tk.Button(btn_frame,text="Purchase Return",font=("Helvetica",10),width=20,command=lambda:purchase_return_window(root,inventory)).grid(padx=10,pady=10,row=0,column=1)
     tk.Button(btn_frame, text="Back",font=("Helvetica",10), width=20, command=lambda:main_window(root)).grid(row=1, column=0,padx=10,pady=10)
     tk.Button(btn_frame, text="Exit",font=("Helvetica",10), width=20, command=root.quit).grid(row=1, column=1,padx=10,pady=10)
 
@@ -153,8 +153,31 @@ def sale_return_window(root):
     table_sale.pack(fill=tk.BOTH, pady=10)
 
     table(table_account_receivable,table_sale,'sale')
-   
-    load_transactions(table_sale,table_account_receivable,sale_transaction,inventory_sale,'sale')
+
+    items = inventory.list_collection_names()
+
+    inventory_return = {}
+    sno_invent = 1
+    for item in items:
+        item_collection = inventory[item]
+        inventory_inv = item_collection.find({})
+        for inv in inventory_inv:
+            if inv.get('voucher_no') == None:
+                inventory_return[sno_invent] = inv
+                sno_invent+=1
+            #     continue
+            # else:
+            #     inventory_return[sno_invent] = inv
+            #     sno_invent+=1
+
+    invoices = account.find().sort("s_no", 1)
+    sno_inv = 1
+    sale_return = {}
+    for invoice in invoices:
+        sale_return[sno_inv] = invoice
+        sno_inv+=1
+    
+    load_transactions(table_sale,table_account_receivable,sale_return,inventory_return,'sale')
 
 
 def purchase_invoice_window(root):
@@ -200,7 +223,7 @@ def purchase_invoice_window(root):
 
     load_transactions(table_purchase,table_account_receivable,purchase_transaction,inventory_sale,'purchase')
 
-def purchase_return_window(root):
+def purchase_return_window(root,inventory):
     
     account = db["purchase_invoice"]
 
@@ -231,4 +254,27 @@ def purchase_return_window(root):
     
     table(table_account_receivable,table_purchase,'purchase')
 
-    load_transactions(table_purchase,table_account_receivable,purchase_transaction,inventory_sale,'purchase')
+    items = inventory.list_collection_names()
+
+    inventory_return = {}
+    sno_invent = 1
+    for item in items:
+        item_collection = inventory[item]
+        inventory_inv = item_collection.find({})
+        for inv in inventory_inv:
+            if inv.get('voucher_no') != None:
+                inventory_return[sno_invent] = inv
+                sno_invent+=1
+            #     continue
+            # else:
+            #     inventory_return[sno_invent] = inv
+            #     sno_invent+=1
+
+    invoices = account.find().sort("s_no", 1)
+    sno_inv = 1
+    purchase_return = {}
+    for invoice in invoices:
+        purchase_return[sno_inv] = invoice
+        sno_inv+=1
+
+    load_transactions(table_purchase,table_account_receivable,purchase_return,inventory_return,'purchase')
