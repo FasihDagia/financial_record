@@ -32,10 +32,53 @@ def main_window(root):
     btn_frame = Frame()
     btn_frame.pack(fill=X, padx=33, pady=10)
 
+    tk.Button(btn_frame,text="Sale Module", font=("Helvetica",10),width=20, command=lambda:sale_module_window(root)).grid(padx=10,pady=10,row=0,column=0)
+    tk.Button(btn_frame,text="Purchase Module", font=("Helvetica",10),width=20, command=lambda:purchase_module_window(root)).grid(padx=10,pady=10,row=0,column=1)
+
+    tk.Button(root,text="Exit", font=("Helvetica",10),width=20, command=lambda:root.quit).pack(padx=10,pady=5)
+
+def sale_module_window(root):
+    
+    for widget in root.winfo_children():
+        widget.destroy()
+
+    root.geometry("450x100")
+    root.minsize(350,200)
+    root.maxsize(450,500)
+
+    root.title("Sale Module")
+
+    tk.Label(root,text="Sale Module",font=("Helvetica",20)).pack(padx=50,pady=5)
+
+    btn_frame = Frame()
+    btn_frame.pack(fill=X, padx=33, pady=10)
+
     tk.Button(btn_frame,text="Sale Invoice", font=("Helvetica",10),width=20, command=lambda:sale_invoice_window(root)).grid(padx=10,pady=10,row=0,column=0)
     tk.Button(btn_frame,text="Sale Return",font=("Helvetica",10),width=20,command=lambda:sale_return_window(root)).grid(padx=10,pady=10,row=0,column=1)
-    tk.Button(btn_frame,text="Purchase Invoice", font=("Helvetica",10),width=20, command=lambda:purchase_invoice_window(root)).grid(padx=10,pady=10,row=1,column=0)
-    tk.Button(btn_frame,text="Purchase Return",font=("Helvetica",10),width=20,command=lambda:purchase_return_window(root)).grid(padx=10,pady=10,row=1,column=1)
+    tk.Button(btn_frame, text="Back",font=("Helvetica",10), width=20, command=lambda:main_window(root)).grid(row=1, column=0,padx=10,pady=10)
+    tk.Button(btn_frame, text="Exit",font=("Helvetica",10), width=20, command=root.quit).grid(row=1, column=1,padx=10,pady=10)
+
+def purchase_module_window(root):
+    
+    for widget in root.winfo_children():
+        widget.destroy()
+
+    root.geometry("450x100")
+    root.minsize(350,200)
+    root.maxsize(450,500)
+
+    root.title("Purchase Module")
+
+    tk.Label(root,text="Purchase Module",font=("Helvetica",20)).pack(padx=50,pady=5)
+
+    btn_frame = Frame()
+    btn_frame.pack(fill=X, padx=33, pady=10)
+    
+    tk.Button(btn_frame,text="Purchase Invoice", font=("Helvetica",10),width=20, command=lambda:purchase_invoice_window(root)).grid(padx=10,pady=10,row=0,column=0)
+    tk.Button(btn_frame,text="Purchase Return",font=("Helvetica",10),width=20,command=lambda:purchase_return_window(root)).grid(padx=10,pady=10,row=0,column=1)
+    tk.Button(btn_frame, text="Back",font=("Helvetica",10), width=20, command=lambda:main_window(root)).grid(row=1, column=0,padx=10,pady=10)
+    tk.Button(btn_frame, text="Exit",font=("Helvetica",10), width=20, command=root.quit).grid(row=1, column=1,padx=10,pady=10)
+
 
 def sale_invoice_window(root):
     global inventory_sale
@@ -61,7 +104,7 @@ def sale_invoice_window(root):
     tk.Button(button_frame,text='Generate Invoice', width=15,command=lambda:generate_invoice(root,sale_transaction,account,inventory_sale,'-',"Sale",sale_invoice_window)).grid(row=0, column=1,padx=5)
     tk.Button(button_frame, text="Print Invoice", width=15, command=lambda:print_invoice(sale_transaction,root,"SALE")).grid(row=0,column=2,padx=5)
     tk.Button(button_frame, text="Save", width=15, command=lambda:save(sale_transaction,account,inventory_sale)).grid(row=0, column=3,padx=5)
-    tk.Button(button_frame, text="Back", width=15, command=lambda:back(root,main_window,sale_transaction,inventory_sale)).grid(row=0, column=4,padx=5)
+    tk.Button(button_frame, text="Back", width=15, command=lambda:back(root,sale_module_window,sale_transaction,inventory_sale)).grid(row=0, column=4,padx=5)
     tk.Button(button_frame, text="Exit", width=15, command=root.quit).grid(row=0, column=5,padx=5)
 
     #to display Cash transaction
@@ -98,7 +141,7 @@ def sale_return_window(root):
     button_frame.pack(pady=10)
 
     tk.Button(button_frame,text='Delete Invoice', width=15,command=lambda:delete_invoice(account)).grid(row=0, column=2,padx=5)
-    tk.Button(button_frame, text="Back", width=15, command=lambda:main_window(root)).grid(row=0, column=3,padx=5)
+    tk.Button(button_frame, text="Back", width=15, command=lambda:sale_module_window(root)).grid(row=0, column=3,padx=5)
     tk.Button(button_frame, text="Exit", width=15, command=root.quit).grid(row=0, column=4,padx=5)
 
     tk.Label(root,text=f"Account Receivable:",font=("Helvetica", 16)).pack(pady=5,)
@@ -109,9 +152,9 @@ def sale_return_window(root):
     table_sale = ttk.Treeview(root, columns=("S.NO", "Date","Invoice.NO","Item","Quantity","Unit","Rate", "Amount","Remaining Stock"), show="headings")
     table_sale.pack(fill=tk.BOTH, pady=10)
 
-    table(table_account_receivable,table_sale)
+    table(table_account_receivable,table_sale,'sale')
    
-    load_transactions(table_sale,table_account_receivable,sale_transaction,inventory_sale)
+    load_transactions(table_sale,table_account_receivable,sale_transaction,inventory_sale,'sale')
 
 
 def purchase_invoice_window(root):
@@ -138,7 +181,7 @@ def purchase_invoice_window(root):
     tk.Button(button_frame,text='Generate Invoice', width=15,command=lambda:generate_invoice(root,purchase_transaction,account,inventory_sale,"+","Purchase",purchase_invoice_window)).grid(row=0, column=1,padx=5)
     tk.Button(button_frame, text="Print Invoice", width=15, command=lambda:print_invoice(purchase_transaction,root,"PURCHASE")).grid(row=0,column=2,padx=5)
     tk.Button(button_frame, text="Save", width=15, command=lambda:save(purchase_transaction,account,inventory_sale)).grid(row=0, column=3,padx=5)
-    tk.Button(button_frame, text="Back", width=15, command=lambda:back(root,main_window,purchase_transaction,inventory_sale)).grid(row=0, column=4,padx=5)
+    tk.Button(button_frame, text="Back", width=15, command=lambda:back(root,purchase_module_window,purchase_transaction,inventory_sale)).grid(row=0, column=4,padx=5)
     tk.Button(button_frame, text="Exit", width=15, command=root.quit).grid(row=0, column=5,padx=5)
 
     #to display Cash transaction
@@ -175,17 +218,17 @@ def purchase_return_window(root):
     button_frame.pack(pady=10)
 
     tk.Button(button_frame,text='Delete Invoice', width=15,command=lambda:delete_invoice(account)).grid(row=0, column=2,padx=5)
-    tk.Button(button_frame, text="Back", width=15, command=lambda:main_window(root)).grid(row=0, column=3,padx=5)
+    tk.Button(button_frame, text="Back", width=15, command=lambda:purchase_module_window(root)).grid(row=0, column=3,padx=5)
     tk.Button(button_frame, text="Exit", width=15, command=root.quit).grid(row=0, column=4,padx=5)
 
     tk.Label(root,text=f"Account Receivable:",font=("Helvetica", 16)).pack(pady=5,)
-    table_account_receivable = ttk.Treeview(root, columns=("S.NO", "Date","Invoice.NO","Account Receivable","Item","Quantity","Unit", "Description","Rate", "Amount","GST","GST Amount","Further Tax","Further Tax Amount","Total Amount","Balance"), show="headings")
+    table_account_receivable = ttk.Treeview(root, columns=("S.NO", "Date","Voucher.NO","Invoice.NO","Account Receivable","Item","Quantity","Unit", "Description","Rate", "Amount","GST","GST Amount","Further Tax","Further Tax Amount","Total Amount","Balance"), show="headings")
     table_account_receivable.pack(fill=tk.BOTH, pady=10)
 
     tk.Label(root,text=f"Purchase:",font=("Helvetica", 16)).pack(pady=5)
-    table_purchase = ttk.Treeview(root, columns=("S.NO", "Date","Invoice.NO","Item","Quantity","Unit","Rate", "Amount","Remaining Stock"), show="headings")
+    table_purchase = ttk.Treeview(root, columns=("S.NO", "Date","Voucher.NO","Invoice.NO","Item","Quantity","Unit","Rate", "Amount","Remaining Stock"), show="headings")
     table_purchase.pack(fill=tk.BOTH, pady=10)
     
-    table(table_account_receivable,table_purchase)
+    table(table_account_receivable,table_purchase,'purchase')
 
-    load_transactions(table_purchase,table_account_receivable,purchase_transaction,inventory_sale)
+    load_transactions(table_purchase,table_account_receivable,purchase_transaction,inventory_sale,'purchase')
