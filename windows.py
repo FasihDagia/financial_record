@@ -42,7 +42,7 @@ def sale_module_window(root):
     for widget in root.winfo_children():
         widget.destroy()
 
-    root.geometry("450x100")
+    root.geometry("450x225")
     root.minsize(350,200)
     root.maxsize(450,500)
 
@@ -53,19 +53,20 @@ def sale_module_window(root):
     btn_frame = Frame()
     btn_frame.pack(fill=X, padx=33, pady=10)
 
-    tk.Button(btn_frame,text="Sale Invoice", font=("Helvetica",10),width=20, command=lambda:sale_invoice_window(root)).grid(padx=10,pady=10,row=0,column=0)
-    tk.Button(btn_frame,text="Sale Return",font=("Helvetica",10),width=20,command=lambda:sale_return_window(root)).grid(padx=10,pady=10,row=0,column=1)
-    tk.Button(btn_frame, text="Back",font=("Helvetica",10), width=20, command=lambda:main_window(root)).grid(row=1, column=0,padx=10,pady=10)
-    tk.Button(btn_frame, text="Exit",font=("Helvetica",10), width=20, command=root.quit).grid(row=1, column=1,padx=10,pady=10)
+    tk.Button(btn_frame, text="Sale Contract", font=("Helvetica",10),width=20, command=lambda:sale_contract_window(root)).grid(padx=10, pady=10, row=0,column=0)
+    tk.Button(btn_frame,text="Sale Invoice", font=("Helvetica",10),width=20, command=lambda:sale_invoice_window(root)).grid(padx=10,pady=10,row=0,column=1)
+    tk.Button(btn_frame,text="Sale Return",font=("Helvetica",10),width=20,command=lambda:sale_return_window(root)).grid(padx=10,pady=10,row=1,column=0)
+    tk.Button(btn_frame, text="Back",font=("Helvetica",10), width=20, command=lambda:main_window(root)).grid(row=1, column=1,padx=10,pady=10)
+    tk.Button(root, text="Exit",font=("Helvetica",10), width=20, command=root.quit).pack(padx=10,pady=5)
 
 def purchase_module_window(root):
     
     for widget in root.winfo_children():
         widget.destroy()
 
-    root.geometry("450x100")
+    root.geometry("450x225")
     root.minsize(350,200)
-    root.maxsize(450,500)
+    root.maxsize(500,500)
 
     root.title("Purchase Module")
 
@@ -73,12 +74,15 @@ def purchase_module_window(root):
 
     btn_frame = Frame()
     btn_frame.pack(fill=X, padx=33, pady=10)
-    
-    tk.Button(btn_frame,text="Purchase Invoice", font=("Helvetica",10),width=20, command=lambda:purchase_invoice_window(root)).grid(padx=10,pady=10,row=0,column=0)
-    tk.Button(btn_frame,text="Purchase Return",font=("Helvetica",10),width=20,command=lambda:purchase_return_window(root,inventory)).grid(padx=10,pady=10,row=0,column=1)
-    tk.Button(btn_frame, text="Back",font=("Helvetica",10), width=20, command=lambda:main_window(root)).grid(row=1, column=0,padx=10,pady=10)
-    tk.Button(btn_frame, text="Exit",font=("Helvetica",10), width=20, command=root.quit).grid(row=1, column=1,padx=10,pady=10)
 
+    tk.Button(btn_frame, text="Purchase Contract", font=("Helvetica", 10), width=20, command=lambda:purchase_contract_window(root)).grid(padx=10,pady=10,row=0,column=0)    
+    tk.Button(btn_frame,text="Purchase Invoice", font=("Helvetica",10),width=20, command=lambda:purchase_invoice_window(root)).grid(padx=10,pady=10,row=0,column=1)
+    tk.Button(btn_frame,text="Purchase Return",font=("Helvetica",10),width=20,command=lambda:purchase_return_window(root,inventory)).grid(padx=10,pady=10,row=1,column=0)
+    tk.Button(btn_frame, text="Back",font=("Helvetica",10), width=20, command=lambda:main_window(root)).grid(row=1, column=1,padx=10,pady=10)
+    tk.Button(root, text="Exit",font=("Helvetica",10), width=20, command=root.quit).pack(padx=10,pady=5)
+
+def sale_contract_window(root):
+    pass
 
 def sale_invoice_window(root):
     global inventory_sale
@@ -176,6 +180,8 @@ def sale_return_window(root):
     
     load_transactions(table_sale,table_account_receivable,sale_return,inventory_return,'sale')
 
+def purchase_contract_window(root):
+    pass
 
 def purchase_invoice_window(root):
     global inventory_sale
