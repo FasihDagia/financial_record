@@ -77,29 +77,30 @@ def table(table_account_receivable,table_inventory,invoice_type):
     table_account_receivable.heading("Balance", text="Balance")
     table_account_receivable.column("Balance", anchor="center", width=40)
 
-    table_inventory.heading("S.NO", text="S.NO")
-    table_inventory.column("S.NO", anchor="center", width=40)
-    table_inventory.heading("Date", text="Date")
-    table_inventory.column("Date", anchor="center", width=40)
+    if table_inventory != None:
+        table_inventory.heading("S.NO", text="S.NO")
+        table_inventory.column("S.NO", anchor="center", width=40)
+        table_inventory.heading("Date", text="Date")
+        table_inventory.column("Date", anchor="center", width=40)
 
-    if invoice_type == 'purchase':
-        table_inventory.heading("Voucher.NO", text="Voucher.NO")
-        table_inventory.column("Voucher.NO", anchor="center", width=20)
+        if invoice_type == 'purchase':
+            table_inventory.heading("Voucher.NO", text="Voucher.NO")
+            table_inventory.column("Voucher.NO", anchor="center", width=20)
 
-    table_inventory.heading("Invoice.NO", text="Invoice.NO")
-    table_inventory.column("Invoice.NO", anchor="center", width=40)
-    table_inventory.heading("Item", text="Item")
-    table_inventory.column("Item", anchor="center", width=40)
-    table_inventory.heading("Quantity", text="Quantity")
-    table_inventory.column("Quantity", anchor="center", width=40)
-    table_inventory.heading("Unit", text="unit")
-    table_inventory.column("Unit", anchor="center", width=40)
-    table_inventory.heading("Rate", text="Rate")
-    table_inventory.column("Rate", anchor="center", width=40)
-    table_inventory.heading("Amount", text="Amount")
-    table_inventory.column("Amount", anchor="center", width=40)
-    table_inventory.heading("Remaining Stock", text="Remaining Stock")
-    table_inventory.column("Remaining Stock", anchor="center", width=40)
+        table_inventory.heading("Invoice.NO", text="Invoice.NO")
+        table_inventory.column("Invoice.NO", anchor="center", width=40)
+        table_inventory.heading("Item", text="Item")
+        table_inventory.column("Item", anchor="center", width=40)
+        table_inventory.heading("Quantity", text="Quantity")
+        table_inventory.column("Quantity", anchor="center", width=40)
+        table_inventory.heading("Unit", text="unit")
+        table_inventory.column("Unit", anchor="center", width=40)
+        table_inventory.heading("Rate", text="Rate")
+        table_inventory.column("Rate", anchor="center", width=40)
+        table_inventory.heading("Amount", text="Amount")
+        table_inventory.column("Amount", anchor="center", width=40)
+        table_inventory.heading("Remaining Stock", text="Remaining Stock")
+        table_inventory.column("Remaining Stock", anchor="center", width=40)
 
 def generate_invoice(root,sale_transaction,account,inventory_sale,operator,invoice_type,window):
 

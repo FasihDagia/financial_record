@@ -82,7 +82,32 @@ def purchase_module_window(root):
     tk.Button(root, text="Exit",font=("Helvetica",10), width=20, command=root.quit).pack(padx=10,pady=5)
 
 def sale_contract_window(root):
-    pass
+    account = db['sale_contract']
+
+    for widget in root.winfo_children():
+        widget.destroy()
+
+    root.geometry("1400x800")
+    root.minsize(1400,700)
+
+    root.title("Sale Contract")
+
+    tk.Label(text="Sale Contracts",font=("Helvetica-bold",22)).pack(pady=30)
+
+    button_frame = tk.Frame(root)
+    button_frame.pack()
+
+    tk.Button(button_frame,text='Generate Contract', width=15,command=lambda:generate_invoice(root,sale_transaction,account,inventory_sale,'-',"Sale",sale_invoice_window)).grid(row=0, column=1,padx=5)
+    tk.Button(button_frame, text="Save", width=15, command=lambda:save(sale_transaction,account,inventory_sale)).grid(row=0, column=3,padx=5)
+    tk.Button(button_frame, text="Back", width=15, command=lambda:back(root,sale_module_window,sale_transaction,inventory_sale)).grid(row=0, column=4,padx=5)
+    tk.Button(button_frame, text="Exit", width=15, command=root.quit).grid(row=0, column=5,padx=5)
+
+    tk.Label(root,text=f"Contracts:",font=("Helvetica", 16)).pack(pady=5,)
+    table_contracts = ttk.Treeview(root, columns=("S.NO", "Date","Invoice.NO","Account Receivable","Item","Quantity","Unit", "Description","Rate", "Amount","GST","GST Amount","Further Tax","Further Tax Amount","Total Amount","Balance"), show="headings")
+    table_contracts.pack(fill=tk.BOTH, pady=10)
+    table_sale = None
+
+    table(table_contracts,table_sale,'sale')
 
 def sale_invoice_window(root):
     global inventory_sale
@@ -181,7 +206,32 @@ def sale_return_window(root):
     load_transactions(table_sale,table_account_receivable,sale_return,inventory_return,'sale')
 
 def purchase_contract_window(root):
-    pass
+    account = db['purchase_contract']
+
+    for widget in root.winfo_children():
+        widget.destroy()
+
+    root.geometry("1400x800")
+    root.minsize(1400,700)
+
+    root.title("Purchase Contract")
+
+    tk.Label(text="Purchase Contracts",font=("Helvetica-bold",22)).pack(pady=30)
+
+    button_frame = tk.Frame(root)
+    button_frame.pack()
+
+    tk.Button(button_frame,text='Generate Contract', width=15,command=lambda:generate_invoice(root,sale_transaction,account,inventory_sale,'-',"Sale",sale_invoice_window)).grid(row=0, column=1,padx=5)
+    tk.Button(button_frame, text="Save", width=15, command=lambda:save(sale_transaction,account,inventory_sale)).grid(row=0, column=3,padx=5)
+    tk.Button(button_frame, text="Back", width=15, command=lambda:back(root,purchase_module_window,sale_transaction,inventory_sale)).grid(row=0, column=4,padx=5)
+    tk.Button(button_frame, text="Exit", width=15, command=root.quit).grid(row=0, column=5,padx=5)
+
+    tk.Label(root,text=f"Contracts:",font=("Helvetica", 16)).pack(pady=5,)
+    table_contracts = ttk.Treeview(root, columns=("S.NO", "Date","Voucher.NO","Invoice.NO","Account Receivable","Item","Quantity","Unit", "Description","Rate", "Amount","GST","GST Amount","Further Tax","Further Tax Amount","Total Amount","Balance"), show="headings")
+    table_contracts.pack(fill=tk.BOTH, pady=10)
+    table_sale = None
+
+    table(table_contracts,table_sale,'purchase')
 
 def purchase_invoice_window(root):
     global inventory_sale
