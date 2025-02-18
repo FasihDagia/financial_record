@@ -37,14 +37,14 @@ def back(root,window,invoices,inventorys):
                 del inventorys[i+1]
             window(root)
 
-def table(table_account_receivable,table_inventory,invoice_type):
+def table(table_account_receivable,table_inventory,contract_type):
 
     table_account_receivable.heading("S.NO", text="S.NO")
     table_account_receivable.column("S.NO", anchor="center", width=20)
     table_account_receivable.heading("Date", text="Date")
     table_account_receivable.column("Date", anchor="center", width=30)
 
-    if invoice_type == 'purchase':
+    if contract_type == 'purchase':
         table_account_receivable.heading("Voucher.NO", text="Voucher.NO")
         table_account_receivable.column("Voucher.NO", anchor="center", width=20)
 
@@ -83,7 +83,7 @@ def table(table_account_receivable,table_inventory,invoice_type):
         table_inventory.heading("Date", text="Date")
         table_inventory.column("Date", anchor="center", width=40)
 
-        if invoice_type == 'purchase':
+        if contract_type == 'purchase':
             table_inventory.heading("Voucher.NO", text="Voucher.NO")
             table_inventory.column("Voucher.NO", anchor="center", width=20)
 
@@ -102,8 +102,7 @@ def table(table_account_receivable,table_inventory,invoice_type):
         table_inventory.heading("Remaining Stock", text="Remaining Stock")
         table_inventory.column("Remaining Stock", anchor="center", width=40)
 
-def generate_invoice(root,sale_transaction,account,inventory_sale,operator,invoice_type,window):
-
+def generate_contract(root,sale_transaction,account,inventory_sale,operator,contract_type,window):
     for widget in root.winfo_children():
         widget.destroy()
     
@@ -112,16 +111,16 @@ def generate_invoice(root,sale_transaction,account,inventory_sale,operator,invoi
     root.maxsize(600,500)
 
 
-    root.title("Add Transaction")
+    root.title("Generate Contract")
 
-    tk.Label(root, text=f"{invoice_type} Invoice", font=("Helvetica", 16)).pack(pady=10)
+    tk.Label(root, text=f"{contract_type} Contract", font=("Helvetica", 16)).pack(pady=10)
     headings = tk.Frame()
     headings.pack()
 
     input_frame = tk.Frame()
     input_frame.pack()
     width = 20
-    if invoice_type == "Sale":
+    if contract_type == "Sale":
 
         tk.Label(headings,text="Invoice No:",font=("Helvetica", 12)).grid(row=1,column=2)
         no_invoices = account.count_documents({})
@@ -426,7 +425,331 @@ def generate_invoice(root,sale_transaction,account,inventory_sale,operator,invoi
     tk.Button(button_frame, text="Back", width=10, command=lambda:window(root)).grid(row=1, column=0,padx=5)
     tk.Button(button_frame, text="Exit", width=10, command=root.quit).grid(row=1, column=1,padx=5)
 
-def generate_invoice_pdf(date, invoice_type, voucher_no, invoice_no, account_receviable,description,item,quantity,unit,rate,amount,gst,gst_amount,total_amount,filename = "invoice2.pdf"):
+def generate_invoice(root,sale_transaction,account,inventory_sale,operator,contract_type,window):
+
+    for widget in root.winfo_children():
+        widget.destroy()
+    
+    root.geometry("500x490")
+    root.minsize(500,430)
+    root.maxsize(600,500)
+
+
+    root.title("Generate Invoicw")
+
+    tk.Label(root, text=f"{contract_type} Invoice", font=("Helvetica", 16)).pack(pady=10)
+    headings = tk.Frame()
+    headings.pack()
+
+    input_frame = tk.Frame()
+    input_frame.pack()
+    width = 20
+    if contract_type == "Sale":
+
+        tk.Label(headings,text="Invoice No:",font=("Helvetica", 12)).grid(row=1,column=2)
+        no_invoices = account.count_documents({})
+        
+        if len(sale_transaction) == 0:
+            invoice_no = no_invoices+1
+        else:
+            invoice_no = len(sale_transaction)+no_invoices+1
+
+        current_date = datetime.now()
+        year = current_date.year
+
+        invoice = f"SL{str(invoice_no).zfill(5)}/{year}"
+        tk.Label(headings,text=invoice,font=("Helvetica", 12)).grid(row=1,column=3)
+        account_receivable_col = 1
+        account_receivable_entery_col = 2
+
+    else:
+        tk.Label(headings,text="Voucher No:",font=("Helvetica", 12)).grid(row=1,column=2)
+        no_vouchers = account.count_documents({})
+        
+        if len(sale_transaction) == 0:
+            voucher_no = 1+no_vouchers
+        else:
+            voucher_no = len(sale_transaction)+no_vouchers+1
+
+        current_date = datetime.now()
+        year = current_date.year
+        voucher = f"PU{str(voucher_no).zfill(5)}/{year}"
+
+        tk.Label(headings,text=voucher,font=("Helvetica", 12)).grid(row=1,column=3)
+
+        tk.Label(input_frame,text="Invoice No:").grid(row=0,column=0,pady=10)
+        invoice_entry = tk.Entry(input_frame,width=width)
+        invoice_entry.grid(row=0,column=1,pady=10,padx=5) 
+        account_receivable_col = 2
+        account_receivable_entery_col = 3    
+
+
+    tk.Label(headings, text="Date:",font=("Helvetica", 12)).grid(row=1,column=0)
+    initial_date_value = StringVar(value=datetime.now().date()) 
+    date_entry = tk.Entry(headings,width=width,textvariable=initial_date_value) 
+    date_entry.grid(row=1,column=1,padx=10)
+
+    tk.Label(input_frame,text="Account Receivable:").grid(row=0,column=account_receivable_col,pady=10)
+    account_recevible_options = ["Name1","Name2","Name3"]
+    account_recevible_option = tk.StringVar(value="Name")
+    account_recevible_entry = OptionMenu(input_frame, account_recevible_option , *account_recevible_options)
+    account_recevible_entry.grid(row=0,column=account_receivable_entery_col,pady=10)
+
+    tk.Label(input_frame, text="Item:").grid(row=1,column=0,pady=10)
+    items_options = []
+    for x in inventory.list_collection_names():
+        items_options.append(x)
+    item_option = tk.StringVar(value="Product Name")
+    item_entry = OptionMenu(input_frame, item_option , *items_options)
+    item_entry.grid(row=1,column=1,pady=10)
+
+    tk.Label(input_frame, text="Quantity:").grid(row=1,column=2,pady=10)
+    quantity_entry = tk.Entry(input_frame,width=10)  
+    quantity_entry.grid(row=1,column=3,pady=10)
+
+    tk.Label(input_frame, text="Unit:").grid(row=2,column=0,pady=10)
+    quantity_unit_options = ['Meters','KG','Liters','PCS']
+    quantity_unit_option = tk.StringVar(value="Unit")
+    quantity_unit_entry = OptionMenu(input_frame, quantity_unit_option , *quantity_unit_options)
+    quantity_unit_entry.grid(row=2,column=1,pady=10)
+
+
+    def calculate_total(*args):
+        try:
+            rate = float(rate_entry.get()) if rate_entry.get() else 0
+            quantity = float(quantity_entry.get()) if quantity_entry.get() else 0
+
+            amount = rate * quantity
+            amount_var.set(amount)
+
+        except ValueError:
+            total_var.set("Invalid input")
+
+        try:
+            amount = float(amount_entry.get()) if amount_entry.get() else 0
+            gst_percent = float(gst_default_value_assign.get()) if gst_default_value_assign.get() else 0
+            further_tax_percent = float(further_tax_entry.get()) if further_tax_entry.get() else 0
+            ft_amount = (amount * further_tax_percent) / 100
+            gt_amount = (amount * gst_percent) / 100
+
+            gst_amount_var.set(gt_amount)
+            Further_tax_amount_var.set(ft_amount)
+
+        except ValueError:
+            gst_amount_var.set("Invalid input")
+            Further_tax_amount_var.set("Invalid input")
+
+        try:
+            amount = float(amount_entry.get()) if amount_entry.get() else 0
+            gst_percent = float(gst_default_value_assign.get()) if gst_default_value_assign.get() else 0
+            further_tax_percent = float(further_tax_entry.get()) if further_tax_entry.get() else 0
+            gst_amount = (amount * gst_percent) / 100
+            further_tax_amount = (amount * further_tax_percent) / 100
+
+            total = amount + gst_amount + further_tax_amount
+            total_var.set(f"{total}")  # Update total label
+        except ValueError:
+            total_var.set("Invalid input")
+
+
+    tk.Label(input_frame,text="Rate:").grid(row=2, column=2,pady=10)
+    rate_entry = tk.Entry(input_frame, width=width)
+    rate_entry.grid(row=2, column=3)
+
+    tk.Label(input_frame, text="Amount:").grid(row=3, column=0,pady=10)
+    amount_var = tk.StringVar(value=0)
+    amount_entry = tk.Entry(input_frame, width=width,textvariable=amount_var)
+    amount_entry.grid(row=3, column=1,)
+
+    rate_entry.bind("<KeyRelease>",calculate_total)
+    quantity_entry.bind("<KeyRelease>",calculate_total)
+
+    tk.Label(input_frame, text="GST(%):").grid(row=3, column=2,pady=10)
+    gst_default_value = 15
+    gst_default_value_assign = tk.StringVar(value=gst_default_value)
+    gst_entry = tk.Entry(input_frame, width=width, textvariable=gst_default_value_assign)
+    gst_entry.grid(row=3, column=3,pady=10)
+
+    tk.Label(input_frame,text="GST Amount:").grid(row=4, column=0,pady=10)
+    gst_amount_var = tk.StringVar(value=0)
+    gst_amount_entry = tk.Entry(input_frame, width=width,textvariable=gst_amount_var)
+    gst_amount_entry.grid(row=4, column=1,pady=10)
+
+
+    tk.Label(input_frame, text="Further Tax(%):").grid(row=4, column=2,pady=10)
+    further_tax_entry = tk.Entry(input_frame, width=width)
+    further_tax_entry.grid(row=4, column=3,pady=10)
+
+    tk.Label(input_frame,text="Futher Tax Amount:").grid(row=5, column=0,pady=10)
+    Further_tax_amount_var = tk.StringVar(value=0)
+    Further_tax_amount_entry = tk.Entry(input_frame, width=width,textvariable=Further_tax_amount_var)
+    Further_tax_amount_entry.grid(row=5, column=1,pady=10)
+
+    tk.Label(input_frame, text="Description:").grid(row=5,column=2,pady=10)
+    description_entry = tk.Entry(input_frame,width=width)  
+    description_entry.grid(row=5,column=3,pady=10)
+    # Total Label
+    total_frame = tk.Frame()
+    total_frame.pack()
+    tk.Label(total_frame,text="Total Amount:",font=9).grid(row=0,column=0)
+    total_var = tk.StringVar(value=0)
+    tk.Label(total_frame,textvariable=total_var,font=9).grid(row=0,column=1,pady=10)
+
+    # Attach trace to auto-update on input
+    amount_entry.bind("<KeyRelease>", calculate_total)
+    gst_default_value_assign.trace_add("write", calculate_total)
+    further_tax_entry.bind("<KeyRelease>", calculate_total)
+
+    def add(window, operator):
+        nonlocal invoice
+        nonlocal voucher
+        if operator == '-':
+            voucher = None
+
+        else :
+            invoice = invoice_entry.get()
+
+        saved_transactions = account.count_documents({})
+
+        if len(sale_transaction) == 0:
+            sno = saved_transactions + 1
+        else:
+            sno = saved_transactions + len(sale_transaction) + 1
+
+        date = date_entry.get()
+        description = description_entry.get()
+        account_recevible = account_recevible_option.get()
+        item = item_option.get()
+        
+        try:
+            quantity = int(quantity_entry.get())
+        except ValueError:
+            messagebox.showerror("Error", "Fields can't be empty")
+            return
+
+        unit = quantity_unit_option.get()
+        
+        try:
+            rate = float(rate_entry.get())
+        except ValueError:
+            messagebox.showerror("Error", "Fields can't be empty")
+            return
+
+        amount = float(amount_var.get())
+        gst = float(gst_default_value_assign.get())
+        gst_amount = float(gst_amount_entry.get())
+        further_tax = further_tax_entry.get()
+        
+        try:
+            further_tax_amount = float(Further_tax_amount_entry.get())
+        except ValueError:
+            messagebox.showerror("Error", "Fields can't be empty")
+            return
+
+        total_amount = float(total_var.get())
+
+        if not date or not description or not amount or account_recevible == 'Name' or not quantity or unit == 'Unit' or not rate or not gst or item == 'Product Name':
+            messagebox.showerror("Error", "Fields can't be empty")
+            return
+        else:
+            if len(sale_transaction) == 0:
+                if saved_transactions == 0:
+                    balance = 0
+                else:
+                    last_save_transaction = account.find_one({'s_no': saved_transactions})
+                    balance = last_save_transaction.get('balance', 0)
+            else:
+                len(sale_transaction)
+                balance = sale_transaction[len(sale_transaction)]['balance']
+            
+            balance += total_amount 
+            sale_transaction[len(sale_transaction) + 1] = {
+                's_no': sno,
+                'invoice_no': invoice,
+                'voucher_no': voucher,
+                'item': item,
+                'quantity': quantity,
+                'unit': unit,
+                'account_receivable': account_recevible,
+                'date': date,
+                'description': description,
+                'rate': rate,
+                'amount': amount,
+                'gst': gst,
+                'gst_amount': gst_amount,
+                'further_tax': further_tax,
+                'further_tax_amount': further_tax_amount,
+                'total_amount': total_amount,
+                'balance': balance
+            }
+            
+            # For inventory 
+            inventory_item = inventory[item]
+            saved_inventory = inventory_item.count_documents({})
+
+            if len(inventory_sale) == 0:
+                sno_inventory = saved_inventory + 1
+            else:
+                sno_inventory = 0
+                for i in inventory_sale.values():
+                    item_for_sno = i.get('item', '')
+                    if item_for_sno == item:
+                        sno_inventory = i['s_no']
+                if sno_inventory == 0:
+                    sno_inventory = saved_inventory 
+                sno_inventory = sno_inventory + 1
+
+
+            # To get remaining quantity in inventory
+            if len(inventory_sale) == 0:
+                if saved_inventory == 0:
+                    remaining_stock = 0
+                else:
+                    # Fetch the last saved inventory
+                    last_save_inventory = inventory_item.find_one({'s_no': sno_inventory-1})
+                    remaining_stock = last_save_inventory.get('remaining_stock', 0)
+            else:        
+                remaining_stock = 0
+                for i in inventory_sale.values():
+                    item_for_remaining_stock = i.get('item', '')
+                    if item_for_remaining_stock == item:
+                        remaining_stock = i['remaining_stock']
+                if remaining_stock == 0:
+                    last_save_inventory = inventory_item.find_one({'s_no': sno_inventory-1})
+                    if last_save_inventory is None:
+                        remaining_stock = 0
+                    else:
+                        remaining_stock = last_save_inventory.get('remaining_stock', 0)
+
+
+            # Updating inventory
+            if operator == '+':    
+                remaining_stock += quantity
+            elif operator == '-': 
+                remaining_stock -= quantity
+            inventory_sale[len(inventory_sale) + 1] = {
+                's_no': sno_inventory,
+                'date': date,
+                'voucher_no':voucher,
+                'invoice_no': invoice,
+                'item': item,
+                'quantity': quantity,
+                'unit': unit,
+                'rate': rate,
+                'amount': amount,
+                'remaining_stock': remaining_stock
+            }
+            messagebox.showinfo("Success", "Transaction Added!")
+            window(root)
+
+    tk.Button(root, text="Add", command=lambda:add(window,operator), width=15).pack(padx=5,pady=5)
+    
+    button_frame = tk.Frame(root)
+    button_frame.pack(pady=10)
+    tk.Button(button_frame, text="Back", width=10, command=lambda:window(root)).grid(row=1, column=0,padx=5)
+    tk.Button(button_frame, text="Exit", width=10, command=root.quit).grid(row=1, column=1,padx=5)
+
+def generate_invoice_pdf(date, contract_type, voucher_no, invoice_no, account_receviable,description,item,quantity,unit,rate,amount,gst,gst_amount,total_amount,filename = "invoice2.pdf"):
     # Create PDF Document
     doc = SimpleDocTemplate(filename, pagesize=A4)
     elements = []
@@ -438,11 +761,11 @@ def generate_invoice_pdf(date, invoice_type, voucher_no, invoice_no, account_rec
     elements.append(Spacer(1, 12))  # Add space
 
     # Invoice Title
-    invoice_title = Paragraph(f"<b><font size=14>{invoice_type} INVOICE</font></b>", styles["Title"])
+    invoice_title = Paragraph(f"<b><font size=14>{contract_type} INVOICE</font></b>", styles["Title"])
     elements.append(invoice_title)
     elements.append(Spacer(1, 12))
 
-    if  invoice_type == "SALE":
+    if  contract_type == "SALE":
         details = [
             ["Invoice No:", f"{invoice_no}", "Date:", f"{date}"],  
             ["Customer:", f"{account_receviable}", "", ""],  
@@ -512,7 +835,7 @@ def generate_invoice_pdf(date, invoice_type, voucher_no, invoice_no, account_rec
     # Build PDF
     doc.build(elements)
     
-def print_invoice(invoices,root,invoice_type):
+def print_invoice(invoices,root,contract_type):
     
     if len(invoices) == 0:
         messagebox.showinfo("Error","No invoices to print")
@@ -521,7 +844,7 @@ def print_invoice(invoices,root,invoice_type):
         invoice_no = simpledialog.askstring("Input", "Enter Invoice NO:", parent=root)
         current_date = datetime.now()
         year = current_date.year
-        if invoice_type == "SALE":
+        if contract_type == "SALE":
             invoice_no = f"SL{invoice_no.zfill(5)}/{year}"
         else:
             invoice_no = f"PU{invoice_no.zfill(5)}/{year}"
@@ -568,11 +891,10 @@ def print_invoice(invoices,root,invoice_type):
             messagebox.showwarning("Warning", "No file path selected. Invoice not saved.")
             return
             
-        generate_invoice_pdf(date,invoice_type,voucher_number,invoice_number,account_receivable,des,item,quant,unit,rate,amount,gst,gst_amount,total_amount,file_path)
+        generate_invoice_pdf(date,contract_type,voucher_number,invoice_number,account_receivable,des,item,quant,unit,rate,amount,gst,gst_amount,total_amount,file_path)
         messagebox.showinfo("Success", f"Invoice saved successfully at:\n{file_path}")
 
-
-def load_transactions(table_inventory,table_account_receivble,new_transactions,inventory,invoice_type):
+def load_transactions(table_inventory,table_account_receivble,new_transactions,inventory,contract_type):
     #removing existing data from cheque table
     for row in table_account_receivble.get_children():
         table_account_receivble.delete(row)
@@ -582,7 +904,7 @@ def load_transactions(table_inventory,table_account_receivble,new_transactions,i
 
     #displaying new data
     j = 1
-    if invoice_type == 'purchase':    
+    if contract_type == 'purchase':    
         for transaction in new_transactions.values():
             table_account_receivble.insert("", tk.END, values=(
                 j,
@@ -627,7 +949,7 @@ def load_transactions(table_inventory,table_account_receivble,new_transactions,i
             j += 1
 
     i = 1
-    if invoice_type == 'purchase':
+    if contract_type == 'purchase':
         for sale in inventory.values():
             table_inventory.insert("", tk.END, values=(
                 i,
@@ -657,7 +979,6 @@ def load_transactions(table_inventory,table_account_receivble,new_transactions,i
             ))
             i += 1
 
-
 def save(transactions,account,inventorys):
 
 
@@ -682,11 +1003,11 @@ def save(transactions,account,inventorys):
         for i in range(len(inventorys)):
             del inventorys[i+1]
 
-def return_invoice(root,inventory,invoice_return,invoice_type,return_account,account,window):
+def return_invoice(root,inventory,invoice_return,contract_type,return_account,account,window):
 
     current_date = datetime.now()
     year = current_date.year
-    if invoice_type == 'sale':
+    if contract_type == 'sale':
         invoice_no = simpledialog.askstring("Input", "Enter Invoice NO:")
         invoice_no = f"SL{invoice_no.zfill(5)}/{year}"
 
@@ -718,7 +1039,7 @@ def return_invoice(root,inventory,invoice_return,invoice_type,return_account,acc
 
             item = invoice_return[keys]['item']
             inventory_item = inventory[item]
-            if invoice_type == 'sale':
+            if contract_type == 'sale':
                 invoice = inventory_item.find_one({'invoice_no':invoice_no})
             else:
                 invoice = inventory_item.find_one({'voucher_no':invoice_no})
@@ -751,5 +1072,5 @@ def return_invoice(root,inventory,invoice_return,invoice_type,return_account,acc
         account.insert_one(invoices)
 
     inventory_item.delete_one({"s_no":sno_inventory})
-    messagebox.showinfo("Success", f"{invoice_type.capitalize()} Invoice returned Successfully")
+    messagebox.showinfo("Success", f"{contract_type.capitalize()} Invoice returned Successfully")
     window(root,inventory)

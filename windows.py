@@ -3,7 +3,7 @@ from tkinter import *
 from tkinter import ttk
 import pymongo as pm
 
-from functions import generate_invoice ,save, load_transactions ,table, back, return_invoice,print_invoice
+from functions import generate_contract, generate_invoice ,save, load_transactions ,table, back, return_invoice,print_invoice
 
 #data base set up
 client = pm.MongoClient("mongodb://localhost:27017/")
@@ -97,7 +97,7 @@ def sale_contract_window(root):
     button_frame = tk.Frame(root)
     button_frame.pack()
 
-    tk.Button(button_frame,text='Generate Contract', width=15,command=lambda:generate_invoice(root,sale_transaction,account,inventory_sale,'-',"Sale",sale_invoice_window)).grid(row=0, column=1,padx=5)
+    tk.Button(button_frame,text='Generate Contract', width=15,command=lambda:generate_contract()).grid(row=0, column=1,padx=5)
     tk.Button(button_frame, text="Save", width=15, command=lambda:save(sale_transaction,account,inventory_sale)).grid(row=0, column=3,padx=5)
     tk.Button(button_frame, text="Back", width=15, command=lambda:back(root,sale_module_window,sale_transaction,inventory_sale)).grid(row=0, column=4,padx=5)
     tk.Button(button_frame, text="Exit", width=15, command=root.quit).grid(row=0, column=5,padx=5)
@@ -221,7 +221,7 @@ def purchase_contract_window(root):
     button_frame = tk.Frame(root)
     button_frame.pack()
 
-    tk.Button(button_frame,text='Generate Contract', width=15,command=lambda:generate_invoice(root,sale_transaction,account,inventory_sale,'-',"Sale",sale_invoice_window)).grid(row=0, column=1,padx=5)
+    tk.Button(button_frame,text='Generate Contract', width=15,command=lambda:generate_contract()).grid(row=0, column=1,padx=5)
     tk.Button(button_frame, text="Save", width=15, command=lambda:save(sale_transaction,account,inventory_sale)).grid(row=0, column=3,padx=5)
     tk.Button(button_frame, text="Back", width=15, command=lambda:back(root,purchase_module_window,sale_transaction,inventory_sale)).grid(row=0, column=4,padx=5)
     tk.Button(button_frame, text="Exit", width=15, command=root.quit).grid(row=0, column=5,padx=5)
