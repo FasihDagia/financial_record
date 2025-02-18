@@ -3,7 +3,7 @@ from tkinter import *
 from tkinter import ttk
 import pymongo as pm
 
-from functions import generate_invoice ,save, load_transactions ,table, back, delete_invoice,print_invoice
+from functions import generate_invoice ,save, load_transactions ,table, back, return_invoice,print_invoice
 
 #data base set up
 client = pm.MongoClient("mongodb://localhost:27017/")
@@ -35,7 +35,7 @@ def main_window(root):
     tk.Button(btn_frame,text="Sale Module", font=("Helvetica",10),width=20, command=lambda:sale_module_window(root)).grid(padx=10,pady=10,row=0,column=0)
     tk.Button(btn_frame,text="Purchase Module", font=("Helvetica",10),width=20, command=lambda:purchase_module_window(root)).grid(padx=10,pady=10,row=0,column=1)
 
-    tk.Button(root,text="Exit", font=("Helvetica",10),width=20, command=lambda:root.quit).pack(padx=10,pady=5)
+    tk.Button(root,text="Exit", font=("Helvetica",10),width=20, command=root.quit).pack(padx=10,pady=5)
 
 def sale_module_window(root):
     
@@ -126,7 +126,8 @@ def sale_invoice_window(root):
 def sale_return_window(root):
     
     account = db['sale_invoice']
-    
+    return_account = db['sale_return']
+
     for widget in root.winfo_children():
         widget.destroy()
 
@@ -136,11 +137,30 @@ def sale_return_window(root):
     root.title(f"Sale Return")
 
     tk.Label(root,text=f"Sale Return",font=("Helvetica", 18)).pack(pady=10)
+    items = inventory.list_collection_names()
+
+    inventory_return = {}
+    sno_invent = 1
+    for item in items:
+        item_collection = inventory[item]
+        inventory_inv = item_collection.find({})
+        for inv in inventory_inv:
+            if inv.get('voucher_no') == None or inv.get('return') == 'returned':
+                inventory_return[sno_invent] = inv
+                sno_invent+=1
+
+    invoices = account.find().sort("s_no", 1)
+    sno_inv = 1
+    sale_return = {}
+    for invoice in invoices:
+        if invoice.get('return') != 'returned':
+            sale_return[sno_inv] = invoice
+            sno_inv+=1
 
     button_frame = tk.Frame(root)
     button_frame.pack(pady=10)
 
-    tk.Button(button_frame,text='Delete Invoice', width=15,command=lambda:delete_invoice(account)).grid(row=0, column=2,padx=5)
+    tk.Button(button_frame,text='Return Invoice', width=15,command=lambda:return_invoice(root,inventory,sale_return,'sale',return_account,account,sale_return_window)).grid(row=0, column=2,padx=5)
     tk.Button(button_frame, text="Back", width=15, command=lambda:sale_module_window(root)).grid(row=0, column=3,padx=5)
     tk.Button(button_frame, text="Exit", width=15, command=root.quit).grid(row=0, column=4,padx=5)
 
@@ -153,29 +173,6 @@ def sale_return_window(root):
     table_sale.pack(fill=tk.BOTH, pady=10)
 
     table(table_account_receivable,table_sale,'sale')
-
-    items = inventory.list_collection_names()
-
-    inventory_return = {}
-    sno_invent = 1
-    for item in items:
-        item_collection = inventory[item]
-        inventory_inv = item_collection.find({})
-        for inv in inventory_inv:
-            if inv.get('voucher_no') == None:
-                inventory_return[sno_invent] = inv
-                sno_invent+=1
-            #     continue
-            # else:
-            #     inventory_return[sno_invent] = inv
-            #     sno_invent+=1
-
-    invoices = account.find().sort("s_no", 1)
-    sno_inv = 1
-    sale_return = {}
-    for invoice in invoices:
-        sale_return[sno_inv] = invoice
-        sno_inv+=1
     
     load_transactions(table_sale,table_account_receivable,sale_return,inventory_return,'sale')
 
@@ -226,6 +223,7 @@ def purchase_invoice_window(root):
 def purchase_return_window(root,inventory):
     
     account = db["purchase_invoice"]
+    return_account = db['purchase_return']
 
     for widget in root.winfo_children():
         widget.destroy()
@@ -237,10 +235,28 @@ def purchase_return_window(root,inventory):
 
     tk.Label(root,text=f"Purchase Return",font=("Helvetica", 18)).pack(pady=10)
 
+    items = inventory.list_collection_names()
+
+    inventory_return = {}
+    sno_invent = 1
+    for item in items:
+        item_collection = inventory[item]
+        inventory_inv = item_collection.find({})
+        for inv in inventory_inv:
+            if inv.get('voucher_no') != None:
+                inventory_return[sno_invent] = inv
+                sno_invent+=1
+
+    invoices = account.find().sort("s_no", 1)
+    sno_inv = 1
+    purchase_return = {}
+    for invoice in invoices:
+        purchase_return[sno_inv] = invoice
+        sno_inv+=1
     button_frame = tk.Frame(root)
     button_frame.pack(pady=10)
 
-    tk.Button(button_frame,text='Delete Invoice', width=15,command=lambda:delete_invoice(account)).grid(row=0, column=2,padx=5)
+    tk.Button(button_frame,text='Return Invoice', width=15,command=lambda:return_invoice(root,inventory,purchase_return,'purchase',return_account,account,purchase_return_window)).grid(row=0, column=2,padx=5)
     tk.Button(button_frame, text="Back", width=15, command=lambda:purchase_module_window(root)).grid(row=0, column=3,padx=5)
     tk.Button(button_frame, text="Exit", width=15, command=root.quit).grid(row=0, column=4,padx=5)
 
@@ -254,27 +270,5 @@ def purchase_return_window(root,inventory):
     
     table(table_account_receivable,table_purchase,'purchase')
 
-    items = inventory.list_collection_names()
-
-    inventory_return = {}
-    sno_invent = 1
-    for item in items:
-        item_collection = inventory[item]
-        inventory_inv = item_collection.find({})
-        for inv in inventory_inv:
-            if inv.get('voucher_no') != None:
-                inventory_return[sno_invent] = inv
-                sno_invent+=1
-            #     continue
-            # else:
-            #     inventory_return[sno_invent] = inv
-            #     sno_invent+=1
-
-    invoices = account.find().sort("s_no", 1)
-    sno_inv = 1
-    purchase_return = {}
-    for invoice in invoices:
-        purchase_return[sno_inv] = invoice
-        sno_inv+=1
 
     load_transactions(table_purchase,table_account_receivable,purchase_return,inventory_return,'purchase')

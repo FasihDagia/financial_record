@@ -511,8 +511,6 @@ def generate_invoice_pdf(date, invoice_type, voucher_no, invoice_no, account_rec
     # Build PDF
     doc.build(elements)
     
-    print(f"Invoice saved as {filename}")
-
 def print_invoice(invoices,root,invoice_type):
     
     if len(invoices) == 0:
@@ -683,5 +681,74 @@ def save(transactions,account,inventorys):
         for i in range(len(inventorys)):
             del inventorys[i+1]
 
-def delete_invoice():
-    pass
+def return_invoice(root,inventory,invoice_return,invoice_type,return_account,account,window):
+
+    current_date = datetime.now()
+    year = current_date.year
+    if invoice_type == 'sale':
+        invoice_no = simpledialog.askstring("Input", "Enter Invoice NO:")
+        invoice_no = f"SL{invoice_no.zfill(5)}/{year}"
+
+    else:
+        invoice_no = simpledialog.askstring("Input", "Enter Voucher NO:")
+        invoice_no = f"PU{invoice_no.zfill(5)}/{year}"
+
+    for keys in list(invoice_return.keys()):  # Iterate over a copy of the keys
+        inv = invoice_return[keys]
+        if inv.get('invoice_no','') == invoice_no or inv.get('voucher_no','') == invoice_no:
+
+            invoice_return[keys]['return'] = 'returned'
+            invoice_return[keys]['return_date'] = current_date.strftime("%Y-%m-%d")
+            sno_return = return_account.count_documents({})
+            invoice_return[keys]['s_no'] = sno_return + 1
+            return_account.insert_one(inv)
+
+            if keys == 1:
+                break
+            else:
+                balance = invoice_return[keys-1]['balance']
+
+                for i in range(keys+1,len(invoice_return)+1):
+                    total_amount = invoice_return[i]['total_amount']
+                    balance += total_amount
+                    s_no = invoice_return[i]['s_no']
+                    invoice_return[i]['balance'] = balance
+                    invoice_return[i]['s_no'] = s_no - 1
+
+            item = invoice_return[keys]['item']
+            inventory_item = inventory[item]
+            if invoice_type == 'sale':
+                invoice = inventory_item.find_one({'invoice_no':invoice_no})
+            else:
+                invoice = inventory_item.find_one({'voucher_no':invoice_no})
+
+            sno_inventory = invoice.get('s_no','')
+            if sno_inventory == 1:
+                remaining_stock = 0
+            else:
+                inven = inventory_item.find_one({'s_no':sno_inventory-1})
+                remaining_stock = inven.get('remaining_stock','')
+            
+            total_invoices = inventory_item.count_documents({})
+            for i in range(sno_inventory+1,total_invoices+1):
+                invoice_to_update = inventory_item.find_one({'s_no':i})
+                quantity = invoice_to_update.get('quantity')
+                voucher_no = invoice_to_update.get('voucher_no')
+
+                if voucher_no == None:
+                    remaining_stock -= quantity
+                else:
+                    remaining_stock += quantity
+                
+                inventory_item.update_one({'s_no':i},{'$set':{'s_no':i-1,'remaining_stock':remaining_stock}})
+
+            del invoice_return[keys]    
+
+    account.delete_many({})
+
+    for invoices in invoice_return.values():
+        account.insert_one(invoices)
+
+    inventory_item.delete_one({"s_no":sno_inventory})
+    messagebox.showinfo("Success", f"{invoice_type.capitalize()} Invoice returned Successfully")
+    window(root,inventory)
