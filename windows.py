@@ -3,18 +3,18 @@ from tkinter import *
 from tkinter import ttk
 import pymongo as pm
 
-from functions import generate_contract, generate_invoice ,save, load_transactions ,table, back, return_invoice,print_invoice
+from functions import generate_contract, generate_invoice ,save, load_transactions ,table, back, return_invoice,print_invoice,table_contract,load_contracts
 
 #data base set up
 client = pm.MongoClient("mongodb://localhost:27017/")
 db = client["financial_records"]
 inventory = client['inventory']
 
-#temprory data storage
+sale_contract = {}
+purchase_contracts = {}
 sale_transaction = {}
-inventory_sale = {}
-
 purchase_transaction = {}
+inventory_sale = {}
 
 def main_window(root):
 
@@ -82,10 +82,20 @@ def purchase_module_window(root):
     tk.Button(root, text="Exit",font=("Helvetica",10), width=20, command=root.quit).pack(padx=10,pady=5)
 
 def sale_contract_window(root):
+    global sale_contract
     account = db['sale_contract']
+
+    existing_contract = account.find().sort("s_no", 1)
+    existing_contracts = {}
+    sno_cont = 1
+    for contract in existing_contract:
+            existing_contracts[sno_cont] = contract
+            sno_cont+=1
 
     for widget in root.winfo_children():
         widget.destroy()
+
+    inventory_Sale=None
 
     root.geometry("1400x800")
     root.minsize(1400,700)
@@ -97,22 +107,30 @@ def sale_contract_window(root):
     button_frame = tk.Frame(root)
     button_frame.pack()
 
-    tk.Button(button_frame,text='Generate Contract', width=15,command=lambda:generate_contract()).grid(row=0, column=1,padx=5)
-    tk.Button(button_frame, text="Save", width=15, command=lambda:save(sale_transaction,account,inventory_sale)).grid(row=0, column=3,padx=5)
-    tk.Button(button_frame, text="Back", width=15, command=lambda:back(root,sale_module_window,sale_transaction,inventory_sale)).grid(row=0, column=4,padx=5)
+    inventory_sale = None
+    tk.Button(button_frame,text='Generate Contract', width=15,command=lambda:generate_contract(root,sale_contract,account,'Sale',sale_contract_window)).grid(row=0, column=1,padx=5)
+    tk.Button(button_frame, text="Save", width=15, command=lambda:save(sale_contract,account,inventory_sale)).grid(row=0, column=3,padx=5)
+    tk.Button(button_frame, text="Back", width=15, command=lambda:back(root,sale_module_window,sale_contract,inventory_sale)).grid(row=0, column=4,padx=5)
     tk.Button(button_frame, text="Exit", width=15, command=root.quit).grid(row=0, column=5,padx=5)
 
-    tk.Label(root,text=f"Contracts:",font=("Helvetica", 16)).pack(pady=5,)
-    table_contracts = ttk.Treeview(root, columns=("S.NO", "Date","Invoice.NO","Account Receivable","Item","Quantity","Unit", "Description","Rate", "Amount","GST","GST Amount","Further Tax","Further Tax Amount","Total Amount","Balance"), show="headings")
-    table_contracts.pack(fill=tk.BOTH, pady=10)
-    table_sale = None
+    tk.Label(root,text=f"New Contracts:",font=("Helvetica", 16)).pack(pady=5,)
+    table_new_contracts = ttk.Treeview(root, columns=("S.NO", "Date","Contract.NO","Terms of Payment","Account Receivable","Item","Quantity","Unit", "Rate", "Amount","GST","GST Amount","Further Tax","Further Tax Amount","Total Amount"), show="headings")
+    table_new_contracts.pack(fill=tk.BOTH, pady=20)
 
-    table(table_contracts,table_sale,'sale')
+    table_contract(table_new_contracts)
+    load_contracts(table_new_contracts,sale_contract)
+
+    tk.Label(root,text=f"Existing Contracts:",font=("Helvetica", 16)).pack(pady=5,)
+    table_existing_contracts = ttk.Treeview(root, columns=("S.NO", "Date","Contract.NO","Terms of Payment","Account Receivable","Item","Quantity","Unit","Rate", "Amount","GST","GST Amount","Further Tax","Further Tax Amount","Total Amount"), show="headings")
+    table_existing_contracts.pack(fill=tk.BOTH, pady=20)
+
+    table_contract(table_existing_contracts)
+    load_contracts(table_existing_contracts,existing_contracts)
+
 
 def sale_invoice_window(root):
-    global inventory_sale
-    global sale_transaction
-    #accessing the particular collection
+
+    global sale_transaction,inventory_sale
     account = db['sale_invoice']
 
     #removing existing widgets
@@ -154,6 +172,8 @@ def sale_invoice_window(root):
 
 def sale_return_window(root):
     
+    global sale_transaction,inventory_sale 
+
     account = db['sale_invoice']
     return_account = db['sale_return']
 
@@ -206,7 +226,16 @@ def sale_return_window(root):
     load_transactions(table_sale,table_account_receivable,sale_return,inventory_return,'sale')
 
 def purchase_contract_window(root):
+
+    global purchase_contracts
+    inventory_sale = None 
     account = db['purchase_contract']
+    existing_contract = account.find().sort("s_no", 1)
+    existing_contracts = {}
+    sno_cont = 1
+    for contract in existing_contract:
+            existing_contracts[sno_cont] = contract
+            sno_cont+=1
 
     for widget in root.winfo_children():
         widget.destroy()
@@ -221,21 +250,28 @@ def purchase_contract_window(root):
     button_frame = tk.Frame(root)
     button_frame.pack()
 
-    tk.Button(button_frame,text='Generate Contract', width=15,command=lambda:generate_contract()).grid(row=0, column=1,padx=5)
-    tk.Button(button_frame, text="Save", width=15, command=lambda:save(sale_transaction,account,inventory_sale)).grid(row=0, column=3,padx=5)
-    tk.Button(button_frame, text="Back", width=15, command=lambda:back(root,purchase_module_window,sale_transaction,inventory_sale)).grid(row=0, column=4,padx=5)
+    tk.Button(button_frame,text='Generate Contract', width=15,command=lambda:generate_contract(root,purchase_contracts,account,'Purchacse',purchase_contract_window)).grid(row=0, column=1,padx=5)
+    tk.Button(button_frame, text="Save", width=15, command=lambda:save(purchase_contracts,account,inventory_sale)).grid(row=0, column=3,padx=5)
+    tk.Button(button_frame, text="Back", width=15, command=lambda:back(root,purchase_module_window,purchase_contracts,inventory_sale)).grid(row=0, column=4,padx=5)
     tk.Button(button_frame, text="Exit", width=15, command=root.quit).grid(row=0, column=5,padx=5)
 
     tk.Label(root,text=f"Contracts:",font=("Helvetica", 16)).pack(pady=5,)
-    table_contracts = ttk.Treeview(root, columns=("S.NO", "Date","Voucher.NO","Invoice.NO","Account Receivable","Item","Quantity","Unit", "Description","Rate", "Amount","GST","GST Amount","Further Tax","Further Tax Amount","Total Amount","Balance"), show="headings")
-    table_contracts.pack(fill=tk.BOTH, pady=10)
-    table_sale = None
+    table_new_contracts = ttk.Treeview(root, columns=("S.NO", "Date","Contract.NO","Terms of Payment","Account Receivable","Item","Quantity","Unit","Rate", "Amount","GST","GST Amount","Further Tax","Further Tax Amount","Total Amount"), show="headings")
+    table_new_contracts.pack(fill=tk.BOTH, pady=10)
 
-    table(table_contracts,table_sale,'purchase')
+    table_contract(table_new_contracts)
+    load_contracts(table_new_contracts,purchase_contracts)
+
+    tk.Label(root,text=f"Existing Contracts:",font=("Helvetica", 16)).pack(pady=5,)
+    table_existing_contracts = ttk.Treeview(root, columns=("S.NO", "Date","Contract.NO","Terms of Payment","Account Receivable","Item","Quantity","Unit","Rate", "Amount","GST","GST Amount","Further Tax","Further Tax Amount","Total Amount"), show="headings")
+    table_existing_contracts.pack(fill=tk.BOTH, pady=20)
+
+    table_contract(table_existing_contracts)
+    load_contracts(table_existing_contracts,existing_contracts)
 
 def purchase_invoice_window(root):
-    global inventory_sale
-    global purchase_transaction
+
+    global purchase_transaction, inventory_sale 
     #accessing the particular collection
     account = db['purchase_invoice']
 
@@ -325,6 +361,4 @@ def purchase_return_window(root,inventory):
     table_purchase.pack(fill=tk.BOTH, pady=10)
     
     table(table_account_receivable,table_purchase,'purchase')
-
-
     load_transactions(table_purchase,table_account_receivable,purchase_return,inventory_return,'purchase')
