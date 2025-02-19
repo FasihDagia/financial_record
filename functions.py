@@ -145,7 +145,7 @@ def generate_contract(root,sale_contract,account,contract_type,window):
     headings.pack()
 
     input_frame = tk.Frame()
-    input_frame.pack()
+    # input_frame.pack()
     width = 20
     tk.Label(headings,text="Contract No:",font=("Helvetica", 12)).grid(row=1,column=2)
     
@@ -170,18 +170,62 @@ def generate_contract(root,sale_contract,account,contract_type,window):
     date_entry = tk.Entry(headings,width=width,textvariable=initial_date_value) 
     date_entry.grid(row=1,column=1,padx=10)
 
+    if contract_type == 'Sale':
+        party_name = 'Buyer'
+    else:
+        party_name = 'Seller'    
+
+    tk.Label(root,text=f"{party_name} Information:", font=("Helvetica-Bold",14)).pack(pady=15)
+
+    def get_party_info(*args):
+        party = client["Customer"]["customer_info"]
+
+        party_name = party_name_option.get()
+        party_details = party.find_one({"name":party_name})
+
+        email = party_details.get("email",'')
+        email_default.set(email)
+        phone = party_details.get("phone",'')
+        phone_default.set(phone)
+        address = party_details.get("address",'')
+        address_default.set(address)
+
+    
+    party_info = tk.Frame(root)
+    party_info.pack()    
+
+    tk.Label(party_info,text=f"{party_name}:",font=("Helvetica",10)).grid(row=1,column=0,pady=5)
+    party_name_options = []
+    for i in client['Customer'].list_collection_names():
+        if i != 'customer_info':
+            party_name_options.append(i)  
+    party_name_options.sort()      
+    party_name_option = tk.StringVar(value="Name")
+    party_name_entry = OptionMenu(party_info, party_name_option , *party_name_options)
+    party_name_entry.grid(row=1,column=1,pady=5,padx=5)
+
+    tk.Label(party_info,text="Email:",font=("Helvetica",10)).grid(row=1,column=2,pady=5,padx=5)
+    email_default = StringVar(None)
+    party_email = tk.Entry(party_info,width=width,textvariable=email_default)
+    party_email.grid(row=1,column=3,pady=5)
+
+    tk.Label(party_info,text="Phone:",font=("Helvetica",10)).grid(row=2,column=0,pady=5)
+    phone_default = StringVar(None)
+    party_phone = tk.Entry(party_info,width=width,textvariable=phone_default)
+    party_phone.grid(row=2,column=1,pady=5,padx=5)
+
+    tk.Label(party_info,text="Address:",font=("Helvetica",10)).grid(row=2,column=2,pady=5,padx=5)
+    address_default = StringVar(None)
+    party_address = tk.Entry(party_info,width=width,textvariable=address_default)
+    party_address.grid(row=2,column=3,pady=5)
+
+    party_name_option.trace_add("write", get_party_info)
+
+    tk.Label(root,text="Contract Information:", font=("Helvetica-Bold",14)).pack(pady=15)
+
     tk.Label(input_frame,text="Terms of payment:").grid(row=0,column=0,pady=10)
     term_payment_entry = tk.Entry(input_frame,width=width)
     term_payment_entry.grid(row=0,column=1, padx=5)
-
-    tk.Label(input_frame,text="Account Receivable:").grid(row=0,column=2,pady=10)
-    account_recevible_options = []
-    for i in client['Customer'].list_collection_names():
-        account_recevible_options.append(i)        
-    account_recevible_option = tk.StringVar(value="Name")
-    account_recevible_entry = OptionMenu(input_frame, account_recevible_option , *account_recevible_options)
-    account_recevible_entry.grid(row=0,column=3,pady=10)
-
     tk.Label(input_frame, text="Item:").grid(row=1,column=0,pady=10)
     items_options = []
     for x in inventory.list_collection_names():
@@ -274,7 +318,7 @@ def generate_contract(root,sale_contract,account,contract_type,window):
 
     # Total Label
     total_frame = tk.Frame()
-    total_frame.pack()
+    # total_frame.pack()
     tk.Label(total_frame,text="Total Amount:",font=9).grid(row=0,column=0)
     total_var = tk.StringVar(value=0)
     tk.Label(total_frame,textvariable=total_var,font=9).grid(row=0,column=1,pady=10)
@@ -295,7 +339,7 @@ def generate_contract(root,sale_contract,account,contract_type,window):
 
         terms_payment = term_payment_entry.get()
         date = date_entry.get()
-        account_recevible = account_recevible_option.get()
+        account_recevible = party_name_option.get()
         item = item_option.get()
         
         try:
@@ -350,10 +394,10 @@ def generate_contract(root,sale_contract,account,contract_type,window):
             messagebox.showinfo("Success", "Contract Generated!")
             window(root)
 
-    tk.Button(root, text="Add", command=lambda:add(window), width=15).pack(padx=5,pady=5)
+    # tk.Button(root, text="Add", command=lambda:add(window), width=15).pack(padx=5,pady=5)
     
     button_frame = tk.Frame(root)
-    button_frame.pack(pady=10)
+    # button_frame.pack(pady=10)
     tk.Button(button_frame, text="Back", width=10, command=lambda:window(root)).grid(row=1, column=0,padx=5)
     tk.Button(button_frame, text="Exit", width=10, command=root.quit).grid(row=1, column=1,padx=5)
 
