@@ -1029,10 +1029,10 @@ def save(transactions,account,inventorys):
 
 def save_contract(contracts,account):
 
-    confirm = messagebox.askyesno("Confirm", f"Once the Contracts are saved you wont be able to cahnge them\nAre you sure you want to save?")
-    if confirm:
+    if len(contracts) != 0:
+        confirm = messagebox.askyesno("Confirm", f"Once the Contracts are saved you wont be able to cahnge them\nAre you sure you want to save?")
+        if confirm:
         
-        if contracts != None:
             for contract in contracts.values():
                 account.insert_one(contract)
             
@@ -1044,9 +1044,9 @@ def save_contract(contracts,account):
                 customer = customers[name]
                 customer.insert_one(customer_update)
 
-            messagebox.showinfo("success","Contracts Saved Succesfully!")
-        else:
-            messagebox.showinfo("error","No Contracts to save!")
+            messagebox.showinfo("Success","Contracts Saved Succesfully!")
+    else:
+        messagebox.showerror("Error","No Contracts to save!")
 
 
 def return_invoice(root,inventory,invoice_return,contract_type,return_account,account,window):
