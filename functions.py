@@ -1006,26 +1006,28 @@ def load_contracts(table_contract,contracts):
 
 def save(transactions,account,inventorys):
 
-    confirm = messagebox.askyesno("Confirm", f"Once the Invoices are saved you wont be able to cahnge them\nAre you sure you want to save invoices?")
-    if confirm:
-        #uploading data to the database
-        for transaction in transactions.values():
-            account.insert_one(transaction)
+    if len(transactions) != 0:
+        confirm = messagebox.askyesno("Confirm", f"Once the Invoices are saved you wont be able to cahnge them\nAre you sure you want to save invoices?")
+        if confirm:
+            #uploading data to the database
+            for transaction in transactions.values():
+                account.insert_one(transaction)
 
-        for j in range(len(transactions)):
-            del transactions[j+1]
+            for j in range(len(transactions)):
+                del transactions[j+1]
 
-        #updating stock in inventory
-        if inventorys != None:
-            for inventory_update in inventorys.values():
-                item = inventory_update.get('item','')
-                inventory_item = inventory[item]
-                inventory_item.insert_one(inventory_update)
-            messagebox.showinfo("success","Transactions Saved!")
-            
-            for i in range(len(inventorys)):
-                del inventorys[i+1]
-        messagebox.showinfo("Success","Particulars saved Succesfully!")
+            #updating stock in inventory
+            if inventorys != None:
+                for inventory_update in inventorys.values():
+                    item = inventory_update.get('item','')
+                    inventory_item = inventory[item]
+                    inventory_item.insert_one(inventory_update)
+                
+                for i in range(len(inventorys)):
+                    del inventorys[i+1]
+            messagebox.showinfo("Success","Invoices saved Succesfully!")
+    else:
+        messagebox.showerror("Error","No Invoices to save!")
 
 def save_contract(contracts,account):
 
@@ -1047,7 +1049,6 @@ def save_contract(contracts,account):
             messagebox.showinfo("Success","Contracts Saved Succesfully!")
     else:
         messagebox.showerror("Error","No Contracts to save!")
-
 
 def return_invoice(root,inventory,invoice_return,contract_type,return_account,account,window):
 
