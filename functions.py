@@ -14,6 +14,7 @@ from reportlab.lib.enums import TA_LEFT
 client = pm.MongoClient("mongodb://localhost:27017/")
 db = client["financial_records"]
 inventory = client['inventory']
+customers = client['Customer']
 
 
 def back(root,window,invoices,inventorys):
@@ -130,12 +131,13 @@ def table_contract(table_contract):
     table_contract.column("Total Amount", anchor="center", width=40)
 
 def generate_contract(root,sale_contract,account,contract_type,window):
+    
     for widget in root.winfo_children():
         widget.destroy()
     
-    root.geometry("500x490")
-    root.minsize(500,430)
-    root.maxsize(600,500)
+    root.geometry("500x625")
+    root.minsize(500,625)
+    root.maxsize(600,700)
 
 
     root.title("Generate Contract")
@@ -144,8 +146,6 @@ def generate_contract(root,sale_contract,account,contract_type,window):
     headings = tk.Frame()
     headings.pack()
 
-    input_frame = tk.Frame()
-    # input_frame.pack()
     width = 20
     tk.Label(headings,text="Contract No:",font=("Helvetica", 12)).grid(row=1,column=2)
     
@@ -206,43 +206,43 @@ def generate_contract(root,sale_contract,account,contract_type,window):
 
     tk.Label(party_info,text="Email:",font=("Helvetica",10)).grid(row=1,column=2,pady=5,padx=5)
     email_default = StringVar(None)
-    party_email = tk.Entry(party_info,width=width,textvariable=email_default)
-    party_email.grid(row=1,column=3,pady=5)
+    party_email_entry = tk.Entry(party_info,width=width,textvariable=email_default)
+    party_email_entry.grid(row=1,column=3,pady=5)
 
     tk.Label(party_info,text="Phone:",font=("Helvetica",10)).grid(row=2,column=0,pady=5)
     phone_default = StringVar(None)
-    party_phone = tk.Entry(party_info,width=width,textvariable=phone_default)
-    party_phone.grid(row=2,column=1,pady=5,padx=5)
+    party_phone_entry = tk.Entry(party_info,width=width,textvariable=phone_default)
+    party_phone_entry.grid(row=2,column=1,pady=5,padx=5)
 
     tk.Label(party_info,text="Address:",font=("Helvetica",10)).grid(row=2,column=2,pady=5,padx=5)
     address_default = StringVar(None)
-    party_address = tk.Entry(party_info,width=width,textvariable=address_default)
-    party_address.grid(row=2,column=3,pady=5)
+    party_address_entry = tk.Entry(party_info,width=width,textvariable=address_default)
+    party_address_entry.grid(row=2,column=3,pady=5)
 
     party_name_option.trace_add("write", get_party_info)
 
     tk.Label(root,text="Contract Information:", font=("Helvetica-Bold",14)).pack(pady=15)
 
-    tk.Label(input_frame,text="Terms of payment:").grid(row=0,column=0,pady=10)
-    term_payment_entry = tk.Entry(input_frame,width=width)
-    term_payment_entry.grid(row=0,column=1, padx=5)
-    tk.Label(input_frame, text="Item:").grid(row=1,column=0,pady=10)
+    contract_info = tk.Frame(root)
+    contract_info.pack(pady=10)
+
+    tk.Label(contract_info, text="Item:").grid(row=0,column=0)
     items_options = []
     for x in inventory.list_collection_names():
         items_options.append(x)
     item_option = tk.StringVar(value="Product Name")
-    item_entry = OptionMenu(input_frame, item_option , *items_options)
-    item_entry.grid(row=1,column=1,pady=10)
+    item_entry = OptionMenu(contract_info, item_option , *items_options)
+    item_entry.grid(row=0,column=1,padx=5)
 
-    tk.Label(input_frame, text="Quantity:").grid(row=1,column=2,pady=10)
-    quantity_entry = tk.Entry(input_frame,width=10)  
-    quantity_entry.grid(row=1,column=3,pady=10)
+    tk.Label(contract_info, text="Quantity:").grid(row=0,column=2,padx=5)
+    quantity_entry = tk.Entry(contract_info,width=10)  
+    quantity_entry.grid(row=0,column=3)
 
-    tk.Label(input_frame, text="Unit:").grid(row=2,column=0,pady=10)
+    tk.Label(contract_info, text="Unit:").grid(row=1,column=0,pady=10)
     quantity_unit_options = ['Meters','KG','Liters','PCS']
     quantity_unit_option = tk.StringVar(value="Unit")
-    quantity_unit_entry = OptionMenu(input_frame, quantity_unit_option , *quantity_unit_options)
-    quantity_unit_entry.grid(row=2,column=1,pady=10)
+    quantity_unit_entry = OptionMenu(contract_info, quantity_unit_option , *quantity_unit_options)
+    quantity_unit_entry.grid(row=1,column=1,padx=5)
 
 
     def calculate_total(*args):
@@ -282,43 +282,52 @@ def generate_contract(root,sale_contract,account,contract_type,window):
         except ValueError:
             total_var.set("Invalid input")
 
+    tk.Label(contract_info,text="Rate:").grid(row=1, column=2,pady=10)
+    rate_entry = tk.Entry(contract_info, width=width)
+    rate_entry.grid(row=1, column=3,padx=5)
 
-    tk.Label(input_frame,text="Rate:").grid(row=2, column=2,pady=10)
-    rate_entry = tk.Entry(input_frame, width=width)
-    rate_entry.grid(row=2, column=3)
-
-    tk.Label(input_frame, text="Amount:").grid(row=3, column=0,pady=10)
+    tk.Label(contract_info, text="Amount:").grid(row=2, column=0)
     amount_var = tk.StringVar(value=0)
-    amount_entry = tk.Entry(input_frame, width=width,textvariable=amount_var)
-    amount_entry.grid(row=3, column=1,)
+    amount_entry = tk.Entry(contract_info, width=width,textvariable=amount_var)
+    amount_entry.grid(row=2, column=1,padx=5)
 
     rate_entry.bind("<KeyRelease>",calculate_total)
     quantity_entry.bind("<KeyRelease>",calculate_total)
 
-    tk.Label(input_frame, text="GST(%):").grid(row=3, column=2,pady=10)
+    tk.Label(contract_info, text="GST(%):").grid(row=2, column=2,padx=5)
     gst_default_value = 15
     gst_default_value_assign = tk.StringVar(value=gst_default_value)
-    gst_entry = tk.Entry(input_frame, width=width, textvariable=gst_default_value_assign)
-    gst_entry.grid(row=3, column=3,pady=10)
+    gst_entry = tk.Entry(contract_info, width=width, textvariable=gst_default_value_assign)
+    gst_entry.grid(row=2, column=3)
 
-    tk.Label(input_frame,text="GST Amount:").grid(row=4, column=0,pady=10)
+    tk.Label(contract_info,text="GST Amount:").grid(row=3, column=0,pady=7)
     gst_amount_var = tk.StringVar(value=0)
-    gst_amount_entry = tk.Entry(input_frame, width=width,textvariable=gst_amount_var)
-    gst_amount_entry.grid(row=4, column=1,pady=10)
+    gst_amount_entry = tk.Entry(contract_info, width=width,textvariable=gst_amount_var)
+    gst_amount_entry.grid(row=3, column=1,padx=5)
 
+    tk.Label(contract_info, text="Further Tax(%):").grid(row=3, column=2,padx=5)
+    further_tax_entry = tk.Entry(contract_info, width=width)
+    further_tax_entry.grid(row=3, column=3)
 
-    tk.Label(input_frame, text="Further Tax(%):").grid(row=4, column=2,pady=10)
-    further_tax_entry = tk.Entry(input_frame, width=width)
-    further_tax_entry.grid(row=4, column=3,pady=10)
-
-    tk.Label(input_frame,text="Futher Tax Amount:").grid(row=5, column=0,pady=10)
+    tk.Label(contract_info,text="Futher Tax Amount:").grid(row=4, column=0,pady=7)
     Further_tax_amount_var = tk.StringVar(value=0)
-    Further_tax_amount_entry = tk.Entry(input_frame, width=width,textvariable=Further_tax_amount_var)
-    Further_tax_amount_entry.grid(row=5, column=1,pady=10)
+    Further_tax_amount_entry = tk.Entry(contract_info, width=width,textvariable=Further_tax_amount_var)
+    Further_tax_amount_entry.grid(row=4, column=1,padx=5)
 
+    tk.Label(contract_info,text="Payment Terms:").grid(row=4,column=2,padx=5)
+    term_payment_entry = tk.Entry(contract_info,width=width)
+    term_payment_entry.grid(row=4,column=3)
+
+    tk.Label(contract_info,text="Tolerence:").grid(row=5,column=0,pady=7)
+    tolerence_entry = tk.Entry(contract_info,width=width)
+    tolerence_entry.grid(row=5,column=1, padx=5)
+
+    tk.Label(contract_info,text="Shipment:").grid(row=5,column=2,padx=5)
+    shipment_entry = tk.Entry(contract_info,width=width)
+    shipment_entry.grid(row=5,column=3)
     # Total Label
     total_frame = tk.Frame()
-    # total_frame.pack()
+    total_frame.pack()
     tk.Label(total_frame,text="Total Amount:",font=9).grid(row=0,column=0)
     total_var = tk.StringVar(value=0)
     tk.Label(total_frame,textvariable=total_var,font=9).grid(row=0,column=1,pady=10)
@@ -329,7 +338,7 @@ def generate_contract(root,sale_contract,account,contract_type,window):
     further_tax_entry.bind("<KeyRelease>", calculate_total)
 
     def add(window):
-
+        
         saved_transactions = account.count_documents({})
 
         if len(sale_contract) == 0:
@@ -337,9 +346,15 @@ def generate_contract(root,sale_contract,account,contract_type,window):
         else:
             sno = saved_transactions + len(sale_contract) + 1
 
-        terms_payment = term_payment_entry.get()
         date = date_entry.get()
-        account_recevible = party_name_option.get()
+
+        #opposing party info
+        party_name = party_name_option.get()
+        party_email = party_email_entry.get()
+        party_phone = party_phone_entry.get()
+        party_address = party_address_entry.get()
+        
+        #contract info
         item = item_option.get()
         
         try:
@@ -368,8 +383,11 @@ def generate_contract(root,sale_contract,account,contract_type,window):
             return
 
         total_amount = float(total_var.get())
+        terms_payment = term_payment_entry.get()
+        tolerence = tolerence_entry.get()
+        shipment = shipment_entry.get()
 
-        if not date or not terms_payment or not amount or account_recevible == 'Name' or not quantity or unit == 'Unit' or not rate or not gst or item == 'Product Name':
+        if not date or not terms_payment or not amount or party_name == 'Name' or not quantity or unit == 'Unit' or not rate or not gst or item == 'Product Name':
             messagebox.showerror("Error", "Fields can't be empty")
             return
         else:
@@ -377,8 +395,10 @@ def generate_contract(root,sale_contract,account,contract_type,window):
                 's_no': sno,
                 'date': date,
                 'contract_no': contract,
-                'terms_payment': terms_payment,
-                'account_receivable': account_recevible,
+                'account_receivable': party_name,
+                'party_email': party_email,
+                'party_phone': party_phone,
+                'party_address': party_address,
                 'item': item,
                 'quantity': quantity,
                 'unit': unit,
@@ -388,16 +408,19 @@ def generate_contract(root,sale_contract,account,contract_type,window):
                 'gst_amount': gst_amount,
                 'further_tax': further_tax,
                 'further_tax_amount': further_tax_amount,
-                'total_amount': total_amount
+                'total_amount': total_amount,
+                'terms_payment': terms_payment,
+                'tolerence': tolerence,
+                'shipment': shipment
             }})
              
             messagebox.showinfo("Success", "Contract Generated!")
             window(root)
 
-    # tk.Button(root, text="Add", command=lambda:add(window), width=15).pack(padx=5,pady=5)
+    tk.Button(root, text="Add", command=lambda:add(window), width=15).pack(padx=5,pady=5)
     
     button_frame = tk.Frame(root)
-    # button_frame.pack(pady=10)
+    button_frame.pack(pady=10)
     tk.Button(button_frame, text="Back", width=10, command=lambda:window(root)).grid(row=1, column=0,padx=5)
     tk.Button(button_frame, text="Exit", width=10, command=root.quit).grid(row=1, column=1,padx=5)
 
@@ -983,7 +1006,7 @@ def load_contracts(table_contract,contracts):
 
 def save(transactions,account,inventorys):
 
-    confirm = messagebox.askyesno("Confirm", f"Once the particulars are saved you wont be able to cahnge them\nAre you sure you want to save transactions?")
+    confirm = messagebox.askyesno("Confirm", f"Once the Invoices are saved you wont be able to cahnge them\nAre you sure you want to save invoices?")
     if confirm:
         #uploading data to the database
         for transaction in transactions.values():
@@ -1003,6 +1026,28 @@ def save(transactions,account,inventorys):
             for i in range(len(inventorys)):
                 del inventorys[i+1]
         messagebox.showinfo("Success","Particulars saved Succesfully!")
+
+def save_contract(contracts,account):
+
+    confirm = messagebox.askyesno("Confirm", f"Once the Contracts are saved you wont be able to cahnge them\nAre you sure you want to save?")
+    if confirm:
+        
+        if contracts != None:
+            for contract in contracts.values():
+                account.insert_one(contract)
+            
+            for j in range(len(contracts)):
+                del contracts[j+1]
+
+            for customer_update in contracts.values():
+                name = customer_update.get('party_name','')
+                customer = customers[name]
+                customer.insert_one(customer_update)
+
+            messagebox.showinfo("success","Contracts Saved Succesfully!")
+        else:
+            messagebox.showinfo("error","No Contracts to save!")
+
 
 def return_invoice(root,inventory,invoice_return,contract_type,return_account,account,window):
 

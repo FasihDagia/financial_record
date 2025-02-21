@@ -3,14 +3,14 @@ from tkinter import *
 from tkinter import ttk
 import pymongo as pm
 
-from functions import generate_contract, generate_invoice ,save, load_transactions ,table, back, return_invoice,print_invoice,table_contract,load_contracts
+from functions import generate_contract, generate_invoice ,save, load_transactions ,table, back, return_invoice,print_invoice,table_contract,load_contracts,save_contract
 
 #data base set up
 client = pm.MongoClient("mongodb://localhost:27017/")
 db = client["financial_records"]
 inventory = client['inventory']
 
-sale_contract = {}
+sale_contracts = {}
 purchase_contracts = {}
 sale_transaction = {}
 purchase_transaction = {}
@@ -108,8 +108,8 @@ def sale_contract_window(root):
     button_frame.pack()
 
     inventory_sale = None
-    tk.Button(button_frame,text='Generate Contract', width=15,command=lambda:generate_contract(root,sale_contract,account,'Sale',sale_contract_window)).grid(row=0, column=1,padx=5)
-    tk.Button(button_frame, text="Save", width=15, command=lambda:save(sale_contract,account,inventory_sale)).grid(row=0, column=3,padx=5)
+    tk.Button(button_frame,text='Generate Contract', width=15,command=lambda:generate_contract(root,sale_contracts,account,'Sale',sale_contract_window)).grid(row=0, column=1,padx=5)
+    tk.Button(button_frame, text="Save", width=15, command=lambda:save_contract(sale_contracts,account)).grid(row=0, column=3,padx=5)
     tk.Button(button_frame, text="Back", width=15, command=lambda:back(root,sale_module_window,sale_contract,inventory_sale)).grid(row=0, column=4,padx=5)
     tk.Button(button_frame, text="Exit", width=15, command=root.quit).grid(row=0, column=5,padx=5)
 
@@ -118,7 +118,7 @@ def sale_contract_window(root):
     table_new_contracts.pack(fill=tk.BOTH, pady=20)
 
     table_contract(table_new_contracts)
-    load_contracts(table_new_contracts,sale_contract)
+    load_contracts(table_new_contracts,sale_contracts)
 
     tk.Label(root,text=f"Existing Contracts:",font=("Helvetica", 16)).pack(pady=5,)
     table_existing_contracts = ttk.Treeview(root, columns=("S.NO", "Date","Contract.NO","Terms of Payment","Account Receivable","Item","Quantity","Unit","Rate", "Amount","GST","GST Amount","Further Tax","Further Tax Amount","Total Amount"), show="headings")
@@ -251,7 +251,7 @@ def purchase_contract_window(root):
     button_frame.pack()
 
     tk.Button(button_frame,text='Generate Contract', width=15,command=lambda:generate_contract(root,purchase_contracts,account,'Purchacse',purchase_contract_window)).grid(row=0, column=1,padx=5)
-    tk.Button(button_frame, text="Save", width=15, command=lambda:save(purchase_contracts,account,inventory_sale)).grid(row=0, column=3,padx=5)
+    tk.Button(button_frame, text="Save", width=15, command=lambda:save_contract(purchase_contracts,account)).grid(row=0, column=3,padx=5)
     tk.Button(button_frame, text="Back", width=15, command=lambda:back(root,purchase_module_window,purchase_contracts,inventory_sale)).grid(row=0, column=4,padx=5)
     tk.Button(button_frame, text="Exit", width=15, command=root.quit).grid(row=0, column=5,padx=5)
 
