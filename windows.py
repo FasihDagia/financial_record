@@ -15,6 +15,7 @@ purchase_contracts = {}
 sale_transaction = {}
 purchase_transaction = {}
 inventory_sale = {}
+existing_contracts = {}
 
 def main_window(root):
 
@@ -82,11 +83,10 @@ def purchase_module_window(root):
     tk.Button(root, text="Exit",font=("Helvetica",10), width=20, command=root.quit).pack(padx=10,pady=5)
 
 def sale_contract_window(root):
-    global sale_contract
+    global sale_contract,existing_contracts
     account = db['sale_contract']
 
     existing_contract = account.find().sort("s_no", 1)
-    existing_contracts = {}
     sno_cont = 1
     for contract in existing_contract:
             existing_contracts[sno_cont] = contract
@@ -110,7 +110,7 @@ def sale_contract_window(root):
     inventory_sale = {}
     tk.Button(button_frame,text='Generate Contract', width=15,command=lambda:generate_contract(root,sale_contracts,account,'Sale',sale_contract_window)).grid(row=0, column=1,padx=5)
     tk.Button(button_frame, text="Save", width=15, command=lambda:save_contract(sale_contracts,account)).grid(row=0, column=3,padx=5)
-    tk.Button(button_frame, text="Back", width=15, command=lambda:back(root,sale_module_window,sale_contracts,inventory_sale)).grid(row=0, column=4,padx=5)
+    tk.Button(button_frame, text="Back", width=15, command=lambda:back(root,sale_module_window,sale_contracts,inventory_sale,existing_contracts)).grid(row=0, column=4,padx=5)
     tk.Button(button_frame, text="Exit", width=15, command=root.quit).grid(row=0, column=5,padx=5)
 
     tk.Label(root,text=f"New Contracts:",font=("Helvetica", 16)).pack(pady=5,)
@@ -129,13 +129,12 @@ def sale_contract_window(root):
 
 def sale_invoice_window(root):
 
-    global sale_transaction,inventory_sale
+    global sale_transaction,inventory_sale,existing_contracts
 
     account = db['sale_invoice']
     contracts = db["sale_contract"]
 
     existing_contract = contracts.find().sort("s_no", 1)
-    existing_contracts = {}
     sno_cont = 1
     for contract in existing_contract:
             existing_contracts[sno_cont] = contract
@@ -157,10 +156,10 @@ def sale_invoice_window(root):
     button_frame = tk.Frame(root)
     button_frame.pack(pady=10)
 
-    tk.Button(button_frame,text='Generate Invoice', width=15,command=lambda:generate_invoice(root,sale_transaction,account,inventory_sale,'-',"Sale",sale_invoice_window,existing_contracts)).grid(row=0, column=1,padx=5)
+    tk.Button(button_frame,text='Generate Invoice', width=15,command=lambda:generate_invoice(root,sale_transaction,account,inventory_sale,'-',"Sale",sale_invoice_window,existing_contracts,contracts)).grid(row=0, column=1,padx=5)
     tk.Button(button_frame, text="Print Invoice", width=15, command=lambda:print_invoice(sale_transaction,root,"SALE")).grid(row=0,column=2,padx=5)
     tk.Button(button_frame, text="Save", width=15, command=lambda:save(sale_transaction,account,inventory_sale)).grid(row=0, column=3,padx=5)
-    tk.Button(button_frame, text="Back", width=15, command=lambda:back(root,sale_module_window,sale_transaction,inventory_sale)).grid(row=0, column=4,padx=5)
+    tk.Button(button_frame, text="Back", width=15, command=lambda:back(root,sale_module_window,sale_transaction,inventory_sale,existing_contracts)).grid(row=0, column=4,padx=5)
     tk.Button(button_frame, text="Exit", width=15, command=root.quit).grid(row=0, column=5,padx=5)
 
     #to display Cash transaction
@@ -236,8 +235,7 @@ def sale_return_window(root):
 
 def purchase_contract_window(root):
 
-    global purchase_contracts
-    inventory_sale = {} 
+    global purchase_contracts,existing_contracts
     account = db['purchase_contract']
     existing_contract = account.find().sort("s_no", 1)
     existing_contracts = {}
@@ -261,7 +259,7 @@ def purchase_contract_window(root):
 
     tk.Button(button_frame,text='Generate Contract', width=15,command=lambda:generate_contract(root,purchase_contracts,account,'Purchacse',purchase_contract_window)).grid(row=0, column=1,padx=5)
     tk.Button(button_frame, text="Save", width=15, command=lambda:save_contract(purchase_contracts,account)).grid(row=0, column=3,padx=5)
-    tk.Button(button_frame, text="Back", width=15, command=lambda:back(root,purchase_module_window,purchase_contracts,inventory_sale)).grid(row=0, column=4,padx=5)
+    tk.Button(button_frame, text="Back", width=15, command=lambda:back(root,purchase_module_window,purchase_contracts,inventory_sale,existing_contracts)).grid(row=0, column=4,padx=5)
     tk.Button(button_frame, text="Exit", width=15, command=root.quit).grid(row=0, column=5,padx=5)
 
     tk.Label(root,text=f"Contracts:",font=("Helvetica", 16)).pack(pady=5,)
@@ -280,13 +278,12 @@ def purchase_contract_window(root):
 
 def purchase_invoice_window(root):
 
-    global purchase_transaction, inventory_sale 
+    global purchase_transaction, inventory_sale,existing_contracts 
     #accessing the particular collection
     account = db['purchase_invoice']
     contracts = db["purchase_contract"]
 
     existing_contract = contracts.find().sort("s_no", 1)
-    existing_contracts = {}
     sno_cont = 1
     for contract in existing_contract:
             existing_contracts[sno_cont] = contract
@@ -310,7 +307,7 @@ def purchase_invoice_window(root):
     tk.Button(button_frame,text='Generate Invoice', width=15,command=lambda:generate_invoice(root,purchase_transaction,account,inventory_sale,"+","Purchase",purchase_invoice_window,existing_contracts)).grid(row=0, column=1,padx=5)
     tk.Button(button_frame, text="Print Invoice", width=15, command=lambda:print_invoice(purchase_transaction,root,"PURCHASE")).grid(row=0,column=2,padx=5)
     tk.Button(button_frame, text="Save", width=15, command=lambda:save(purchase_transaction,account,inventory_sale)).grid(row=0, column=3,padx=5)
-    tk.Button(button_frame, text="Back", width=15, command=lambda:back(root,purchase_module_window,purchase_transaction,inventory_sale)).grid(row=0, column=4,padx=5)
+    tk.Button(button_frame, text="Back", width=15, command=lambda:back(root,purchase_module_window,purchase_transaction,inventory_sale,existing_contracts)).grid(row=0, column=4,padx=5)
     tk.Button(button_frame, text="Exit", width=15, command=root.quit).grid(row=0, column=5,padx=5)
 
     #to display Cash transaction

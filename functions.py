@@ -9,30 +9,29 @@ from reportlab.lib import colors
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.enums import TA_LEFT
 
-
 #data base set up
 client = pm.MongoClient("mongodb://localhost:27017/")
 db = client["financial_records"]
 inventory = client['inventory']
 customers = client['Customer']
 
+def back(root,window,invoices,inventorys,existing_contracts):
 
-def back(root,window,invoices,inventorys):
-
-    if len(inventorys) == 0 and len(invoices) == 0:
+    if len(inventorys) == 0 and len(invoices) == 0 :
         window(root)
     else:
         confirm = messagebox.askyesno("Confirm", f"You have not saved the Invoices yet!\n Are you sure you want to go back?")
         if confirm:
             #deleting data from the temprory dictionary
-            for j in range(len(invoices)):
-                del invoices[j+1]
+            invoices.clear()
 
-            #deleting data from the temporary dictionary
             if inventorys != None:
-                for i in range(len(inventorys)):
-                    del inventorys[i+1]
-            window(root)
+                inventorys.clear()
+            
+    if existing_contracts != None:
+        existing_contracts.clear()
+
+    window(root)
 
 def table(table_account_receivable,table_inventory,invoice_type):
 
@@ -411,7 +410,9 @@ def generate_contract(root,sale_contract,account,contract_type,window):
                 'total_amount': total_amount,
                 'terms_payment': terms_payment,
                 'tolerence': tolerence,
-                'shipment': shipment
+                'shipment': shipment,
+                'delivered_qant': None,
+                'progress': 'in_progress'
             }})
              
             messagebox.showinfo("Success", "Contract Generated!")
@@ -548,7 +549,8 @@ def generate_invoice(root,invoices_to_save,account,inventory_sale,operator,invoi
         contract_options.append("No contracts to show")
     else:
         for contract in contracts.values():
-            contract_options.append(contract["contract_no"])
+            if contract.get("progress", "") == "in_progress":
+                contract_options.append(contract["contract_no"])
     contract_option = tk.StringVar(value="Contract No")
     contract_option.trace_add("write", get_contract_info)
     contract_entry = OptionMenu(headings, contract_option, *contract_options)
@@ -817,6 +819,17 @@ def generate_invoice(root,invoices_to_save,account,inventory_sale,operator,invoi
                 'amount': amount,
                 'remaining_stock': remaining_stock
             }
+
+            for contract in contracts.values():
+                if contract.get("contract_no") == contract_no:
+                    if contract.get("delivered_qant") == None:
+                        contract["delivered_qant"] = quantity
+                    else:
+                        contract["delivered_qant"] += quantity
+                    
+                    if contract.get("quantity", "") == contract.get("deliverd_quantity"):
+                        contract["progress"] = "completed"
+                    break
             messagebox.showinfo("Success", "Invoice Generated!")
             window(root)
 
@@ -1082,17 +1095,24 @@ def load_contracts(table_contract,contracts):
         ))
         i+=1
 
-def save(transactions,account,inventorys):
+def save(transactions,account,inventorys,existing_Contracts,contracts):
 
     if len(transactions) != 0:
         confirm = messagebox.askyesno("Confirm", f"Once the Invoices are saved you wont be able to cahnge them\nAre you sure you want to save invoices?")
         if confirm:
             #uploading data to the database
             for transaction in transactions.values():
+                contract_no = transaction.get('contract_no', "")
+                for contract in existing_Contracts.values():
+                    if contract.get('contract_no', '') == contract_no:
+                        delivered_quant = contract.get("delivered_qant")
+                        if contract.get("progress", "") == "completed":
+                            contracts.update_one({'contract_no':contract_no},{'$set':{'delivered_qant':delivered_quant,"progress":"completed"}})
+                        else:
+                            contracts.update_one({'contract_no':contract_no},{'$set':{'delivered_qant':delivered_quant}})
+                        break
                 account.insert_one(transaction)
 
-            for j in range(len(transactions)):
-                del transactions[j+1]
 
             #updating stock in inventory
             if inventorys != None:
@@ -1100,9 +1120,9 @@ def save(transactions,account,inventorys):
                     item = inventory_update.get('item','')
                     inventory_item = inventory[item]
                     inventory_item.insert_one(inventory_update)
-                
-                for i in range(len(inventorys)):
-                    del inventorys[i+1]
+                                
+            inventorys.clear()
+            transactions.clear()
             messagebox.showinfo("Success","Invoices saved Succesfully!")
     else:
         messagebox.showerror("Error","No Invoices to save!")
