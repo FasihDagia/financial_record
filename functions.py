@@ -604,10 +604,22 @@ def generate_invoice(root,invoices_to_save,account,inventory_sale,operator,invoi
     item_entry = OptionMenu(contract_info, item_option , *items_options)
     item_entry.grid(row=0,column=1,padx=5)
 
+    def check_quntity(*args):
+
+        quantity = int(quantity_entry.get())
+        for contract_details in contracts.values():
+            if quantity > contract_details['quantity']:
+                messagebox.showerror("Error", "Quantity can't be more than the agreed quantity")
+                quantity_default.set(contract_details.get("quantity", ""))
+        
+        calculate_total()
+
     tk.Label(contract_info, text="Quantity:",font=("Helvetica",10)).grid(row=0,column=2,padx=5)
     quantity_default = StringVar(value=0)
     quantity_entry = tk.Entry(contract_info,width=10,textvariable=quantity_default)  
     quantity_entry.grid(row=0,column=3)
+
+    quantity_entry.bind("<KeyRelease>",check_quntity)
 
     tk.Label(contract_info, text="Unit:",font=("Helvetica",10)).grid(row=1,column=0,pady=10)
     quantity_unit_options = ['Meters','KG','Liters','PCS']
@@ -620,14 +632,12 @@ def generate_invoice(root,invoices_to_save,account,inventory_sale,operator,invoi
     rate_entry = tk.Entry(contract_info, width=width,textvariable=rate_default)
     rate_entry.grid(row=1, column=3,padx=5)
     
+    rate_entry.bind("<KeyRelease>",calculate_total)
 
     tk.Label(contract_info, text="Amount:",font=("Helvetica",10)).grid(row=2, column=0)
     amount_var = tk.StringVar(value=0)
     amount_entry = tk.Entry(contract_info, width=width,textvariable=amount_var)
     amount_entry.grid(row=2, column=1,padx=5)
-
-    quantity_entry.bind("<KeyRelease>",calculate_total)
-
     tk.Label(contract_info, text="GST(%):",font=("Helvetica",10)).grid(row=2, column=2,padx=5)
     gst_default_value = 15
     gst_default_value_assign = tk.StringVar(value=gst_default_value)
@@ -651,6 +661,10 @@ def generate_invoice(root,invoices_to_save,account,inventory_sale,operator,invoi
     tk.Label(contract_info, text="Description:",font=("Helvetica",10)).grid(row=4,column=2,pady=10)
     description_entry = tk.Entry(contract_info,width=width)  
     description_entry.grid(row=4,column=3,pady=10)
+
+    amount_entry.bind("<KeyRelease>", calculate_total)
+    gst_default_value_assign.trace_add("write", calculate_total)
+    further_tax_entry.bind("<KeyRelease>", calculate_total)
     # Total Label
     total_frame = tk.Frame()
     total_frame.pack()
@@ -675,8 +689,11 @@ def generate_invoice(root,invoices_to_save,account,inventory_sale,operator,invoi
             sno = saved_transactions + len(invoices_to_save) + 1
 
         date = date_entry.get()
-        description = description_entry.get()
+        contract_no = contract_option.get()
         account_recevible = party_name_option.get()
+        party_email = party_email_entry.get()
+        party_phone = party_phone_entry.get()
+        party_address = party_address_entry.get()
         item = item_option.get()
         
         try:
@@ -705,6 +722,7 @@ def generate_invoice(root,invoices_to_save,account,inventory_sale,operator,invoi
             return
 
         total_amount = float(total_var.get())
+        description = description_entry.get()
 
         if not date or not description or not amount or account_recevible == 'Name' or not quantity or unit == 'Unit' or not rate or not gst or item == 'Product Name':
             messagebox.showerror("Error", "Fields can't be empty")
@@ -723,14 +741,17 @@ def generate_invoice(root,invoices_to_save,account,inventory_sale,operator,invoi
             balance += total_amount 
             invoices_to_save[len(invoices_to_save) + 1] = {
                 's_no': sno,
+                'date': date,
                 'invoice_no': invoice,
                 'voucher_no': voucher,
+                'contract_no': contract_no,
+                'account_receivable': account_recevible,
+                'party_email': party_email,
+                'party_phone': party_phone,
+                'party_address': party_address,
                 'item': item,
                 'quantity': quantity,
                 'unit': unit,
-                'account_receivable': account_recevible,
-                'date': date,
-                'description': description,
                 'rate': rate,
                 'amount': amount,
                 'gst': gst,
@@ -738,6 +759,7 @@ def generate_invoice(root,invoices_to_save,account,inventory_sale,operator,invoi
                 'further_tax': further_tax,
                 'further_tax_amount': further_tax_amount,
                 'total_amount': total_amount,
+                'description': description,
                 'balance': balance
             }
             
@@ -756,7 +778,6 @@ def generate_invoice(root,invoices_to_save,account,inventory_sale,operator,invoi
                 if sno_inventory == 0:
                     sno_inventory = saved_inventory 
                 sno_inventory = sno_inventory + 1
-
 
             # To get remaining quantity in inventory
             if len(inventory_sale) == 0:
