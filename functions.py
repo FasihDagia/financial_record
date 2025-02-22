@@ -429,7 +429,7 @@ def generate_invoice(root,invoices_to_save,account,inventory_sale,operator,invoi
     for widget in root.winfo_children():
         widget.destroy()
     
-    root.geometry("500x600")
+    root.geometry("500x620")
     root.minsize(500,430)
     root.maxsize(600,700)
 
@@ -440,14 +440,13 @@ def generate_invoice(root,invoices_to_save,account,inventory_sale,operator,invoi
     headings = tk.Frame()
     headings.pack()
 
-    input_frame = tk.Frame()
-    # input_frame.pack()
     width = 20
 
     tk.Label(headings, text="Date:",font=("Helvetica", 12)).grid(row=1,column=0)
     initial_date_value = StringVar(value=datetime.now().date()) 
     date_entry = tk.Entry(headings,width=width,textvariable=initial_date_value) 
     date_entry.grid(row=1,column=1,padx=10)
+
     if invoice_type == "Sale":
 
         tk.Label(headings,text="Invoice No:",font=("Helvetica", 12)).grid(row=1,column=2)
@@ -487,77 +486,6 @@ def generate_invoice(root,invoices_to_save,account,inventory_sale,operator,invoi
         contract_col = 2
         contract_entery_col = 3    
 
-    tk.Label(headings,text="Contract No:",font=("Helvetica",10)).grid(row=2,column=contract_col,pady=7)
-    contract_options = []
-    if len(contracts) == 0:
-        contract_options.append("No contracts to show")
-    else:
-        for contract in contracts.values():
-            contract_options.append(contract["contract_no"])
-    contract_option = tk.StringVar(value="Contract No")
-    contract_entry = OptionMenu(headings, contract_option, *contract_options)
-    contract_entry.grid(row=2,column=contract_entery_col)
-
-    if invoice_type == 'Sale':
-        party_name = 'Buyer'
-    else:
-        party_name = 'Seller'
-         
-    tk.Label(root,text=f"{party_name} Information:", font=("Helvetica-Bold",14)).pack(pady=15)
-
-    party_info = tk.Frame(root)
-    party_info.pack()    
-
-
-    tk.Label(party_info,text=f"{party_name}:",font=("Helvetica",10)).grid(row=1,column=0,pady=5)
-    party_name_options = []
-    for i in client['Customer'].list_collection_names():
-        if i != 'customer_info':
-            party_name_options.append(i)  
-    party_name_options.sort()      
-    party_name_option = tk.StringVar(value="Name")
-    party_name_entry = OptionMenu(party_info, party_name_option , *party_name_options)
-    party_name_entry.grid(row=1,column=1,pady=5,padx=5)
-
-    tk.Label(party_info,text="Email:",font=("Helvetica",10)).grid(row=1,column=2,pady=5,padx=5)
-    email_default = StringVar(None)
-    party_email_entry = tk.Entry(party_info,width=width,textvariable=email_default)
-    party_email_entry.grid(row=1,column=3,pady=5)
-
-    tk.Label(party_info,text="Phone:",font=("Helvetica",10)).grid(row=2,column=0,pady=5)
-    phone_default = StringVar(None)
-    party_phone_entry = tk.Entry(party_info,width=width,textvariable=phone_default)
-    party_phone_entry.grid(row=2,column=1,pady=5,padx=5)
-
-    tk.Label(party_info,text="Address:",font=("Helvetica",10)).grid(row=2,column=2,pady=5,padx=5)
-    address_default = StringVar(None)
-    party_address_entry = tk.Entry(party_info,width=width,textvariable=address_default)
-    party_address_entry.grid(row=2,column=3,pady=5)
-
-    tk.Label(root,text="Invoice Information:", font=("Helvetica-Bold",14)).pack(pady=15)
-
-    contract_info = tk.Frame(root)
-    contract_info.pack()
-
-    tk.Label(contract_info, text="Item:").grid(row=0,column=0)
-    items_options = []
-    for x in inventory.list_collection_names():
-        items_options.append(x)
-    item_option = tk.StringVar(value="Product Name")
-    item_entry = OptionMenu(contract_info, item_option , *items_options)
-    item_entry.grid(row=0,column=1,padx=5)
-
-    tk.Label(contract_info, text="Quantity:").grid(row=0,column=2,padx=5)
-    quantity_entry = tk.Entry(contract_info,width=10)  
-    quantity_entry.grid(row=0,column=3)
-
-    tk.Label(contract_info, text="Unit:").grid(row=1,column=0,pady=10)
-    quantity_unit_options = ['Meters','KG','Liters','PCS']
-    quantity_unit_option = tk.StringVar(value="Unit")
-    quantity_unit_entry = OptionMenu(contract_info, quantity_unit_option , *quantity_unit_options)
-    quantity_unit_entry.grid(row=1,column=1,padx=5)
-
-
     def calculate_total(*args):
         try:
             rate = float(rate_entry.get()) if rate_entry.get() else 0
@@ -595,39 +523,132 @@ def generate_invoice(root,invoices_to_save,account,inventory_sale,operator,invoi
         except ValueError:
             total_var.set("Invalid input")
 
-    tk.Label(contract_info,text="Rate:").grid(row=1, column=2,pady=10)
-    rate_entry = tk.Entry(contract_info, width=width)
-    rate_entry.grid(row=1, column=3,padx=5)
+    def get_contract_info(*args):
+                
+        contract_no = contract_option.get()
+        
+        for contract_details in contracts.values():
+            if contract_details.get("contract_no", "") == contract_no:
+                party_name_option.set(contract_details.get("account_receivable", ""))
+                email_default.set(contract_details.get("party_email", ""))
+                phone_default.set(contract_details.get("party_phone", ""))
+                address_default.set(contract_details.get("party_address", ""))
+                item_option.set(contract_details.get("item", ""))
+                quantity_unit_option.set(contract_details.get("unit", ""))
+                quantity_default.set(contract_details.get("quantity", ""))
+                rate_default.set(contract_details.get("rate", ""))
+        
+                break
 
-    tk.Label(contract_info, text="Amount:").grid(row=2, column=0)
+        calculate_total()               
+    
+    tk.Label(headings,text="Contract No:",font=("Helvetica",10)).grid(row=2,column=contract_col,pady=7)
+    contract_options = []
+    if len(contracts) == 0:
+        contract_options.append("No contracts to show")
+    else:
+        for contract in contracts.values():
+            contract_options.append(contract["contract_no"])
+    contract_option = tk.StringVar(value="Contract No")
+    contract_option.trace_add("write", get_contract_info)
+    contract_entry = OptionMenu(headings, contract_option, *contract_options)
+    contract_entry.grid(row=2,column=contract_entery_col)
+
+
+    if invoice_type == 'Sale':
+        party_name = 'Buyer'
+    else:
+        party_name = 'Seller'
+         
+    tk.Label(root,text=f"{party_name} Information:", font=("Helvetica-Bold",14)).pack(pady=15)
+
+    party_info = tk.Frame(root)
+    party_info.pack()    
+
+
+    tk.Label(party_info,text=f"{party_name}:",font=("Helvetica",10)).grid(row=1,column=0,pady=5)
+    party_name_options = []
+    for i in client['Customer'].list_collection_names():
+        if i != 'customer_info':
+            party_name_options.append(i)  
+    party_name_options.sort()      
+    party_name_option = tk.StringVar(value="Name")
+    party_name_entry = OptionMenu(party_info, party_name_option , *party_name_options)
+    party_name_entry.grid(row=1,column=1,pady=5,padx=5)
+
+    tk.Label(party_info,text="Email:",font=("Helvetica",10)).grid(row=1,column=2,pady=5,padx=5)
+    email_default = StringVar()
+    party_email_entry = tk.Entry(party_info,width=width,textvariable=email_default)
+    party_email_entry.grid(row=1,column=3,pady=5)
+
+    tk.Label(party_info,text="Phone:",font=("Helvetica",10)).grid(row=2,column=0,pady=5)
+    phone_default = StringVar()
+    party_phone_entry = tk.Entry(party_info,width=width,textvariable=phone_default)
+    party_phone_entry.grid(row=2,column=1,pady=5,padx=5)
+
+    tk.Label(party_info,text="Address:",font=("Helvetica",10)).grid(row=2,column=2,pady=5,padx=5)
+    address_default = StringVar()
+    party_address_entry = tk.Entry(party_info,width=width,textvariable=address_default)
+    party_address_entry.grid(row=2,column=3,pady=5)
+
+    tk.Label(root,text="Invoice Information:", font=("Helvetica-Bold",14)).pack(pady=15)
+
+    contract_info = tk.Frame(root)
+    contract_info.pack()
+
+    tk.Label(contract_info, text="Item:",font=("Helvetica",10)).grid(row=0,column=0)
+    items_options = []
+    for x in inventory.list_collection_names():
+        items_options.append(x)
+    item_option = tk.StringVar(value="Product Name")
+    item_entry = OptionMenu(contract_info, item_option , *items_options)
+    item_entry.grid(row=0,column=1,padx=5)
+
+    tk.Label(contract_info, text="Quantity:",font=("Helvetica",10)).grid(row=0,column=2,padx=5)
+    quantity_default = StringVar(value=0)
+    quantity_entry = tk.Entry(contract_info,width=10,textvariable=quantity_default)  
+    quantity_entry.grid(row=0,column=3)
+
+    tk.Label(contract_info, text="Unit:",font=("Helvetica",10)).grid(row=1,column=0,pady=10)
+    quantity_unit_options = ['Meters','KG','Liters','PCS']
+    quantity_unit_option = tk.StringVar(value="Unit")
+    quantity_unit_entry = OptionMenu(contract_info, quantity_unit_option , *quantity_unit_options)
+    quantity_unit_entry.grid(row=1,column=1,padx=5)
+
+    tk.Label(contract_info,text="Rate:",font=("Helvetica",10)).grid(row=1, column=2,pady=10)
+    rate_default = StringVar(value=0)
+    rate_entry = tk.Entry(contract_info, width=width,textvariable=rate_default)
+    rate_entry.grid(row=1, column=3,padx=5)
+    
+
+    tk.Label(contract_info, text="Amount:",font=("Helvetica",10)).grid(row=2, column=0)
     amount_var = tk.StringVar(value=0)
     amount_entry = tk.Entry(contract_info, width=width,textvariable=amount_var)
     amount_entry.grid(row=2, column=1,padx=5)
 
-    rate_entry.bind("<KeyRelease>",calculate_total)
     quantity_entry.bind("<KeyRelease>",calculate_total)
 
-    tk.Label(contract_info, text="GST(%):").grid(row=2, column=2,padx=5)
+    tk.Label(contract_info, text="GST(%):",font=("Helvetica",10)).grid(row=2, column=2,padx=5)
     gst_default_value = 15
     gst_default_value_assign = tk.StringVar(value=gst_default_value)
     gst_entry = tk.Entry(contract_info, width=width, textvariable=gst_default_value_assign)
     gst_entry.grid(row=2, column=3)
 
-    tk.Label(contract_info,text="GST Amount:").grid(row=3, column=0,pady=7)
+    tk.Label(contract_info,text="GST Amount:",font=("Helvetica",10)).grid(row=3, column=0,pady=7)
     gst_amount_var = tk.StringVar(value=0)
     gst_amount_entry = tk.Entry(contract_info, width=width,textvariable=gst_amount_var)
     gst_amount_entry.grid(row=3, column=1,padx=5)
 
-    tk.Label(contract_info, text="Further Tax(%):").grid(row=3, column=2,padx=5)
+    tk.Label(contract_info, text="Further Tax(%):",font=("Helvetica",10)).grid(row=3, column=2,padx=5)
     further_tax_entry = tk.Entry(contract_info, width=width)
     further_tax_entry.grid(row=3, column=3)
 
-    tk.Label(contract_info,text="Futher Tax Amount:").grid(row=4, column=0,pady=7)
+    tk.Label(contract_info,text="Futher Tax Amount:",font=("Helvetica",9)).grid(row=4, column=0,pady=7)
     Further_tax_amount_var = tk.StringVar(value=0)
     Further_tax_amount_entry = tk.Entry(contract_info, width=width,textvariable=Further_tax_amount_var)
     Further_tax_amount_entry.grid(row=4, column=1,padx=5)
 
-    tk.Label(contract_info, text="Description:").grid(row=4,column=2,pady=10)
+    tk.Label(contract_info, text="Description:",font=("Helvetica",10)).grid(row=4,column=2,pady=10)
     description_entry = tk.Entry(contract_info,width=width)  
     description_entry.grid(row=4,column=3,pady=10)
     # Total Label
@@ -636,11 +657,6 @@ def generate_invoice(root,invoices_to_save,account,inventory_sale,operator,invoi
     tk.Label(total_frame,text="Total Amount:",font=9).grid(row=0,column=0)
     total_var = tk.StringVar(value=0)
     tk.Label(total_frame,textvariable=total_var,font=9).grid(row=0,column=1,pady=10)
-
-    # Attach trace to auto-update on input
-    amount_entry.bind("<KeyRelease>", calculate_total)
-    gst_default_value_assign.trace_add("write", calculate_total)
-    further_tax_entry.bind("<KeyRelease>", calculate_total)
 
     def add(window, operator):
         nonlocal invoice
