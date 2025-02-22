@@ -822,7 +822,7 @@ def generate_invoice(root,invoices_to_save,account,inventory_sale,operator,invoi
 
             for contract in contracts.values():
                 if contract.get("contract_no") == contract_no:
-                    if contract.get("delivered_qant") == None:
+                    if contract.get("delivered_qant","") == None:
                         contract["delivered_qant"] = quantity
                     else:
                         contract["delivered_qant"] += quantity
@@ -1136,13 +1136,13 @@ def save_contract(contracts,account):
             for contract in contracts.values():
                 account.insert_one(contract)
             
-            for j in range(len(contracts)):
-                del contracts[j+1]
 
             for customer_update in contracts.values():
-                name = customer_update.get('party_name','')
+                name = customer_update.get('account_receivable','')
                 customer = customers[name]
                 customer.insert_one(customer_update)
+        
+            contracts.clear()
 
             messagebox.showinfo("Success","Contracts Saved Succesfully!")
     else:
