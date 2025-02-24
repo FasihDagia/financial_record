@@ -1107,12 +1107,9 @@ def save(transactions,account,inventorys,existing_Contracts,contracts):
             #uploading data to the database
             for transaction in transactions.values():
                 contract_no = transaction.get('contract_no', "")
-                print(contract_no)
                 for contract in existing_Contracts.values():
-                    print(contract)
                     if contract.get('contract_no', '') == contract_no:
                         delivered_quant = contract.get("delivered_qant")
-                        print(delivered_quant)
                         if contract.get("progress", "") == "completed":
                             contracts.update_one({'contract_no':contract_no},{'$set':{'delivered_qant':delivered_quant,"progress":"completed"}})
                         else:
