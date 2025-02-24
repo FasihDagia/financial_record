@@ -411,7 +411,7 @@ def generate_contract(root,sale_contract,account,contract_type,window):
                 'terms_payment': terms_payment,
                 'tolerence': tolerence,
                 'shipment': shipment,
-                'delivered_qant': None,
+                'delivered_qant': 0,
                 'progress': 'in_progress'
             }})
              
@@ -435,7 +435,7 @@ def generate_invoice(root,invoices_to_save,account,inventory_sale,operator,invoi
     root.maxsize(600,700)
 
 
-    root.title("Generate Invoicw")
+    root.title("Generate Invoice")
 
     tk.Label(root, text=f"{invoice_type} Invoice", font=("Helvetica", 16)).pack(pady=10)
     headings = tk.Frame()
@@ -536,7 +536,7 @@ def generate_invoice(root,invoices_to_save,account,inventory_sale,operator,invoi
                 address_default.set(contract_details.get("party_address", ""))
                 item_option.set(contract_details.get("item", ""))
                 quantity_unit_option.set(contract_details.get("unit", ""))
-                quantity_default.set(contract_details.get("quantity", ""))
+                quantity_default.set(contract_details.get("quantity", "")-contract_details.get("delivered_qant",""))
                 rate_default.set(contract_details.get("rate", ""))
         
                 break
@@ -551,6 +551,7 @@ def generate_invoice(root,invoices_to_save,account,inventory_sale,operator,invoi
         for contract in contracts.values():
             if contract.get("progress", "") == "in_progress":
                 contract_options.append(contract["contract_no"])
+    
     contract_option = tk.StringVar(value="Contract No")
     contract_option.trace_add("write", get_contract_info)
     contract_entry = OptionMenu(headings, contract_option, *contract_options)
@@ -609,10 +610,12 @@ def generate_invoice(root,invoices_to_save,account,inventory_sale,operator,invoi
     def check_quntity(*args):
 
         quantity = int(quantity_entry.get())
+        contract_no = contract_option.get()
         for contract_details in contracts.values():
-            if quantity > contract_details['quantity']:
-                messagebox.showerror("Error", "Quantity can't be more than the agreed quantity")
-                quantity_default.set(contract_details.get("quantity", ""))
+            if contract_details.get("contract_no","") == contract_no:
+                if (quantity + contract_details.get("delivered_qant","")) > contract_details['quantity']:
+                    messagebox.showerror("Error", "Quantity can't be more than the agreed quantity")
+                    quantity_default.set(contract_details.get("quantity", "")-contract_details.get("delivered_qant"))
         
         calculate_total()
 
@@ -819,6 +822,7 @@ def generate_invoice(root,invoices_to_save,account,inventory_sale,operator,invoi
                 'amount': amount,
                 'remaining_stock': remaining_stock
             }
+            window(root)
 
             for contract in contracts.values():
                 if contract.get("contract_no") == contract_no:
@@ -826,12 +830,11 @@ def generate_invoice(root,invoices_to_save,account,inventory_sale,operator,invoi
                         contract["delivered_qant"] = quantity
                     else:
                         contract["delivered_qant"] += quantity
-                    
-                    if contract.get("quantity", "") == contract.get("deliverd_quantity"):
+
+                    if contract.get("quantity", "") == contract.get("delivered_qant",""):
                         contract["progress"] = "completed"
                     break
             messagebox.showinfo("Success", "Invoice Generated!")
-            window(root)
 
     tk.Button(root, text="Add", command=lambda:add(window,operator), width=15).pack(padx=5,pady=5)
     
@@ -1103,9 +1106,12 @@ def save(transactions,account,inventorys,existing_Contracts,contracts):
             #uploading data to the database
             for transaction in transactions.values():
                 contract_no = transaction.get('contract_no', "")
+                print(contract_no)
                 for contract in existing_Contracts.values():
+                    print(contract)
                     if contract.get('contract_no', '') == contract_no:
                         delivered_quant = contract.get("delivered_qant")
+                        print(delivered_quant)
                         if contract.get("progress", "") == "completed":
                             contracts.update_one({'contract_no':contract_no},{'$set':{'delivered_qant':delivered_quant,"progress":"completed"}})
                         else:
