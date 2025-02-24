@@ -551,7 +551,8 @@ def generate_invoice(root,invoices_to_save,account,inventory_sale,operator,invoi
         for contract in contracts.values():
             if contract.get("progress", "") == "in_progress":
                 contract_options.append(contract["contract_no"])
-    
+    if len(contract_options) == 0:
+        contract_options.append("No contracts to show")
     contract_option = tk.StringVar(value="Contract No")
     contract_option.trace_add("write", get_contract_info)
     contract_entry = OptionMenu(headings, contract_option, *contract_options)
