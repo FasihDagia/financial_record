@@ -425,6 +425,149 @@ def generate_contract(root,sale_contract,account,contract_type,window):
     tk.Button(button_frame, text="Back", width=10, command=lambda:window(root)).grid(row=1, column=0,padx=5)
     tk.Button(button_frame, text="Exit", width=10, command=root.quit).grid(row=1, column=1,padx=5)
 
+def create_contract_pdf(contract_no,date,name,party_address,item, quantity, rate, gst_amount,ft_amount,total_amount,filename):
+
+    # Create a PDF document
+    pdf = SimpleDocTemplate(filename, pagesize=A4)
+    styles = getSampleStyleSheet()
+    
+    # Custom styles
+    title_style = ParagraphStyle(
+        'TitleStyle',
+        parent=styles['Heading1'],
+        fontSize=14,
+        alignment=1,  # Center alignment
+        spaceAfter=6,
+    )
+    
+    subtitle_style = ParagraphStyle(
+        'SubtitleStyle',
+        parent=styles['Heading2'],
+        fontSize=10,
+        alignment=0,  # Center alignment
+        spaceAfter=4,
+    )
+    
+    normal_style = ParagraphStyle(
+        'NormalStyle',
+        parent=styles['Normal'],
+        fontSize=9,
+        spaceAfter=4,
+    )
+    
+    # Content
+    content = []
+    
+    # Title
+    content.append(Paragraph("Contract",title_style))
+    content.append(Spacer(1, 6))
+    
+    # Contract Details
+    contract_details = [
+        ["CONTRACT NO.:", contract_no,"","","Dated:", date]
+    ]
+
+    contract_table = Table(contract_details, colWidths=[60, 60, 75,75, 50, 40])
+    contract_table.setStyle(TableStyle([
+        ('FONTNAME', (0, 0), (-1, -1), 'Helvetica-Bold'),
+        ('FONTSIZE', (0, 0), (-1, -1), 9),
+        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+        ('BOTTOMPADDING', (0, 0), (-1, -1), 4),
+    ]))
+    
+    content.append(contract_table)
+    content.append(Spacer(1, 8))
+    
+    cont_statement = f"This contract is made between the seller(s) COMPANY NAME and the buyer(s) {name} that the seller wants to sale and buyer wants to purchase on the following terms"
+    content.append(Paragraph(cont_statement,normal_style))
+    content.append(Spacer(1, 30))
+
+    buyer_seller_info = [
+        ["BUYER",f"{name}, {party_address}",""],
+        ["SELLER", "COMPANY NAME,COMPANY ADDRESS",""],
+        ["COMMODITY", item,""]
+    ]
+    
+    buyer_seller_table = Table(buyer_seller_info, colWidths=[200, 250, 150])
+    buyer_seller_table.setStyle(TableStyle([
+        ('FONTNAME', (0, 0), (-1, -1), 'Helvetica-Bold'),
+        ('FONTSIZE', (0, 0), (-1, -1), 9),
+        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+        ('BOTTOMPADDING', (0, 0), (-1, -1), 4),
+    ]))
+    
+    content.append(buyer_seller_table)
+    content.append(Spacer(1, 50))
+    
+    bed_sets_data = [
+        ["ITEM", "QUANTITY", "RATE","GST Amount", "Further Tax Amount","TOTAL"],
+        [item, quantity, rate, gst_amount,ft_amount ,total_amount],
+        [".","","","",""],
+        ["TOTAL INVOICE VALUE ","","","","",total_amount]       
+    ]
+    
+    bed_sets_table = Table(bed_sets_data, colWidths=[120, 70, 60, 90, 70, 100,60],rowHeights=[30,20,20,25])
+    bed_sets_table.setStyle(TableStyle([
+        ('FONT', (0, 0), (-1, 0), 'Helvetica-Bold', 10), 
+        ('FONT', (0, 1), (-1, -1), 'Helvetica', 8),
+        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+        ('GRID', (0, 0), (-1, -1), 1, colors.black),
+        ('BOTTOMPADDING', (0, 0), (-1, -1), 6),
+    ]))
+    
+    content.append(bed_sets_table)
+    content.append(Spacer(1, 50))
+    
+    terms = [
+        "1. THIS CONTRACT IS SUBJECT TO ANY FORCE DI MAJEURE",
+        "2. THIS CONTRACT IS SUBJECT TO SITUATION BEYOND CONTROL (MARKET TREND)",
+        "3. THIS CONTRACT IS SUBJECT TO ANY RESTRICTION IMPOSED BY GOVERNMENT",
+        "4. KINDLY RETURN ONE COPY OF THIS CONTRACT DULY SIGNED",
+        "5. SUBJECT TO COVID-19 SITUATION (SCHEDULE MAY VARY)",
+    ]
+    
+    for term in terms:
+        content.append(Paragraph(term, normal_style))
+    
+    content.append(Spacer(1, 6))
+    
+    # Bank Details
+    content.append(Paragraph("Bank Details :", subtitle_style))
+    bank_details = [
+        "HABIB METROPOLITAN BANK LTD.",
+        "ISLAMIC BANKING - SITE BRANCH",
+        "PLOT NO. B-12B-1, ESTATE AVENUE, SITE",
+        "KARACHI, PAKISTAN",
+        "ACCOUNT NUMBER: 6-99-01-29301-714-153481",
+        "IBAN: PK83 MPBL 9901 1771 4015 3481",
+        "SWIFT CODE: MPBLPKKA",
+    ]
+    
+    for detail in bank_details:
+        content.append(Paragraph(detail, normal_style))
+    
+    content.append(Spacer(1, 20))
+    sign = [["_____________________________","","_____________________________"],
+            ["Buyers Signature", "","Sellers Signature",],
+            [name,"","Company name"]
+            ]
+
+    signature_table = Table(sign, colWidths=[200,100,200])
+    signature_table.setStyle(TableStyle([
+        ('FONT', (0, 0), (-1, -1), 'Helvetica-Bold', 10),
+        ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
+    ]))
+    # Buyer's Signature
+    content.append(signature_table)
+    content.append(Spacer(1, 6))
+    
+    
+    # Build the PDF
+    pdf.build(content)
+
+
+
+
 def generate_invoice(root,invoices_to_save,account,inventory_sale,operator,invoice_type,window,contracts):
 
     for widget in root.winfo_children():
