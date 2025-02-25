@@ -557,7 +557,7 @@ def create_contract_pdf(contract_no,date,name,party_address,item, quantity, rate
     for detail in bank_details:
         content.append(Paragraph(detail, normal_style))
     
-    content.append(Spacer(1, 10))
+    content.append(Spacer(1, 40))
     sign = [["_____________________________","","_____________________________"],
             ["Buyers Signature", "","Sellers Signature",],
             [name,"","Company name"]
