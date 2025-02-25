@@ -425,7 +425,7 @@ def generate_contract(root,sale_contract,account,contract_type,window):
     tk.Button(button_frame, text="Back", width=10, command=lambda:window(root)).grid(row=1, column=0,padx=5)
     tk.Button(button_frame, text="Exit", width=10, command=root.quit).grid(row=1, column=1,padx=5)
 
-def create_contract_pdf(contract_no,date,name,party_address,item, quantity, rate, gst_amount,ft_amount,total_amount,filename):
+def create_contract_pdf(contract_no,date,name,party_address,item, quantity, rate, gst_amount,ft_amount,total_amount,tolerence,payment_terms,shipment,filename):
 
     # Create a PDF document
     pdf = SimpleDocTemplate(filename, pagesize=A4)
@@ -497,7 +497,7 @@ def create_contract_pdf(contract_no,date,name,party_address,item, quantity, rate
     ]))
     
     content.append(buyer_seller_table)
-    content.append(Spacer(1, 50))
+    content.append(Spacer(1, 40))
     
     bed_sets_data = [
         ["ITEM", "QUANTITY", "RATE","GST Amount", "Further Tax Amount","TOTAL"],
@@ -516,7 +516,18 @@ def create_contract_pdf(contract_no,date,name,party_address,item, quantity, rate
     ]))
     
     content.append(bed_sets_table)
-    content.append(Spacer(1, 50))
+    content.append(Spacer(1, 25))
+
+    details = [["TOLERANCE","",tolerence],
+               ["PATMENT TERMS","",payment_terms],
+               ["SHIPMENT","",shipment]]
+    details_table = Table(details, colWidths=[40, 20, 40])
+    details_table.setStyle(TableStyle([
+        ('FONT', (0, 0), (-1, -1), 'Helvetica-Bold', 9),
+        ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
+    ]))
+    content.append(details_table)
+    content.append(Spacer(1, 20))
     
     terms = [
         "1. THIS CONTRACT IS SUBJECT TO ANY FORCE DI MAJEURE",
@@ -565,8 +576,46 @@ def create_contract_pdf(contract_no,date,name,party_address,item, quantity, rate
     # Build the PDF
     pdf.build(content)
 
+def print_contracts(root,contracts,contract_type):
 
+    if len(contracts) == 0:
+        messagebox.showinfo("Error","No contracts to print")
+    else:
+        contract_no = simpledialog.askstring("Input", "Enter Invoice NO:", parent=root)
+        current_date = datetime.now()
+        year = current_date.year
+        if contract_type == "SALE":
+            contract_no = f"SL{contract_no.zfill(5)}/{year}"
+        else:
+            contract_no = f"PU{contract_no.zfill(5)}/{year}"
 
+        for contract in contracts.values():
+            if contract.get("contract_no","") == contract_no:
+                date = contract.get("date","")
+                name = contract.get("account_receivable","")
+                address = contract.get("party_address","")
+                item = contract.get("item","")
+                quantity = contract.get("quantity","")
+                rate = contract.get("rate","")
+                gst_amount = contract.get("gst_amount","")
+                ft_amount = contract.get("further_tax_amount","")
+                total_amount = contract.get("total_amount","")
+                tolerence = contract.get("tolerence","")
+                payment_terms = contract.get("terms_payment","")
+                shipment = contract.get("shipment","")
+                break
+
+            file_path = filedialog.asksaveasfilename(
+            defaultextension=".pdf",
+            filetypes=[("PDF files", "*.pdf"), ("All files", "*.*")],
+            title="Save Invoice As"
+        )
+
+        if not file_path:
+            messagebox.showwarning("Warning", "No file path selected. Contract not saved.")
+            return
+        create_contract_pdf(contract_no,date,name,address,item, quantity, rate, gst_amount,ft_amount,total_amount,tolerence,payment_terms,shipment,file_path)
+        messagebox.showinfo("Success", f"Contract saved successfully at:\n{file_path}")
 
 def generate_invoice(root,invoices_to_save,account,inventory_sale,operator,invoice_type,window,contracts):
 
@@ -1079,17 +1128,17 @@ def print_invoice(invoices,root,invoice_type):
         messagebox.showinfo("Error","No invoices to print")
     else:
 
-        contract_no = simpledialog.askstring("Input", "Enter Invoice NO:", parent=root)
+        invoice_no = simpledialog.askstring("Input", "Enter Invoice NO:", parent=root)
         current_date = datetime.now()
         year = current_date.year
         if invoice_type == "SALE":
-            contract_no = f"SL{contract_no.zfill(5)}/{year}"
+            invoice_no = f"SL{invoice_no.zfill(5)}/{year}"
         else:
-            contract_no = f"PU{contract_no.zfill(5)}/{year}"
+            invoice_no = f"PU{invoice_no.zfill(5)}/{year}"
 
 
         for transaction in invoices.values():
-            if transaction['invoice_no'] == contract_no or transaction['voucher_no'] == contract_no:
+            if transaction['invoice_no'] == invoice_no or transaction['voucher_no'] == invoice_no:
                 date = transaction['date'],
                 invoice_number=transaction.get('invoice_no',''),
                 voucher_number = transaction.get('voucher_no',''),
@@ -1116,7 +1165,6 @@ def print_invoice(invoices,root,invoice_type):
                 amount = amount[0]
                 gst = gst[0]
                 gst_amount = gst_amount[0]
-                # total_amount = total_amount[0]
         
         
         file_path = filedialog.asksaveasfilename(

@@ -3,7 +3,7 @@ from tkinter import *
 from tkinter import ttk
 import pymongo as pm
 
-from functions import generate_contract, generate_invoice ,save, load_transactions ,table, back, return_invoice,print_invoice,table_contract,load_contracts,save_contract
+from functions import generate_contract, print_contracts, generate_invoice ,save, load_transactions ,table, back, return_invoice,print_invoice,table_contract,load_contracts,save_contract
 
 #data base set up
 client = pm.MongoClient("mongodb://localhost:27017/")
@@ -109,6 +109,7 @@ def sale_contract_window(root):
 
     inventory_sale = {}
     tk.Button(button_frame,text='Generate Contract', width=15,command=lambda:generate_contract(root,sale_contracts,account,'Sale',sale_contract_window)).grid(row=0, column=1,padx=5)
+    tk.Button(button_frame, text= "Print Contract", width=15, command=lambda:print_contracts(root,sale_contracts,"SALE")).grid(row=0, column=2,padx=5)
     tk.Button(button_frame, text="Save", width=15, command=lambda:save_contract(sale_contracts,account)).grid(row=0, column=3,padx=5)
     tk.Button(button_frame, text="Back", width=15, command=lambda:back(root,sale_module_window,sale_contracts,inventory_sale,existing_contracts)).grid(row=0, column=4,padx=5)
     tk.Button(button_frame, text="Exit", width=15, command=root.quit).grid(row=0, column=5,padx=5)
@@ -258,6 +259,7 @@ def purchase_contract_window(root):
     button_frame.pack()
 
     tk.Button(button_frame,text='Generate Contract', width=15,command=lambda:generate_contract(root,purchase_contracts,account,'Purchacse',purchase_contract_window)).grid(row=0, column=1,padx=5)
+    tk.Button(button_frame, text= "Print Contract", width=15, command=lambda:print_contracts(root,purchase_contracts,"PURCHASE")).grid(row=0, column=2,padx=5)
     tk.Button(button_frame, text="Save", width=15, command=lambda:save_contract(purchase_contracts,account)).grid(row=0, column=3,padx=5)
     tk.Button(button_frame, text="Back", width=15, command=lambda:back(root,purchase_module_window,purchase_contracts,inventory_sale,existing_contracts)).grid(row=0, column=4,padx=5)
     tk.Button(button_frame, text="Exit", width=15, command=root.quit).grid(row=0, column=5,padx=5)
