@@ -467,7 +467,7 @@ def create_contract_pdf(contract_no,date,name,party_address,item, quantity, rate
         ["CONTRACT NO.:", contract_no,"","","Dated:", date]
     ]
 
-    contract_table = Table(contract_details, colWidths=[60, 60, 75,75, 50, 40])
+    contract_table = Table(contract_details, colWidths=[75, 60, 70,70, 50, 40])
     contract_table.setStyle(TableStyle([
         ('FONTNAME', (0, 0), (-1, -1), 'Helvetica-Bold'),
         ('FONTSIZE', (0, 0), (-1, -1), 9),
@@ -497,7 +497,7 @@ def create_contract_pdf(contract_no,date,name,party_address,item, quantity, rate
     ]))
     
     content.append(buyer_seller_table)
-    content.append(Spacer(1, 40))
+    content.append(Spacer(1, 30))
     
     bed_sets_data = [
         ["ITEM", "QUANTITY", "RATE","GST Amount", "Further Tax Amount","TOTAL"],
@@ -506,7 +506,7 @@ def create_contract_pdf(contract_no,date,name,party_address,item, quantity, rate
         ["TOTAL INVOICE VALUE ","","","","",total_amount]       
     ]
     
-    bed_sets_table = Table(bed_sets_data, colWidths=[120, 70, 60, 90, 70, 100,60],rowHeights=[30,20,20,25])
+    bed_sets_table = Table(bed_sets_data, colWidths=[120, 70, 60, 90, 110, 80],rowHeights=[30,20,20,25])
     bed_sets_table.setStyle(TableStyle([
         ('FONT', (0, 0), (-1, 0), 'Helvetica-Bold', 10), 
         ('FONT', (0, 1), (-1, -1), 'Helvetica', 8),
@@ -516,18 +516,18 @@ def create_contract_pdf(contract_no,date,name,party_address,item, quantity, rate
     ]))
     
     content.append(bed_sets_table)
-    content.append(Spacer(1, 25))
+    content.append(Spacer(1, 15))
 
-    details = [["TOLERANCE","",tolerence],
-               ["PATMENT TERMS","",payment_terms],
-               ["SHIPMENT","",shipment]]
-    details_table = Table(details, colWidths=[40, 20, 40])
+    details = [["TOLERANCE:","",f"+/-{tolerence}%"],
+               ["PATMENT TERMS:","",payment_terms],
+               ["SHIPMENT:","",shipment]]
+    details_table = Table(details, colWidths=[40, 40, 40],hAlign='LEFT')
     details_table.setStyle(TableStyle([
         ('FONT', (0, 0), (-1, -1), 'Helvetica-Bold', 9),
         ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
     ]))
     content.append(details_table)
-    content.append(Spacer(1, 20))
+    content.append(Spacer(1, 10))
     
     terms = [
         "1. THIS CONTRACT IS SUBJECT TO ANY FORCE DI MAJEURE",
@@ -557,7 +557,7 @@ def create_contract_pdf(contract_no,date,name,party_address,item, quantity, rate
     for detail in bank_details:
         content.append(Paragraph(detail, normal_style))
     
-    content.append(Spacer(1, 20))
+    content.append(Spacer(1, 10))
     sign = [["_____________________________","","_____________________________"],
             ["Buyers Signature", "","Sellers Signature",],
             [name,"","Company name"]
@@ -581,7 +581,7 @@ def print_contracts(root,contracts,contract_type):
     if len(contracts) == 0:
         messagebox.showinfo("Error","No contracts to print")
     else:
-        contract_no = simpledialog.askstring("Input", "Enter Invoice NO:", parent=root)
+        contract_no = simpledialog.askstring("Input", "Enter Contract NO:", parent=root)
         current_date = datetime.now()
         year = current_date.year
         if contract_type == "SALE":
@@ -605,7 +605,7 @@ def print_contracts(root,contracts,contract_type):
                 shipment = contract.get("shipment","")
                 break
 
-            file_path = filedialog.asksaveasfilename(
+        file_path = filedialog.asksaveasfilename(
             defaultextension=".pdf",
             filetypes=[("PDF files", "*.pdf"), ("All files", "*.*")],
             title="Save Invoice As"
