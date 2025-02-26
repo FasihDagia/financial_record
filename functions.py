@@ -425,7 +425,7 @@ def generate_contract(root,sale_contract,account,contract_type,window):
     tk.Button(button_frame, text="Back", width=10, command=lambda:window(root)).grid(row=1, column=0,padx=5)
     tk.Button(button_frame, text="Exit", width=10, command=root.quit).grid(row=1, column=1,padx=5)
 
-def create_contract_pdf(contract_no,date,name,party_address,item, quantity, rate, gst_amount,ft_amount,total_amount,tolerence,payment_terms,shipment,filename):
+def create_contract_pdf(contract_no,date,name,party_address,item, quantity, rate, gst_amount,ft_amount,total_amount,tolerence,payment_terms,shipment,contract_type,filename):
 
     # Create a PDF document
     pdf = SimpleDocTemplate(filename, pagesize=A4)
@@ -477,14 +477,26 @@ def create_contract_pdf(contract_no,date,name,party_address,item, quantity, rate
     
     content.append(contract_table)
     content.append(Spacer(1, 8))
-    
-    cont_statement = f"This contract is made between the seller(s) COMPANY NAME and the buyer(s) {name} that the seller wants to sale and buyer wants to purchase on the following terms"
+
+    if contract_type == 'SALE':
+        buyer = name
+        buyer_address = party_address
+        seller = "COMPANY NAME"
+        seller_address = "COMPANY ADDRESS"
+    else:
+        buyer = "COMPANY NAME"
+        buyer_address = "COMPANY ADDRESS"
+        seller = name
+        seller_address = party_address
+
+
+    cont_statement = f"This contract is made between the seller(s) {seller} and the buyer(s) {buyer} that the seller wants to sale and buyer wants to purchase on the following terms"
     content.append(Paragraph(cont_statement,normal_style))
     content.append(Spacer(1, 30))
 
     buyer_seller_info = [
-        ["BUYER",f"{name}, {party_address}",""],
-        ["SELLER", "COMPANY NAME,COMPANY ADDRESS",""],
+        ["BUYER",f"{buyer}, {buyer_address}",""],
+        ["SELLER", f"{seller}, {seller_address}",""],
         ["COMMODITY", item,""]
     ]
     
@@ -500,13 +512,13 @@ def create_contract_pdf(contract_no,date,name,party_address,item, quantity, rate
     content.append(Spacer(1, 30))
     
     bed_sets_data = [
-        ["ITEM", "QUANTITY", "RATE","GST Amount", "Further Tax Amount","TOTAL"],
-        [item, quantity, rate, gst_amount,ft_amount ,total_amount],
+        ["ITEM", "QUANTITY", "RATE","GST Amount", "Further Tax Amount"],
+        [item, quantity, rate, gst_amount,ft_amount ],
         [".","","","",""],
-        ["TOTAL INVOICE VALUE ","","","","",total_amount]       
+        ["TOTAL INVOICE VALUE ","","","",total_amount]       
     ]
     
-    bed_sets_table = Table(bed_sets_data, colWidths=[120, 70, 60, 90, 110, 80],rowHeights=[30,20,20,25])
+    bed_sets_table = Table(bed_sets_data, colWidths=[120, 70, 60, 90, 110],rowHeights=[30,20,20,25])
     bed_sets_table.setStyle(TableStyle([
         ('FONT', (0, 0), (-1, 0), 'Helvetica-Bold', 10), 
         ('FONT', (0, 1), (-1, -1), 'Helvetica', 8),
@@ -521,7 +533,7 @@ def create_contract_pdf(contract_no,date,name,party_address,item, quantity, rate
     details = [["TOLERANCE:","",f"+/-{tolerence}%"],
                ["PATMENT TERMS:","",payment_terms],
                ["SHIPMENT:","",shipment]]
-    details_table = Table(details, colWidths=[40, 40, 40],hAlign='LEFT')
+    details_table = Table(details, colWidths=[40, 60, 40],hAlign='LEFT')
     details_table.setStyle(TableStyle([
         ('FONT', (0, 0), (-1, -1), 'Helvetica-Bold', 9),
         ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
@@ -540,7 +552,7 @@ def create_contract_pdf(contract_no,date,name,party_address,item, quantity, rate
     for term in terms:
         content.append(Paragraph(term, normal_style))
     
-    content.append(Spacer(1, 6))
+    # content.append(Spacer(1, 6))
     
     # Bank Details
     content.append(Paragraph("Bank Details :", subtitle_style))
@@ -557,7 +569,7 @@ def create_contract_pdf(contract_no,date,name,party_address,item, quantity, rate
     for detail in bank_details:
         content.append(Paragraph(detail, normal_style))
     
-    content.append(Spacer(1, 40))
+    content.append(Spacer(1, 25))
     sign = [["_____________________________","","_____________________________"],
             ["Buyers Signature", "","Sellers Signature",],
             [name,"","Company name"]
@@ -614,7 +626,7 @@ def print_contracts(root,contracts,contract_type):
         if not file_path:
             messagebox.showwarning("Warning", "No file path selected. Contract not saved.")
             return
-        create_contract_pdf(contract_no,date,name,address,item, quantity, rate, gst_amount,ft_amount,total_amount,tolerence,payment_terms,shipment,file_path)
+        create_contract_pdf(contract_no,date,name,address,item, quantity, rate, gst_amount,ft_amount,total_amount,tolerence,payment_terms,shipment,contract_type,file_path)
         messagebox.showinfo("Success", f"Contract saved successfully at:\n{file_path}")
 
 def generate_invoice(root,invoices_to_save,account,inventory_sale,operator,invoice_type,window,contracts):
