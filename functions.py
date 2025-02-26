@@ -99,35 +99,33 @@ def table(table_account_receivable,table_inventory,invoice_type):
 
 def table_contract(table_contract):
     table_contract.heading("S.NO", text="S.NO")
-    table_contract.column("S.NO", anchor="center", width=20)
+    table_contract.column("S.NO", anchor="center", width=50)
     table_contract.heading("Date", text="Date")
-    table_contract.column("Date", anchor="center", width=30)
+    table_contract.column("Date", anchor="center", width=40)
     table_contract.heading("Contract.NO", text="Contract.NO")
-    table_contract.column("Contract.NO", anchor="center", width=20)
-    table_contract.heading("Terms of Payment", text="Terms of Payment")
-    table_contract.column("Terms of Payment", anchor="center", width=70)
-    table_contract.heading("Account Receivable", text="Account Receivable")
-    table_contract.column("Account Receivable", anchor="center", width=30)
+    table_contract.column("Contract.NO", anchor="center", width=50)
+    table_contract.heading("Party Name", text="Party Name")
+    table_contract.column("Party Name", anchor="center", width=60)
     table_contract.heading("Item", text="Item")
-    table_contract.column("Item", anchor="center", width=40)
+    table_contract.column("Item", anchor="center", width=50)
     table_contract.heading("Quantity", text="Quantity")
-    table_contract.column("Quantity", anchor="center", width=30)
+    table_contract.column("Quantity", anchor="center", width=50)
     table_contract.heading("Unit", text="Unit")
-    table_contract.column("Unit", anchor="center", width=20)
+    table_contract.column("Unit", anchor="center", width=50)
     table_contract.heading("Rate", text="Rate")
-    table_contract.column("Rate", anchor="center", width=40)
+    table_contract.column("Rate", anchor="center", width=50)
     table_contract.heading("Amount", text="Amount")
-    table_contract.column("Amount", anchor="center", width=40)
+    table_contract.column("Amount", anchor="center", width=50)
     table_contract.heading("GST", text="GST")
-    table_contract.column("GST", anchor="center", width=30)
+    table_contract.column("GST", anchor="center", width=50)
     table_contract.heading("GST Amount", text="GST Amount")
-    table_contract.column("GST Amount", anchor="center", width=30)
+    table_contract.column("GST Amount", anchor="center", width=50)
     table_contract.heading("Further Tax", text="Further Tax")
-    table_contract.column("Further Tax", anchor="center", width=30)
+    table_contract.column("Further Tax", anchor="center", width=50)
     table_contract.heading("Further Tax Amount", text="Further Tax Amount")
-    table_contract.column("Further Tax Amount", anchor="center", width=30)
+    table_contract.column("Further Tax Amount", anchor="center", width=50)
     table_contract.heading("Total Amount", text="Total Amount")
-    table_contract.column("Total Amount", anchor="center", width=40)
+    table_contract.column("Total Amount", anchor="center", width=50)
 
 def generate_contract(root,sale_contract,account,contract_type,window):
     
@@ -1291,7 +1289,6 @@ def load_contracts(table_contract,contracts):
             contract.get('item',''),
             contract.get('quantity',''),
             contract.get('unit',''),
-            contract.get('description',''),
             contract.get('rate',''),
             contract.get('amount',''),
             contract.get('gst',''),

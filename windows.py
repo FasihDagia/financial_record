@@ -115,14 +115,14 @@ def sale_contract_window(root):
     tk.Button(button_frame, text="Exit", width=15, command=root.quit).grid(row=0, column=5,padx=5)
 
     tk.Label(root,text=f"New Contracts:",font=("Helvetica", 16)).pack(pady=5,)
-    table_new_contracts = ttk.Treeview(root, columns=("S.NO", "Date","Contract.NO","Terms of Payment","Account Receivable","Item","Quantity","Unit", "Rate", "Amount","GST","GST Amount","Further Tax","Further Tax Amount","Total Amount"), show="headings")
+    table_new_contracts = ttk.Treeview(root, columns=("S.NO", "Date","Contract.NO","Party Name","Item","Quantity","Unit", "Rate", "Amount","GST","GST Amount","Further Tax","Further Tax Amount","Total Amount"), show="headings")
     table_new_contracts.pack(fill=tk.BOTH, pady=20)
 
     table_contract(table_new_contracts)
     load_contracts(table_new_contracts,sale_contracts)
 
     tk.Label(root,text=f"Existing Contracts:",font=("Helvetica", 16)).pack(pady=5,)
-    table_existing_contracts = ttk.Treeview(root, columns=("S.NO", "Date","Contract.NO","Terms of Payment","Account Receivable","Item","Quantity","Unit","Rate", "Amount","GST","GST Amount","Further Tax","Further Tax Amount","Total Amount"), show="headings")
+    table_existing_contracts = ttk.Treeview(root, columns=("S.NO", "Date","Contract.NO","Party Name","Item","Quantity","Unit","Rate", "Amount","GST","GST Amount","Further Tax","Further Tax Amount","Total Amount"), show="headings")
     table_existing_contracts.pack(fill=tk.BOTH, pady=20)
 
     table_contract(table_existing_contracts)
@@ -265,14 +265,14 @@ def purchase_contract_window(root):
     tk.Button(button_frame, text="Exit", width=15, command=root.quit).grid(row=0, column=5,padx=5)
 
     tk.Label(root,text=f"Contracts:",font=("Helvetica", 16)).pack(pady=5,)
-    table_new_contracts = ttk.Treeview(root, columns=("S.NO", "Date","Contract.NO","Terms of Payment","Account Receivable","Item","Quantity","Unit","Rate", "Amount","GST","GST Amount","Further Tax","Further Tax Amount","Total Amount"), show="headings")
+    table_new_contracts = ttk.Treeview(root, columns=("S.NO", "Date","Contract.NO","Party Name","Item","Quantity","Unit","Rate", "Amount","GST","GST Amount","Further Tax","Further Tax Amount","Total Amount"), show="headings")
     table_new_contracts.pack(fill=tk.BOTH, pady=10)
 
     table_contract(table_new_contracts)
     load_contracts(table_new_contracts,purchase_contracts)
 
     tk.Label(root,text=f"Existing Contracts:",font=("Helvetica", 16)).pack(pady=5,)
-    table_existing_contracts = ttk.Treeview(root, columns=("S.NO", "Date","Contract.NO","Terms of Payment","Account Receivable","Item","Quantity","Unit","Rate", "Amount","GST","GST Amount","Further Tax","Further Tax Amount","Total Amount"), show="headings")
+    table_existing_contracts = ttk.Treeview(root, columns=("S.NO", "Date","Contract.NO","Party Name","Item","Quantity","Unit","Rate", "Amount","GST","GST Amount","Further Tax","Further Tax Amount","Total Amount"), show="headings")
     table_existing_contracts.pack(fill=tk.BOTH, pady=20)
 
     table_contract(table_existing_contracts)
