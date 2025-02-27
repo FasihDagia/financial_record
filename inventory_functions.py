@@ -3,9 +3,7 @@ from tkinter import *
 import pymongo as pm
 
 client = pm.MongoClient("mongodb://localhost:27017/")
-db = client["financial_records"]
 inventory = client['inventory']
-customers = client['Customer']
 
 def inventory_check(table_inventory):
 
