@@ -139,6 +139,10 @@ def sale_contract_window(root):
     tk.Button(button_frame, text="Back", width=15, command=lambda:back(root,sale_module_window,sale_contracts,inventory_sale,existing_contracts)).grid(row=0, column=4,padx=5)
     tk.Button(button_frame, text="Exit", width=15, command=root.quit).grid(row=0, column=5,padx=5)
 
+    style = ttk.Style()
+    style.configure("Treeview.Heading", font=("Helvetica", 10, "bold"))  
+    style.configure("Treeview", font=("Helvetica", 8)) 
+    
     tk.Label(root,text=f"New Contracts:",font=("Helvetica", 16)).pack(pady=5,)
     table_new_contracts = ttk.Treeview(root, columns=("S.NO", "Date","Contract.NO","Party Name","Item","Quantity","Unit", "Rate", "Amount","GST","GST Amount","Further Tax","Further Tax Amount","Total Amount"), show="headings")
     table_new_contracts.pack(fill=tk.BOTH, pady=20)
@@ -191,6 +195,10 @@ def sale_invoice_window(root):
     #to display Cash transaction
     display_frame = Frame()
     display_frame.pack(pady=10)
+
+    style = ttk.Style()
+    style.configure("Treeview.Heading", font=("Helvetica", 10, "bold"))  
+    style.configure("Treeview", font=("Helvetica", 8)) 
 
     tk.Label(root,text=f"Account Receivable:",font=("Helvetica", 16)).pack(pady=5,)
     table_account_receivable = ttk.Treeview(root, columns=("S.NO", "Date","Invoice.NO","Account Receivable","Item","Quantity","Unit", "Description","Rate", "Amount","GST","GST Amount","Further Tax","Further Tax Amount","Total Amount","Balance"), show="headings")
@@ -246,6 +254,10 @@ def sale_return_window(root):
     tk.Button(button_frame, text="Back", width=15, command=lambda:sale_module_window(root)).grid(row=0, column=3,padx=5)
     tk.Button(button_frame, text="Exit", width=15, command=root.quit).grid(row=0, column=4,padx=5)
 
+    style = ttk.Style()
+    style.configure("Treeview.Heading", font=("Helvetica", 10, "bold"))  
+    style.configure("Treeview", font=("Helvetica", 8)) 
+
     tk.Label(root,text=f"Account Receivable:",font=("Helvetica", 16)).pack(pady=5,)
     table_account_receivable = ttk.Treeview(root, columns=("S.NO", "Date","Invoice.NO","Account Receivable","Item","Quantity","Unit", "Description","Rate", "Amount","GST","GST Amount","Further Tax","Further Tax Amount","Total Amount","Balance"), show="headings")
     table_account_receivable.pack(fill=tk.BOTH, pady=10)
@@ -287,6 +299,10 @@ def purchase_contract_window(root):
     tk.Button(button_frame, text="Save", width=15, command=lambda:save_contract(purchase_contracts,account)).grid(row=0, column=3,padx=5)
     tk.Button(button_frame, text="Back", width=15, command=lambda:back(root,purchase_module_window,purchase_contracts,inventory_sale,existing_contracts)).grid(row=0, column=4,padx=5)
     tk.Button(button_frame, text="Exit", width=15, command=root.quit).grid(row=0, column=5,padx=5)
+
+    style = ttk.Style()
+    style.configure("Treeview.Heading", font=("Helvetica", 10, "bold"))  
+    style.configure("Treeview", font=("Helvetica", 8)) 
 
     tk.Label(root,text=f"Contracts:",font=("Helvetica", 16)).pack(pady=5,)
     table_new_contracts = ttk.Treeview(root, columns=("S.NO", "Date","Contract.NO","Party Name","Item","Quantity","Unit","Rate", "Amount","GST","GST Amount","Further Tax","Further Tax Amount","Total Amount"), show="headings")
@@ -340,6 +356,10 @@ def purchase_invoice_window(root):
     display_frame = Frame()
     display_frame.pack(pady=10)
 
+    style = ttk.Style()
+    style.configure("Treeview.Heading", font=("Helvetica", 10, "bold"))  
+    style.configure("Treeview", font=("Helvetica", 8)) 
+
     tk.Label(root,text=f"Account Receivable:",font=("Helvetica", 16)).pack(pady=5,)
     table_account_receivable = ttk.Treeview(root, columns=("S.NO", "Date","Voucher.NO","Invoice.NO","Account Receivable","Item","Quantity","Unit", "Description","Rate", "Amount","GST","GST Amount","Further Tax","Further Tax Amount","Total Amount","Balance"), show="headings")
     table_account_receivable.pack(fill=tk.BOTH, pady=10)
@@ -387,6 +407,10 @@ def purchase_return_window(root,inventory):
         sno_inv+=1
     button_frame = tk.Frame(root)
     button_frame.pack(pady=10)
+
+    style = ttk.Style()
+    style.configure("Treeview.Heading", font=("Helvetica", 10, "bold"))  
+    style.configure("Treeview", font=("Helvetica", 8)) 
 
     tk.Button(button_frame,text='Return Invoice', width=15,command=lambda:return_invoice(root,inventory,purchase_return,'purchase',return_account,account,purchase_return_window)).grid(row=0, column=2,padx=5)
     tk.Button(button_frame, text="Back", width=15, command=lambda:purchase_module_window(root)).grid(row=0, column=3,padx=5)
@@ -444,7 +468,16 @@ def inventory_window(root):
     inventory_check(table_inventory)
 
 def add_product_window(root):
-    pass
+    
+    for widgeet in root.winfo_children():
+        widgeet.destroy()
+
+    root.geometry("900x600")
+    root.minsize(900,600)
+
+    root.title("Add Product")
+
+    tk.Label(text="Existing Product",font=("Helvetica-bold",25)).pack(pady=30)
 
 def remove_product_window(root):
     pass
