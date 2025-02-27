@@ -509,4 +509,36 @@ def add_product_window(root):
     table_inventory.column("Remaining Stock", anchor="center", width=100)
 
 def remove_product_window(root):
-    pass
+    
+    for widgeet in root.winfo_children():
+        widgeet.destroy()
+
+    root.geometry("900x600")
+    root.minsize(900,600)
+
+    root.title("Remove Product")
+
+    tk.Label(text="Remove Products",font=("Helvetica-bold",25)).pack(pady=30)
+
+    style = ttk.Style()
+    style.configure("Treeview.Heading", font=("Helvetica", 10, "bold"))  
+    style.configure("Treeview", font=("Helvetica", 8))  
+
+    btn_frame = tk.Frame(root)
+    btn_frame.pack(pady=10)
+
+    tk.Button(btn_frame,text="Remove product",width=20, font=("Helvetica",10)).grid(row=0,column=2,pady=10)
+    tk.Button(btn_frame, text="Back", width=20, command=lambda:inventory_module_window(root)).grid(row=0, column=3,padx=5)
+    tk.Button(btn_frame, text="Exit", width=20, command=root.quit).grid(row=0, column=4,padx=5)
+
+    tk.Label(text="Existing Products",font=("Helvetica-bold",20)).pack(pady=30)
+
+    table_inventory = ttk.Treeview(root, columns=("S.NO","Item","Remaining Stock"), show="headings")
+    table_inventory.pack(fill=tk.BOTH, pady=20)
+
+    table_inventory.heading("S.NO", text="S.NO")
+    table_inventory.column("S.NO", anchor="center", width=50)
+    table_inventory.heading("Item", text="Item")
+    table_inventory.column("Item", anchor="center", width=100)
+    table_inventory.heading("Remaining Stock", text="Remaining Stock")
+    table_inventory.column("Remaining Stock", anchor="center", width=100)
