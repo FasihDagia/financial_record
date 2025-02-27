@@ -3,8 +3,8 @@ from tkinter import *
 from tkinter import ttk
 import pymongo as pm
 
-from functions import generate_contract, print_contracts, generate_invoice ,save, load_transactions ,table, back, return_invoice,print_invoice,table_contract,load_contracts,save_contract,inventory_check
-
+from functions import generate_contract, print_contracts, generate_invoice ,save, load_transactions ,table, back, return_invoice,print_invoice,table_contract,load_contracts,save_contract
+from inventory_functions import inventory_check,existing_products
 #data base set up
 client = pm.MongoClient("mongodb://localhost:27017/")
 db = client["financial_records"]
@@ -496,7 +496,7 @@ def add_product_window(root):
     tk.Button(btn_frame, text="Back", width=20, command=lambda:inventory_module_window(root)).grid(row=0, column=3,padx=5)
     tk.Button(btn_frame, text="Exit", width=20, command=root.quit).grid(row=0, column=4,padx=5)
 
-    tk.Label(text="Existing Products",font=("Helvetica-bold",20)).pack(pady=30)
+    tk.Label(text="Existing Products",font=("Helvetica-bold",20)).pack(pady=15)
 
     table_inventory = ttk.Treeview(root, columns=("S.NO","Item","Remaining Stock"), show="headings")
     table_inventory.pack(fill=tk.BOTH, pady=20)
@@ -507,6 +507,8 @@ def add_product_window(root):
     table_inventory.column("Item", anchor="center", width=100)
     table_inventory.heading("Remaining Stock", text="Remaining Stock")
     table_inventory.column("Remaining Stock", anchor="center", width=100)
+
+    existing_products(table_inventory)
 
 def remove_product_window(root):
     
@@ -531,7 +533,7 @@ def remove_product_window(root):
     tk.Button(btn_frame, text="Back", width=20, command=lambda:inventory_module_window(root)).grid(row=0, column=3,padx=5)
     tk.Button(btn_frame, text="Exit", width=20, command=root.quit).grid(row=0, column=4,padx=5)
 
-    tk.Label(text="Existing Products",font=("Helvetica-bold",20)).pack(pady=30)
+    tk.Label(text="Existing Products",font=("Helvetica-bold",20)).pack(pady=15)
 
     table_inventory = ttk.Treeview(root, columns=("S.NO","Item","Remaining Stock"), show="headings")
     table_inventory.pack(fill=tk.BOTH, pady=20)
@@ -542,3 +544,5 @@ def remove_product_window(root):
     table_inventory.column("Item", anchor="center", width=100)
     table_inventory.heading("Remaining Stock", text="Remaining Stock")
     table_inventory.column("Remaining Stock", anchor="center", width=100)
+
+    existing_products(table_inventory)
