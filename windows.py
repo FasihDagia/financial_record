@@ -3,7 +3,7 @@ from tkinter import *
 from tkinter import ttk
 import pymongo as pm
 
-from functions import generate_contract, print_contracts, generate_invoice ,save, load_transactions ,table, back, return_invoice,print_invoice,table_contract,load_contracts,save_contract
+from functions import generate_contract, print_contracts, generate_invoice ,save, load_transactions ,table, back, return_invoice,print_invoice,table_contract,load_contracts,save_contract,inventory_check
 
 #data base set up
 client = pm.MongoClient("mongodb://localhost:27017/")
@@ -22,8 +22,8 @@ def main_window(root):
     for widget in root.winfo_children():
         widget.destroy()
 
-    root.geometry("450x200")
-    root.minsize(350,200)
+    root.geometry("450x275")
+    root.minsize(350,275)
     root.maxsize(450,500)
 
     root.title("Financial Records")
@@ -35,6 +35,10 @@ def main_window(root):
 
     tk.Button(btn_frame,text="Sale Module", font=("Helvetica",10),width=20, command=lambda:sale_module_window(root)).grid(padx=10,pady=10,row=0,column=0)
     tk.Button(btn_frame,text="Purchase Module", font=("Helvetica",10),width=20, command=lambda:purchase_module_window(root)).grid(padx=10,pady=10,row=0,column=1)
+    tk.Button(btn_frame,text="Payment Module", font=("Helvetica",10),width=20, command=lambda:purchase_module_window(root)).grid(padx=10,pady=10,row=1,column=0)
+    tk.Button(btn_frame,text="Receipt Module", font=("Helvetica",10),width=20, command=lambda:purchase_module_window(root)).grid(padx=10,pady=10,row=1,column=1)
+    tk.Button(btn_frame,text="Inventory Module", font=("Helvetica",10),width=20, command=lambda:inventory_module_window(root)).grid(padx=10,pady=10,row=2,column=0)
+    tk.Button(btn_frame,text="Client Module", font=("Helvetica",10),width=20, command=lambda:inventory_module_window(root)).grid(padx=10,pady=10,row=2,column=1)
 
     tk.Button(root,text="Exit", font=("Helvetica",10),width=20, command=root.quit).pack(padx=10,pady=5)
 
@@ -79,6 +83,27 @@ def purchase_module_window(root):
     tk.Button(btn_frame, text="Purchase Contract", font=("Helvetica", 10), width=20, command=lambda:purchase_contract_window(root)).grid(padx=10,pady=10,row=0,column=0)    
     tk.Button(btn_frame,text="Purchase Invoice", font=("Helvetica",10),width=20, command=lambda:purchase_invoice_window(root)).grid(padx=10,pady=10,row=0,column=1)
     tk.Button(btn_frame,text="Purchase Return",font=("Helvetica",10),width=20,command=lambda:purchase_return_window(root,inventory)).grid(padx=10,pady=10,row=1,column=0)
+    tk.Button(btn_frame, text="Back",font=("Helvetica",10), width=20, command=lambda:main_window(root)).grid(row=1, column=1,padx=10,pady=10)
+    tk.Button(root, text="Exit",font=("Helvetica",10), width=20, command=root.quit).pack(padx=10,pady=5)
+
+def inventory_module_window(root):
+    for widget in root.winfo_children():
+        widget.destroy()
+
+    root.geometry("450x225")
+    root.minsize(350,200)
+    root.maxsize(450,500)
+
+    root.title("Inventory Module")
+
+    tk.Label(root,text="Inventory Module",font=("Helvetica",20)).pack(padx=50,pady=5)
+
+    btn_frame = Frame()
+    btn_frame.pack(fill=X, padx=33, pady=10)
+
+    tk.Button(btn_frame, text="Inventory", font=("Helvetica",10),width=20, command=lambda:inventory_window(root)).grid(padx=10, pady=10, row=0,column=0)
+    tk.Button(btn_frame,text="Add Product", font=("Helvetica",10),width=20, command=lambda:add_product_window(root)).grid(padx=10,pady=10,row=0,column=1)
+    tk.Button(btn_frame,text="Remove Product",font=("Helvetica",10),width=20,command=lambda:remove_product_window(root)).grid(padx=10,pady=10,row=1,column=0)
     tk.Button(btn_frame, text="Back",font=("Helvetica",10), width=20, command=lambda:main_window(root)).grid(row=1, column=1,padx=10,pady=10)
     tk.Button(root, text="Exit",font=("Helvetica",10), width=20, command=root.quit).pack(padx=10,pady=5)
 
@@ -176,7 +201,6 @@ def sale_invoice_window(root):
     table_sale.pack(fill=tk.BOTH, pady=10)
 
     table(table_account_receivable,table_sale,'sale')
-   
     load_transactions(table_sale,table_account_receivable,sale_transaction,inventory_sale,'sale')
 
 def sale_return_window(root):
@@ -378,3 +402,49 @@ def purchase_return_window(root,inventory):
     
     table(table_account_receivable,table_purchase,'purchase')
     load_transactions(table_purchase,table_account_receivable,purchase_return,inventory_return,'purchase')
+
+def inventory_window(root):
+
+    for widget in root.winfo_children():
+        widget.destroy()
+    
+    root.geometry("1200x800")
+    root.minsize(1200,700)
+
+    root.title("Inventory")
+
+    style = ttk.Style()
+    style.configure("Treeview.Heading", font=("Helvetica", 10, "bold"))  
+    style.configure("Treeview", font=("Helvetica", 8))  
+    
+    tk.Label(text="Inventory",font=("Helvetica-bold",25)).pack(pady=30)
+
+    table_inventory = ttk.Treeview(root, columns=("S.NO","Last Contract No","Invoice No","Name of Party","Item","Quantity","Unit","Rate","Remaining Stock"), show="headings")
+    table_inventory.pack(fill=tk.BOTH, pady=20)
+
+    table_inventory.heading("S.NO", text="S.NO")
+    table_inventory.column("S.NO", anchor="center", width=50)
+    table_inventory.heading("Last Contract No", text="Last Contract No")
+    table_inventory.column("Last Contract No", anchor="center", width=75)
+    table_inventory.heading("Invoice No", text="Invoice No")
+    table_inventory.column("Invoice No", anchor="center", width=75)
+    table_inventory.heading("Name of Party", text="Name of Party")
+    table_inventory.column("Name of Party", anchor="center", width=100)
+    table_inventory.heading("Item", text="Item")
+    table_inventory.column("Item", anchor="center", width=100)
+    table_inventory.heading("Quantity", text="Quantity")
+    table_inventory.column("Quantity", anchor="center", width=75)
+    table_inventory.heading("Unit", text="Unit")
+    table_inventory.column("Unit", anchor="center", width=50)
+    table_inventory.heading("Rate", text="Rate")
+    table_inventory.column("Rate", anchor="center", width=75)
+    table_inventory.heading("Remaining Stock", text="Remaining Stock")
+    table_inventory.column("Remaining Stock", anchor="center", width=100)
+    
+    inventory_check(table_inventory)
+
+def add_product_window(root):
+    pass
+
+def remove_product_window(root):
+    pass

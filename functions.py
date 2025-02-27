@@ -1016,6 +1016,8 @@ def generate_invoice(root,invoices_to_save,account,inventory_sale,operator,invoi
             inventory_sale[len(inventory_sale) + 1] = {
                 's_no': sno_inventory,
                 'date': date,
+                'contract_no':contract_no,
+                'account_receivable': account_recevible,
                 'voucher_no':voucher,
                 'invoice_no': invoice,
                 'item': item,
@@ -1025,6 +1027,7 @@ def generate_invoice(root,invoices_to_save,account,inventory_sale,operator,invoi
                 'amount': amount,
                 'remaining_stock': remaining_stock
             }
+            messagebox.showinfo("Success", "Invoice Generated!")
             window(root)
 
             for contract in contracts.values():
@@ -1037,7 +1040,6 @@ def generate_invoice(root,invoices_to_save,account,inventory_sale,operator,invoi
                     if contract.get("quantity", "") == contract.get("delivered_qant",""):
                         contract["progress"] = "completed"
                     break
-            messagebox.showinfo("Success", "Invoice Generated!")
 
     tk.Button(root, text="Add", command=lambda:add(window,operator), width=15).pack(padx=5,pady=5)
     
@@ -1423,3 +1425,31 @@ def return_invoice(root,inventory,invoice_return,contract_type,return_account,ac
     inventory_item.delete_one({"s_no":sno_inventory})
     messagebox.showinfo("Success", f"{contract_type.capitalize()} Invoice returned Successfully")
     window(root,inventory)
+
+def inventory_check(table_inventory):
+
+    product_names = inventory.list_collection_names()
+    last_contracts = {}
+    
+    for product in product_names:
+        no_contracts = inventory[product].count_documents({})
+        last_contract = inventory[product].find_one({"s_no":no_contracts})
+    
+        if last_contract != None:
+            last_contracts[len(last_contracts)+1] = last_contract
+
+    i = 1
+
+    for contract in last_contracts.values():
+        table_inventory.insert("", tk.END, values=(
+            i,
+            contract.get('contract_no', ''),
+            contract.get('invoice_no',''),
+            contract.get('account_receivable', ''),
+            contract.get('item',''),
+            contract.get('quantity',''),
+            contract.get('unit',''),
+            contract.get('rate',''),
+            contract.get('remaining_stock','')
+        ))
+        i += 1
