@@ -9,11 +9,6 @@ from reportlab.lib import colors
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.enums import TA_LEFT
 
-#data base set up
-client = pm.MongoClient("mongodb://localhost:27017/")
-db = client["financial_records"]
-inventory = client['inventory']
-customers = client['Customer']
 
 def back(root,window,invoices,inventorys,existing_contracts):
 
@@ -127,7 +122,7 @@ def table_contract(table_contract):
     table_contract.heading("Total Amount", text="Total Amount")
     table_contract.column("Total Amount", anchor="center", width=50)
 
-def generate_contract(root,sale_contract,account,contract_type,window):
+def generate_contract(root,sale_contract,account,contract_type,window,inventory,customers):
     
     for widget in root.winfo_children():
         widget.destroy()
@@ -175,7 +170,7 @@ def generate_contract(root,sale_contract,account,contract_type,window):
     tk.Label(root,text=f"{party_name} Information:", font=("Helvetica-Bold",14)).pack(pady=15)
 
     def get_party_info(*args):
-        party = client["Customer"]["customer_info"]
+        party = customers["customer_info"]
 
         party_name = party_name_option.get()
         party_details = party.find_one({"name":party_name})
@@ -193,7 +188,7 @@ def generate_contract(root,sale_contract,account,contract_type,window):
 
     tk.Label(party_info,text=f"{party_name}:",font=("Helvetica",10)).grid(row=1,column=0,pady=5)
     party_name_options = []
-    for i in client['Customer'].list_collection_names():
+    for i in customers.list_collection_names():
         if i != 'customer_info':
             party_name_options.append(i)  
     party_name_options.sort()      
@@ -627,7 +622,7 @@ def print_contracts(root,contracts,contract_type):
         create_contract_pdf(contract_no,date,name,address,item, quantity, rate, gst_amount,ft_amount,total_amount,tolerence,payment_terms,shipment,contract_type,file_path)
         messagebox.showinfo("Success", f"Contract saved successfully at:\n{file_path}")
 
-def generate_invoice(root,invoices_to_save,account,inventory_sale,operator,invoice_type,window,contracts):
+def generate_invoice(root,invoices_to_save,account,inventory_sale,operator,invoice_type,window,contracts,inventory,customers):
 
     for widget in root.winfo_children():
         widget.destroy()
@@ -774,7 +769,7 @@ def generate_invoice(root,invoices_to_save,account,inventory_sale,operator,invoi
 
     tk.Label(party_info,text=f"{party_name}:",font=("Helvetica",10)).grid(row=1,column=0,pady=5)
     party_name_options = []
-    for i in client['Customer'].list_collection_names():
+    for i in customers.list_collection_names():
         if i != 'customer_info':
             party_name_options.append(i)  
     party_name_options.sort()      
@@ -1301,7 +1296,7 @@ def load_contracts(table_contract,contracts):
         ))
         i+=1
 
-def save(transactions,account,inventorys,existing_Contracts,contracts):
+def save(transactions,account,inventorys,existing_Contracts,contracts,inventory):
 
     if len(transactions) != 0:
         confirm = messagebox.askyesno("Confirm", f"Once the Invoices are saved you wont be able to cahnge them\nAre you sure you want to save invoices?")
@@ -1333,7 +1328,7 @@ def save(transactions,account,inventorys,existing_Contracts,contracts):
     else:
         messagebox.showerror("Error","No Invoices to save!")
 
-def save_contract(contracts,account):
+def save_contract(contracts,account,customers):
 
     if len(contracts) != 0:
         confirm = messagebox.askyesno("Confirm", f"Once the Contracts are saved you wont be able to cahnge them\nAre you sure you want to save?")

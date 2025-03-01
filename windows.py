@@ -9,6 +9,7 @@ from inventory_functions import inventory_check,existing_products,add_product,re
 client = pm.MongoClient("mongodb://localhost:27017/")
 db = client["financial_records"]
 inventory = client['inventory']
+customers = client['Customer']
 
 sale_contracts = {}
 purchase_contracts = {}
@@ -133,9 +134,9 @@ def sale_contract_window(root):
     button_frame.pack()
 
     inventory_sale = {}
-    tk.Button(button_frame,text='Generate Contract', width=15,command=lambda:generate_contract(root,sale_contracts,account,'Sale',sale_contract_window)).grid(row=0, column=1,padx=5)
+    tk.Button(button_frame,text='Generate Contract', width=15,command=lambda:generate_contract(root,sale_contracts,account,'Sale',sale_contract_window,inventory,customers)).grid(row=0, column=1,padx=5)
     tk.Button(button_frame, text= "Print Contract", width=15, command=lambda:print_contracts(root,sale_contracts,"SALE")).grid(row=0, column=2,padx=5)
-    tk.Button(button_frame, text="Save", width=15, command=lambda:save_contract(sale_contracts,account)).grid(row=0, column=3,padx=5)
+    tk.Button(button_frame, text="Save", width=15, command=lambda:save_contract(sale_contracts,account,customers)).grid(row=0, column=3,padx=5)
     tk.Button(button_frame, text="Back", width=15, command=lambda:back(root,sale_module_window,sale_contracts,inventory_sale,existing_contracts)).grid(row=0, column=4,padx=5)
     tk.Button(button_frame, text="Exit", width=15, command=root.quit).grid(row=0, column=5,padx=5)
 
@@ -186,7 +187,7 @@ def sale_invoice_window(root):
     button_frame = tk.Frame(root)
     button_frame.pack(pady=10)
 
-    tk.Button(button_frame,text='Generate Invoice', width=15,command=lambda:generate_invoice(root,sale_transaction,account,inventory_sale,'-',"Sale",sale_invoice_window,existing_contracts,contracts)).grid(row=0, column=1,padx=5)
+    tk.Button(button_frame,text='Generate Invoice', width=15,command=lambda:generate_invoice(root,sale_transaction,account,inventory_sale,'-',"Sale",sale_invoice_window,existing_contracts,contracts,inventory,customers)).grid(row=0, column=1,padx=5)
     tk.Button(button_frame, text="Print Invoice", width=15, command=lambda:print_invoice(sale_transaction,root,"SALE")).grid(row=0,column=2,padx=5)
     tk.Button(button_frame, text="Save", width=15, command=lambda:save(sale_transaction,account,inventory_sale)).grid(row=0, column=3,padx=5)
     tk.Button(button_frame, text="Back", width=15, command=lambda:back(root,sale_module_window,sale_transaction,inventory_sale,existing_contracts)).grid(row=0, column=4,padx=5)
@@ -294,9 +295,9 @@ def purchase_contract_window(root):
     button_frame = tk.Frame(root)
     button_frame.pack()
 
-    tk.Button(button_frame,text='Generate Contract', width=15,command=lambda:generate_contract(root,purchase_contracts,account,'Purchacse',purchase_contract_window)).grid(row=0, column=1,padx=5)
+    tk.Button(button_frame,text='Generate Contract', width=15,command=lambda:generate_contract(root,purchase_contracts,account,'Purchacse',purchase_contract_window,inventory,customers)).grid(row=0, column=1,padx=5)
     tk.Button(button_frame, text= "Print Contract", width=15, command=lambda:print_contracts(root,purchase_contracts,"PURCHASE")).grid(row=0, column=2,padx=5)
-    tk.Button(button_frame, text="Save", width=15, command=lambda:save_contract(purchase_contracts,account)).grid(row=0, column=3,padx=5)
+    tk.Button(button_frame, text="Save", width=15, command=lambda:save_contract(purchase_contracts,account, customers = client['Customer'])).grid(row=0, column=3,padx=5)
     tk.Button(button_frame, text="Back", width=15, command=lambda:back(root,purchase_module_window,purchase_contracts,inventory_sale,existing_contracts)).grid(row=0, column=4,padx=5)
     tk.Button(button_frame, text="Exit", width=15, command=root.quit).grid(row=0, column=5,padx=5)
 
@@ -346,7 +347,7 @@ def purchase_invoice_window(root):
     button_frame = tk.Frame(root)
     button_frame.pack(pady=10)
 
-    tk.Button(button_frame,text='Generate Invoice', width=15,command=lambda:generate_invoice(root,purchase_transaction,account,inventory_sale,"+","Purchase",purchase_invoice_window,existing_contracts)).grid(row=0, column=1,padx=5)
+    tk.Button(button_frame,text='Generate Invoice', width=15,command=lambda:generate_invoice(root,purchase_transaction,account,inventory_sale,"+","Purchase",purchase_invoice_window,existing_contracts,inventory,customers)).grid(row=0, column=1,padx=5)
     tk.Button(button_frame, text="Print Invoice", width=15, command=lambda:print_invoice(purchase_transaction,root,"PURCHASE")).grid(row=0,column=2,padx=5)
     tk.Button(button_frame, text="Save", width=15, command=lambda:save(purchase_transaction,account,inventory_sale,existing_contracts,contracts)).grid(row=0, column=3,padx=5)
     tk.Button(button_frame, text="Back", width=15, command=lambda:back(root,purchase_module_window,purchase_transaction,inventory_sale,existing_contracts)).grid(row=0, column=4,padx=5)
