@@ -546,4 +546,4 @@ def remove_product_window(root):
     table_inventory.heading("Remaining Stock", text="Remaining Stock")
     table_inventory.column("Remaining Stock", anchor="center", width=100)
 
-    existing_products(table_inventory)
+    existing_products(table_inventory,inventory)
