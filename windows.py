@@ -4,7 +4,7 @@ from tkinter import ttk
 import pymongo as pm
 
 from functions import generate_contract, print_contracts, generate_invoice ,save, load_transactions ,table, back, return_invoice,print_invoice,table_contract,load_contracts,save_contract
-from inventory_functions import inventory_check,existing_products
+from inventory_functions import inventory_check,existing_products,add_product,remove_product
 #data base set up
 client = pm.MongoClient("mongodb://localhost:27017/")
 db = client["financial_records"]
@@ -471,7 +471,7 @@ def inventory_window(root):
     table_inventory.heading("Remaining Stock", text="Remaining Stock")
     table_inventory.column("Remaining Stock", anchor="center", width=100)
     
-    inventory_check(table_inventory)
+    inventory_check(table_inventory,inventory)
 
 def add_product_window(root):
     
@@ -492,7 +492,7 @@ def add_product_window(root):
     btn_frame = tk.Frame(root)
     btn_frame.pack(pady=10)
 
-    tk.Button(btn_frame,text="Add product",width=20, font=("Helvetica",10)).grid(row=0,column=2,pady=10)
+    tk.Button(btn_frame,text="Add product",width=20, font=("Helvetica",10), command=lambda:add_product(inventory)).grid(row=0,column=2,pady=10)
     tk.Button(btn_frame, text="Back", width=20, command=lambda:inventory_module_window(root)).grid(row=0, column=3,padx=5)
     tk.Button(btn_frame, text="Exit", width=20, command=root.quit).grid(row=0, column=4,padx=5)
 
@@ -508,7 +508,7 @@ def add_product_window(root):
     table_inventory.heading("Remaining Stock", text="Remaining Stock")
     table_inventory.column("Remaining Stock", anchor="center", width=100)
 
-    existing_products(table_inventory)
+    existing_products(table_inventory,inventory)
 
 def remove_product_window(root):
     
@@ -529,7 +529,7 @@ def remove_product_window(root):
     btn_frame = tk.Frame(root)
     btn_frame.pack(pady=10)
 
-    tk.Button(btn_frame,text="Remove product",width=20, font=("Helvetica",10)).grid(row=0,column=2,pady=10)
+    tk.Button(btn_frame,text="Remove product",width=20, font=("Helvetica",10),command=lambda:remove_product(inventory)).grid(row=0,column=2,pady=10)
     tk.Button(btn_frame, text="Back", width=20, command=lambda:inventory_module_window(root)).grid(row=0, column=3,padx=5)
     tk.Button(btn_frame, text="Exit", width=20, command=root.quit).grid(row=0, column=4,padx=5)
 

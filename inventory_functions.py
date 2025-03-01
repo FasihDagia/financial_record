@@ -2,10 +2,8 @@ import tkinter as tk
 from tkinter import *
 import pymongo as pm
 
-client = pm.MongoClient("mongodb://localhost:27017/")
-inventory = client['inventory']
 
-def inventory_check(table_inventory):
+def inventory_check(table_inventory,inventory):
 
     product_names = inventory.list_collection_names()
     last_contracts = {}
@@ -33,7 +31,7 @@ def inventory_check(table_inventory):
         ))
         i += 1
 
-def existing_products(table_inventory):
+def existing_products(table_inventory,inventory):
 
     product_names = inventory.list_collection_names()
     last_contracts = {}
@@ -54,3 +52,9 @@ def existing_products(table_inventory):
             contract.get('remaining_stock','')
         ))
         i += 1
+
+def add_product(inventory):
+    pass
+
+def remove_product(inventory):
+    pass
