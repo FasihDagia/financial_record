@@ -433,8 +433,8 @@ def inventory_window(root):
     for widget in root.winfo_children():
         widget.destroy()
     
-    root.geometry("1200x800")
-    root.minsize(1200,700)
+    root.geometry("1200x600")
+    root.minsize(1200,500)
 
     root.title("Inventory")
 

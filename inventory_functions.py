@@ -9,14 +9,14 @@ def inventory_check(table_inventory,inventory):
     last_contracts = {}
     
     for product in product_names:
-        no_contracts = inventory[product].count_documents({})
-        last_contract = inventory[product].find_one({"s_no":no_contracts})
+        if product != "inventory_details":
+            no_contracts = inventory[product].count_documents({})
+            last_contract = inventory[product].find_one({"s_no":no_contracts})
     
-        if last_contract != None:
-            last_contracts[len(last_contracts)+1] = last_contract
+            if last_contract != None:
+                last_contracts[len(last_contracts)+1] = last_contract
 
     i = 1
-
     for contract in last_contracts.values():
         table_inventory.insert("", tk.END, values=(
             i,
