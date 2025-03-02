@@ -234,7 +234,7 @@ def generate_contract(root,sale_contract,account,contract_type,window,inventory,
     
     if len(items_options) == 0:
         items_options.append("No items in Inventory")
-
+    items_options.sort()
     item_option = tk.StringVar(value="Product Name")
     item_entry = OptionMenu(contract_info, item_option , *items_options)
     item_entry.grid(row=0,column=1,padx=5)
@@ -811,9 +811,20 @@ def generate_invoice(root,invoices_to_save,account,inventory_sale,operator,invoi
     contract_info.pack()
 
     tk.Label(contract_info, text="Item:",font=("Helvetica",10)).grid(row=0,column=0)
+    inven = inventory["inventory_details"].count_documents({})
     items_options = []
-    for x in inventory.list_collection_names():
-        items_options.append(x)
+    if invoice_type == 'Sale':
+        for x in range(1,inven+1):
+            items = inventory["inventory_details"].find_one({"s_no":x})
+            if items.get('remaining_stock','') != 0:
+                item_name = items.get('item','')
+                items_options.append(item_name)     
+    else:
+        for x in range(1,inven+1):
+            items = inventory["inventory_details"].find_one({"s_no":x})
+            item_name = items.get('item','')
+            items_options.append(item_name)
+    items_options.sort()
     item_option = tk.StringVar(value="Product Name")
     item_entry = OptionMenu(contract_info, item_option , *items_options)
     item_entry.grid(row=0,column=1,padx=5)
