@@ -1,7 +1,6 @@
 import tkinter as tk
 from tkinter import *
 from tkinter import ttk, messagebox, simpledialog,filedialog
-import pymongo as pm
 from datetime import datetime
 from reportlab.lib.pagesizes import A4
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
@@ -165,7 +164,7 @@ def generate_contract(root,sale_contract,account,contract_type,window,inventory,
     if contract_type == 'Sale':
         party_name = 'Buyer'
     else:
-        party_name = 'Seller'    
+        party_name = 'Seller'  
 
     tk.Label(root,text=f"{party_name} Information:", font=("Helvetica-Bold",14)).pack(pady=15)
 
@@ -219,9 +218,23 @@ def generate_contract(root,sale_contract,account,contract_type,window,inventory,
     contract_info.pack(pady=10)
 
     tk.Label(contract_info, text="Item:").grid(row=0,column=0)
+    inven = inventory["inventory_details"].count_documents({})
     items_options = []
-    for x in inventory.list_collection_names():
-        items_options.append(x)
+    if contract_type == 'Sale':
+        for x in range(1,inven+1):
+            items = inventory["inventory_details"].find_one({"s_no":x})
+            if items.get('remaining_stock','') != 0:
+                item_name = items.get('item','')
+                items_options.append(item_name)     
+    else:
+        for x in range(1,inven+1):
+            items = inventory["inventory_details"].find_one({"s_no":x})
+            item_name = items.get('item','')
+            items_options.append(item_name) 
+    
+    if len(items_options) == 0:
+        items_options.append("No items in Inventory")
+
     item_option = tk.StringVar(value="Product Name")
     item_entry = OptionMenu(contract_info, item_option , *items_options)
     item_entry.grid(row=0,column=1,padx=5)

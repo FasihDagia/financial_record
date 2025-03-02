@@ -493,7 +493,7 @@ def add_product_window(root):
     btn_frame = tk.Frame(root)
     btn_frame.pack(pady=10)
 
-    tk.Button(btn_frame,text="Add product",width=20, font=("Helvetica",10), command=lambda:add_product(inventory)).grid(row=0,column=2,pady=10)
+    tk.Button(btn_frame,text="Add product",width=20, font=("Helvetica",10), command=lambda:add_product(root,inventory,add_product_window)).grid(row=0,column=2,pady=10)
     tk.Button(btn_frame, text="Back", width=20, command=lambda:inventory_module_window(root)).grid(row=0, column=3,padx=5)
     tk.Button(btn_frame, text="Exit", width=20, command=root.quit).grid(row=0, column=4,padx=5)
 
