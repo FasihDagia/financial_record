@@ -1334,7 +1334,8 @@ def save(transactions,account,inventorys,existing_Contracts,contracts,inventory)
                     item = inventory_update.get('item','')
                     inventory_item = inventory[item]
                     inventory_item.insert_one(inventory_update)
-                                
+                    inventory_detail = inventory["inventory_details"]
+                    inventory_detail.update_one({'item':item},{'$set':{'remaining_stock':inventory_update.get('remaining_stock','')}})
             inventorys.clear()
             transactions.clear()
             messagebox.showinfo("Success","Invoices saved Succesfully!")
