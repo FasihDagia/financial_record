@@ -87,16 +87,26 @@ def add_product(root,inventory,window):
         details = inventory["inventory_details"]
         sno = details.count_documents({})
         date = date_entry.get()
-        item = product_name_entry.get()
+        item = product_name_entry.get().title()
 
         if not date or not item:
             messagebox.showerror("Error","Feilds Caan't be empty!")
             return
         else:
-            product = {'s_no':sno+1,'date':date,'item':item,'remaining_stock':0}
-            details.insert_one(product)
-            messagebox.showinfo("Success","Product Added!")
-            window(root)
+            exist = details.find_one({'item':item})
+            if exist == None:
+                product = {'s_no':sno+1,'date':date,'item':item,'remaining_stock':0}
+                details.insert_one(product)
+                
+                if item in inventory.list_collection_names():
+                    inventory[item].delete_one({'availablity':'removed'})
+                
+                messagebox.showinfo("Success","Product Added!")
+                window(root)
+            else:
+                messagebox.showinfo("Exist","Product Exists!")
+            
+
 
 def remove_product(root,inventory,window):
     for widget in root.winfo_children():
