@@ -36,10 +36,10 @@ def main_window(root):
 
     tk.Button(btn_frame,text="Sale Module", font=("Helvetica",10),width=20, command=lambda:sale_module_window(root)).grid(padx=10,pady=10,row=0,column=0)
     tk.Button(btn_frame,text="Purchase Module", font=("Helvetica",10),width=20, command=lambda:purchase_module_window(root)).grid(padx=10,pady=10,row=0,column=1)
-    tk.Button(btn_frame,text="Payment Module", font=("Helvetica",10),width=20, command=lambda:purchase_module_window(root)).grid(padx=10,pady=10,row=1,column=0)
-    tk.Button(btn_frame,text="Receipt Module", font=("Helvetica",10),width=20, command=lambda:purchase_module_window(root)).grid(padx=10,pady=10,row=1,column=1)
+    tk.Button(btn_frame,text="Payment Module", font=("Helvetica",10),width=20, command=lambda:payment_module_window(root)).grid(padx=10,pady=10,row=1,column=0)
+    tk.Button(btn_frame,text="Receipt Module", font=("Helvetica",10),width=20, command=lambda:receipt_module_window(root)).grid(padx=10,pady=10,row=1,column=1)
     tk.Button(btn_frame,text="Inventory Module", font=("Helvetica",10),width=20, command=lambda:inventory_module_window(root)).grid(padx=10,pady=10,row=2,column=0)
-    tk.Button(btn_frame,text="Client Module", font=("Helvetica",10),width=20, command=lambda:inventory_module_window(root)).grid(padx=10,pady=10,row=2,column=1)
+    tk.Button(btn_frame,text="Client Module", font=("Helvetica",10),width=20, command=lambda:client_module_window(root)).grid(padx=10,pady=10,row=2,column=1)
 
     tk.Button(root,text="Exit", font=("Helvetica",10),width=20, command=root.quit).pack(padx=10,pady=5)
 
@@ -87,6 +87,44 @@ def purchase_module_window(root):
     tk.Button(btn_frame, text="Back",font=("Helvetica",10), width=20, command=lambda:main_window(root)).grid(row=1, column=1,padx=10,pady=10)
     tk.Button(root, text="Exit",font=("Helvetica",10), width=20, command=root.quit).pack(padx=10,pady=5)
 
+def payment_module_window(root):
+
+    for widget in root.winfo_children():
+        widget.destroy()
+
+    root.geometry("450x225")
+    root.minsize(350,200)
+    root.maxsize(500,500)
+
+    root.title("Payment Module")
+
+    tk.Label(root,text="Payment Module",font=("Helvetica",20)).pack(padx=50,pady=5)
+
+    btn_frame = Frame()
+    btn_frame.pack(fill=X, padx=33, pady=10)
+
+    tk.Button(btn_frame, text="Back",font=("Helvetica",10), width=20, command=lambda:main_window(root)).grid(row=1, column=1,padx=10,pady=10)
+    tk.Button(root, text="Exit",font=("Helvetica",10), width=20, command=root.quit).pack(padx=10,pady=5)
+
+def receipt_module_window(root):
+
+    for widget in root.winfo_children():
+        widget.destroy()
+
+    root.geometry("450x225")
+    root.minsize(350,200)
+    root.maxsize(500,500)
+
+    root.title("Receipt Module")
+
+    tk.Label(root,text="Receipt Module",font=("Helvetica",20)).pack(padx=50,pady=5)
+
+    btn_frame = Frame()
+    btn_frame.pack(fill=X, padx=33, pady=10)
+
+    tk.Button(btn_frame, text="Back",font=("Helvetica",10), width=20, command=lambda:main_window(root)).grid(row=1, column=1,padx=10,pady=10)
+    tk.Button(root, text="Exit",font=("Helvetica",10), width=20, command=root.quit).pack(padx=10,pady=5)
+
 def inventory_module_window(root):
     for widget in root.winfo_children():
         widget.destroy()
@@ -105,6 +143,27 @@ def inventory_module_window(root):
     tk.Button(btn_frame, text="Inventory", font=("Helvetica",10),width=20, command=lambda:inventory_window(root)).grid(padx=10, pady=10, row=0,column=0)
     tk.Button(btn_frame,text="Add Product", font=("Helvetica",10),width=20, command=lambda:add_product_window(root)).grid(padx=10,pady=10,row=0,column=1)
     tk.Button(btn_frame,text="Remove Product",font=("Helvetica",10),width=20,command=lambda:remove_product_window(root)).grid(padx=10,pady=10,row=1,column=0)
+    tk.Button(btn_frame, text="Back",font=("Helvetica",10), width=20, command=lambda:main_window(root)).grid(row=1, column=1,padx=10,pady=10)
+    tk.Button(root, text="Exit",font=("Helvetica",10), width=20, command=root.quit).pack(padx=10,pady=5)
+
+def client_module_window(root):
+    for widget in root.winfo_children():
+        widget.destroy()
+
+    root.geometry("450x225")
+    root.minsize(350,200)
+    root.maxsize(450,500)
+
+    root.title("Client Module")
+
+    tk.Label(root,text="Client Module",font=("Helvetica",20)).pack(padx=50,pady=5)
+
+    btn_frame = Frame()
+    btn_frame.pack(fill=X, padx=33, pady=10)
+
+    tk.Button(btn_frame, text="Client", font=("Helvetica",10),width=20, command=lambda:inventory_window(root)).grid(padx=10, pady=10, row=0,column=0)
+    tk.Button(btn_frame,text="Add client", font=("Helvetica",10),width=20, command=lambda:add_product_window(root)).grid(padx=10,pady=10,row=0,column=1)
+    tk.Button(btn_frame,text="Remove client",font=("Helvetica",10),width=20,command=lambda:remove_product_window(root)).grid(padx=10,pady=10,row=1,column=0)
     tk.Button(btn_frame, text="Back",font=("Helvetica",10), width=20, command=lambda:main_window(root)).grid(row=1, column=1,padx=10,pady=10)
     tk.Button(root, text="Exit",font=("Helvetica",10), width=20, command=root.quit).pack(padx=10,pady=5)
 

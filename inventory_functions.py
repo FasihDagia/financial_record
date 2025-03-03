@@ -106,8 +106,6 @@ def add_product(root,inventory,window):
             else:
                 messagebox.showinfo("Exist","Product Exists!")
             
-
-
 def remove_product(root,inventory,window):
     for widget in root.winfo_children():
         widget.destroy()
