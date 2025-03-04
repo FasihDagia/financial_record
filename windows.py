@@ -5,6 +5,7 @@ import pymongo as pm
 
 from functions import generate_contract, print_contracts, generate_invoice ,save, load_transactions ,table, back, return_invoice,print_invoice,table_contract,load_contracts,save_contract
 from inventory_functions import inventory_check,existing_products,add_product,remove_product
+from client_function import client_check
 #data base set up
 client = pm.MongoClient("mongodb://localhost:27017/")
 db = client["financial_records"]
@@ -161,7 +162,7 @@ def client_module_window(root):
     btn_frame = Frame()
     btn_frame.pack(fill=X, padx=33, pady=10)
 
-    tk.Button(btn_frame, text="Client", font=("Helvetica",10),width=20, command=lambda:inventory_window(root)).grid(padx=10, pady=10, row=0,column=0)
+    tk.Button(btn_frame, text="Client", font=("Helvetica",10),width=20, command=lambda:client_window(root)).grid(padx=10, pady=10, row=0,column=0)
     tk.Button(btn_frame,text="Add client", font=("Helvetica",10),width=20, command=lambda:add_product_window(root)).grid(padx=10,pady=10,row=0,column=1)
     tk.Button(btn_frame,text="Remove client",font=("Helvetica",10),width=20,command=lambda:remove_product_window(root)).grid(padx=10,pady=10,row=1,column=0)
     tk.Button(btn_frame, text="Back",font=("Helvetica",10), width=20, command=lambda:main_window(root)).grid(row=1, column=1,padx=10,pady=10)
@@ -606,3 +607,43 @@ def remove_product_window(root):
     table_inventory.column("Remaining Stock", anchor="center", width=100)
 
     existing_products(table_inventory,inventory)
+
+def client_window(root):
+    for widgeet in root.winfo_children():
+        widgeet.destroy()
+
+    root.geometry("1050x600")
+    root.minsize(1050,600)
+
+    root.title("Clients")
+
+    tk.Label(root,text="Clients",font=("Helvetica-Bold",25)).pack(pady=30)
+
+    style = ttk.Style()
+    style.configure("Treeview.Heading", font=("Helvetica", 10, "bold"))  
+    style.configure("Treeview", font=("Helvetica", 8))  
+
+    btn_frame = tk.Frame(root)
+    btn_frame.pack(pady=10)
+    tk.Button(btn_frame, text="Back", width=20, command=lambda:client_module_window(root)).grid(row=0, column=3,padx=5)
+    tk.Button(btn_frame, text="Exit", width=20, command=root.quit).grid(row=0, column=4,padx=5)
+
+    table_client = ttk.Treeview(root, columns=("S.NO","Name","Address","Phone NO","Email","Last Contract","Last Contract Progress"), show="headings")
+    table_client.pack(fill=tk.BOTH, pady=20)
+
+    table_client.heading("S.NO", text="S.NO")
+    table_client.column("S.NO", anchor="center", width=10)
+    table_client.heading("Name", text="Name")
+    table_client.column("Name", anchor="center", width=100)
+    table_client.heading("Address" ,text="Address")
+    table_client.column("Address", anchor="center", width=150)
+    table_client.heading("Phone NO", text="Phone NO")
+    table_client.column("Phone NO", anchor="center", width=50)
+    table_client.heading("Email", text="Email")
+    table_client.column("Email", anchor="center", width=50)
+    table_client.heading("Last Contract", text="Last Contract")
+    table_client.column("Last Contract", anchor="center", width=50)
+    table_client.heading("Last Contract Progress", text="Last Contract Progress")
+    table_client.column("Last Contract Progress", anchor="center", width=90)
+
+    client_check(table_client,customers)
