@@ -111,6 +111,8 @@ def add_client(root,window,customers):
 
                 if name in customers.list_collection_names():
                     customers[name].delete_one({'business_releation':'ended'})
+                
+                customers[name].insert_one({'account_receivable':name,'party_email':email,'party_phone':phone,'party_address':address})
 
                 messagebox.showinfo("Added","Client Added!")
                 window(root)
