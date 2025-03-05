@@ -5,7 +5,7 @@ import pymongo as pm
 
 from functions import generate_contract, print_contracts, generate_invoice ,save, load_transactions ,table, back, return_invoice,print_invoice,table_contract,load_contracts,save_contract
 from inventory_functions import inventory_check,existing_products,add_product,remove_product
-from client_function import client_check
+from client_function import client_check,existing_clients,add_client,remove_client
 
 #data base set up
 client = pm.MongoClient("mongodb://localhost:27017/")
@@ -164,8 +164,8 @@ def client_module_window(root):
     btn_frame.pack(fill=X, padx=33, pady=10)
 
     tk.Button(btn_frame, text="Client", font=("Helvetica",10),width=20, command=lambda:client_window(root)).grid(padx=10, pady=10, row=0,column=0)
-    tk.Button(btn_frame,text="Add client", font=("Helvetica",10),width=20, command=lambda:add_client_window(root)).grid(padx=10,pady=10,row=0,column=1)
-    tk.Button(btn_frame,text="Remove client",font=("Helvetica",10),width=20,command=lambda:remove_client_window(root)).grid(padx=10,pady=10,row=1,column=0)
+    tk.Button(btn_frame,text="Add Client", font=("Helvetica",10),width=20, command=lambda:add_client_window(root)).grid(padx=10,pady=10,row=0,column=1)
+    tk.Button(btn_frame,text="Remove Client",font=("Helvetica",10),width=20,command=lambda:remove_client_window(root)).grid(padx=10,pady=10,row=1,column=0)
     tk.Button(btn_frame, text="Back",font=("Helvetica",10), width=20, command=lambda:main_window(root)).grid(row=1, column=1,padx=10,pady=10)
     tk.Button(root, text="Exit",font=("Helvetica",10), width=20, command=root.quit).pack(padx=10,pady=5)
 
@@ -655,8 +655,8 @@ def add_client_window(root):
     for widgeet in root.winfo_children():
         widgeet.destroy()
 
-    root.geometry("1050x600")
-    root.minsize(1050,600)
+    root.geometry("900x600")
+    root.minsize(900,600)
 
     root.title("Add Clients")
 
@@ -669,7 +669,7 @@ def add_client_window(root):
     btn_frame = tk.Frame(root)
     btn_frame.pack(pady=10)
 
-    tk.Button(btn_frame, text="Add Client", width=20, command=lambda:client_module_window(root)).grid(row=0, column=2,padx=5)
+    tk.Button(btn_frame, text="Add Client", width=20, command=lambda:add_client(root)).grid(row=0, column=2,padx=5)
     tk.Button(btn_frame, text="Back", width=20, command=lambda:client_module_window(root)).grid(row=0, column=3,padx=5)
     tk.Button(btn_frame, text="Exit", width=20, command=root.quit).grid(row=0, column=4,padx=5)
 
@@ -689,12 +689,14 @@ def add_client_window(root):
     table_client.heading("Email", text="Email")
     table_client.column("Email", anchor="center", width=50)
 
+    existing_clients(table_client,customers)
+
 def remove_client_window(root):
     
     for widgeet in root.winfo_children():
         widgeet.destroy()
 
-    root.geometry("1050x600")
+    root.geometry("900x600")
     root.minsize(1050,600)
 
     root.title("Remove Clients")
@@ -708,7 +710,7 @@ def remove_client_window(root):
     btn_frame = tk.Frame(root)
     btn_frame.pack(pady=10)
 
-    tk.Button(btn_frame, text="Remove Client", width=20, command=lambda:client_module_window(root)).grid(row=0, column=2,padx=5)
+    tk.Button(btn_frame, text="Remove Client", width=20, command=lambda:remove_client(root)).grid(row=0, column=2,padx=5)
     tk.Button(btn_frame, text="Back", width=20, command=lambda:client_module_window(root)).grid(row=0, column=3,padx=5)
     tk.Button(btn_frame, text="Exit", width=20, command=root.quit).grid(row=0, column=4,padx=5)
 
@@ -727,3 +729,5 @@ def remove_client_window(root):
     table_client.column("Phone NO", anchor="center", width=50)
     table_client.heading("Email", text="Email")
     table_client.column("Email", anchor="center", width=50)
+
+    existing_clients(table_client,customers)

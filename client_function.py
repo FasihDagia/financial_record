@@ -32,3 +32,30 @@ def client_check(table_client,customers):
         
         i += 1
 
+def existing_clients(table_client, customers):
+    
+    clients_info = customers["customer_info"]
+    clients = {}
+    
+    client_info = clients_info.find()
+
+    for client in client_info:
+        if client != None:
+            clients[len(clients)+1] = client
+
+    i = 1
+    for contract in clients.values():
+        table_client.insert("", tk.END, values=(
+            i,
+            contract.get('account_receivable', ''),
+            contract.get('party_address', ''),
+            contract.get('party_phone', ''),
+            contract.get('party_email', ''),
+        ))
+        i += 1
+
+def add_client(root):
+    pass
+
+def remove_client(root):
+    pass
