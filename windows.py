@@ -669,7 +669,7 @@ def add_client_window(root):
     btn_frame = tk.Frame(root)
     btn_frame.pack(pady=10)
 
-    tk.Button(btn_frame, text="Add Client", width=20, command=lambda:add_client(root)).grid(row=0, column=2,padx=5)
+    tk.Button(btn_frame, text="Add Client", width=20, command=lambda:add_client(root,add_client_window,customers)).grid(row=0, column=2,padx=5)
     tk.Button(btn_frame, text="Back", width=20, command=lambda:client_module_window(root)).grid(row=0, column=3,padx=5)
     tk.Button(btn_frame, text="Exit", width=20, command=root.quit).grid(row=0, column=4,padx=5)
 

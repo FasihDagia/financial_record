@@ -172,13 +172,13 @@ def generate_contract(root,sale_contract,account,contract_type,window,inventory,
         party = customers["customer_info"]
 
         party_name = party_name_option.get()
-        party_details = party.find_one({"name":party_name})
+        party_details = party.find_one({"account_receivable":party_name})
 
-        email = party_details.get("email",'')
+        email = party_details.get("party_email",'')
         email_default.set(email)
-        phone = party_details.get("phone",'')
+        phone = party_details.get("party_phone",'')
         phone_default.set(phone)
-        address = party_details.get("address",'')
+        address = party_details.get("party_address",'')
         address_default.set(address)
 
     
@@ -187,9 +187,8 @@ def generate_contract(root,sale_contract,account,contract_type,window,inventory,
 
     tk.Label(party_info,text=f"{party_name}:",font=("Helvetica",10)).grid(row=1,column=0,pady=5)
     party_name_options = []
-    for i in customers.list_collection_names():
-        if i != 'customer_info':
-            party_name_options.append(i)  
+    for i in customers['customer_info'].find():
+            party_name_options.append(i.get('account_receivable',''))  
     party_name_options.sort()      
     party_name_option = tk.StringVar(value="Name")
     party_name_entry = OptionMenu(party_info, party_name_option , *party_name_options)
@@ -782,9 +781,8 @@ def generate_invoice(root,invoices_to_save,account,inventory_sale,operator,invoi
 
     tk.Label(party_info,text=f"{party_name}:",font=("Helvetica",10)).grid(row=1,column=0,pady=5)
     party_name_options = []
-    for i in customers.list_collection_names():
-        if i != 'customer_info':
-            party_name_options.append(i)  
+    for i in customers['customer_info'].find():
+            party_name_options.append(i.get('account_receivable',''))  
     party_name_options.sort()      
     party_name_option = tk.StringVar(value="Name")
     party_name_entry = OptionMenu(party_info, party_name_option , *party_name_options)
