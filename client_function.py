@@ -112,12 +112,102 @@ def add_client(root,window,customers):
                 if name in customers.list_collection_names():
                     customers[name].delete_one({'business_releation':'ended'})
 
-                messagebox.showinfo("Success","Product Added!")
+                messagebox.showinfo("Added","Client Added!")
                 window(root)
 
             else:
                 messagebox.showinfo("Exist","Client already exists!")
 
+def remove_client(root,window,customers):
+    
+    for widget in root.winfo_children():
+        widget.destroy()
 
-def remove_client(root):
-    pass
+    root.geometry("250x325")
+    root.minsize(250,340)
+
+    root.title("Add Client")
+
+    tk.Label(root, text="Add Client", font=("Helvetica-bold", 16)).pack(pady=10)
+
+    input_frame = tk.Frame(root)
+    input_frame.pack()
+
+    def get_party_info(*args):
+        party = customers["customer_info"]
+
+        party_name = party_name_option.get()
+        party_details = party.find_one({"account_receivable":party_name})
+
+        email = party_details.get("party_email",'')
+        email_default.set(email)
+        phone = party_details.get("party_phone",'')
+        phone_default.set(phone)
+        address = party_details.get("party_address",'')
+        address_default.set(address)
+
+    tk.Label(input_frame,text="Name:",font=("Helvetica",10)).grid(row=0,column=0,pady=10)
+    party_name_options = []
+    for i in customers['customer_info'].find():
+            party_name_options.append(i.get('account_receivable',''))  
+    party_name_options.sort()      
+    party_name_option = tk.StringVar(value="Name")
+    party_name_entry = OptionMenu(input_frame, party_name_option , *party_name_options)
+    party_name_entry.grid(row=0,column=1,pady=5,padx=5)
+
+    tk.Label(input_frame,text="Email:",font=("Helvetica",10)).grid(row=1,column=0,pady=10)
+    email_default = tk.StringVar(None)
+    email_entry =tk.Entry(input_frame,width=20,textvariable=email_default)
+    email_entry.grid(row=1,column=1,pady=10)
+
+    tk.Label(input_frame,text="Phone:",font=("Helvetica",10)).grid(row=2,column=0,pady=10)
+    phone_default = tk.StringVar(None)
+    phone_entry =tk.Entry(input_frame,width=20,textvariable=phone_default)
+    phone_entry.grid(row=2,column=1,pady=10)
+
+    tk.Label(input_frame,text="Address:",font=("Helvetica",10)).grid(row=3,column=0,pady=10)
+    address_default = tk.StringVar(None)
+    address_entry = tk.Entry(input_frame,width=20,textvariable=address_default)
+    address_entry.grid(row=3,column=1,pady=10)
+
+    party_name_option.trace_add("write", get_party_info)
+    
+    def remove_default_text(event):
+    
+        if reason_entry.get() == "Optional":
+            reason_entry.delete(0, tk.END)  
+            reason_entry.config(fg="black") 
+    
+    tk.Label(input_frame,text="Reason:",font=("Helvetica",10)).grid(row=4,column=0,pady=10)
+    reason_default = tk.StringVar(value="Optional")
+    reason_entry = tk.Entry(input_frame,width=20,textvariable=reason_default,fg='grey')
+    reason_entry.grid(row=4,column=1,pady=10)
+
+    reason_entry.bind("<KeyPress>", remove_default_text)
+    
+    tk.Button(root,text="Remove",width=20,font=("Helvetica",9),command=lambda:remove(window,customers)).pack(pady=10)
+
+    btn = tk.Frame()
+    btn.pack()
+    tk.Button(btn,text="Back",width=10,font=("Helvetica",9),command=lambda:window(root)).grid(row=0,column=0)
+    tk.Button(btn,text="Exit",width=10,font=("Helvetica",9),command=root.quit).grid(row=0,column=1,padx=5)
+
+    def remove(window,customers):
+        
+        clients_info = customers["customer_info"]
+        name = party_name_option.get()
+        email = email_default.get()
+        phone = phone_default.get()
+        address = address_default.get()
+        reason = reason_entry.get()
+
+        if not name or not email or not phone or not address:
+            messagebox.showerror("Feilds","Feilds Can't be Empty!")
+            return
+        else:
+            customers[name].insert_one({'account_receivable':name,'party_email':email,'party_phone':phone,'party_address':address,'business_releation':'ended','reason':reason})
+            clients_info.delete_one({'account_receivable':name})
+
+            messagebox.showinfo("Removed","CLient Removed!")
+            window(root)
+
