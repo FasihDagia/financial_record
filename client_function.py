@@ -4,20 +4,21 @@ from tkinter import messagebox
 
 def client_check(table_client,customers):
 
-    clients_names = customers.list_collection_names()
-    clients_names.sort()
+    clients_names = customers["customer_info"].find()
+    client_name = []
+    for i in customers['customer_info'].find():
+            client_name.append(i.get('account_receivable','')) 
+
     clients = {}
     
-    for client in clients_names:
-        if client != "customer_info":
-            no_contracts = customers[client].count_documents({})
-            if no_contracts == 0:
-                client_info = customers['customer_info'].find_one({'account_receivable':client})
-                clients[len(clients)+1] = client_info
-            else:
-                last_contract = customers[client].find_one({"s_no":no_contracts})
-                clients[len(clients)+1] = last_contract
-
+    for client in client_name:
+        no_contracts = customers[client].count_documents({})
+        if no_contracts == 1:
+            client_info = customers['customer_info'].find_one({'account_receivable':client})
+            clients[len(clients)+1] = client_info
+        else:
+            last_contract = customers[client].find_one({"s_no":no_contracts-1})
+            clients[len(clients)+1] = last_contract
     i = 1
     for contract in clients.values():
         table_client.insert("", tk.END, values=(
