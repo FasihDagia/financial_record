@@ -126,7 +126,7 @@ def generate_contract(root,sale_contract,account,contract_type,window,inventory,
     for widget in root.winfo_children():
         widget.destroy()
     
-    root.geometry("500x625")
+    root.geometry("525x625")
     root.minsize(500,625)
     root.maxsize(600,700)
 
