@@ -8,7 +8,6 @@ from reportlab.lib import colors
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.enums import TA_LEFT
 
-
 def back(root,window,invoices,inventorys,existing_contracts):
 
     if len(inventorys) == 0 and len(invoices) == 0 :
@@ -1155,83 +1154,80 @@ def generate_invoice_pdf(date, contract_type, voucher_no, invoice_no, account_re
     # Build PDF
     doc.build(elements)
     
-def print_invoice(invoices,invoice_type):
+def print_invoice(invoices,invoice_type,root):
     
     if len(invoices) == 0:
         messagebox.showinfo("Error","No invoices to print")
     else:
-        root = tk.Tk()
 
-        root.geometry("300x100")
-        root.minsize(300,100)
+        popup =tk.Toplevel(root)
 
-        root.title("Print Invoice")
+        popup.geometry("300x100")
+        popup.minsize(300,100)
 
-        frame = tk.Frame(root)
+        popup.title("Print Invoice")
+
+        frame = tk.Frame(popup)
         frame.pack()
-        tk.Label(root,text=f"Invoice No:",font=("Helvetica",10)).pack(pady=5)
+        tk.Label(frame,text=f"Invoice No:",font=("Helvetica",10)).grid(row=0,column=0,pady=5)
         invoice_options = []
         for invoice in invoices.values():
                 invoice_options.append(invoice.get('invoice_no',''))  
         invoice_options.sort()    
-        print(invoice_options)
-        invoice_opt = tk.StringVar()
-        invoice_opt.set("Invoice No")
-        invoice_entry = OptionMenu(root, invoice_opt, *invoice_options)
-        invoice_entry.pack(pady=5,padx=5)
+        invoice_opt = tk.StringVar(value="Invoice No")
+        invoice_entry = tk.OptionMenu(frame, invoice_opt, *invoice_options)
+        invoice_entry.grid(row=0,column=1,pady=5)
 
-        root.mainloop()
+        btn = tk.Frame(popup)
+        btn.pack()
+        tk.Button(btn, text="Print", font=("Helvetica",8), width=10 ,command=lambda:prin()).grid(column=0,row=0,padx=5,pady=5)
+        tk.Button(btn, text="Back", font=("Helvetica",8), width=10,command=popup.destroy).grid(column=1,row=0,padx=5,pady=5)
+        
+        def prin():
+            invoice_no = invoice_opt.get()
+            for transaction in invoices.values():
+                if transaction['invoice_no'] == invoice_no :
+                    date = transaction['date'],
+                    invoice_number=transaction.get('invoice_no',''),
+                    voucher_number = transaction.get('voucher_no',''),
+                    account_receivable = transaction.get('account_receivable', ''),
+                    item = transaction.get('item', ''),
+                    quant = str(transaction.get('quantity', '')),
+                    unit = transaction.get('unit',''),
+                    des = transaction.get('description', ''),
+                    rate=str(transaction.get('rate', '')),
+                    amount = str(transaction.get('amount', '')),
+                    gst = str(transaction.get('gst', '')),
+                    gst_amount = str(transaction.get('gst_amount','')),
+                    total_amount = str(transaction.get('total_amount', ''))
 
-        # current_date = datetime.now()
-        # year = current_date.year
-        # if invoice_type == "SALE":
-        #     invoice_no = f"SL{invoice_no.zfill(5)}/{year}"
-        # else:
-        #     invoice_no = f"PU{invoice_no.zfill(5)}/{year}"
-
-
-        # for transaction in invoices.values():
-        #     if transaction['invoice_no'] == invoice_no or transaction['voucher_no'] == invoice_no:
-        #         date = transaction['date'],
-        #         invoice_number=transaction.get('invoice_no',''),
-        #         voucher_number = transaction.get('voucher_no',''),
-        #         account_receivable = transaction.get('account_receivable', ''),
-        #         item = transaction.get('item', ''),
-        #         quant = str(transaction.get('quantity', '')),
-        #         unit = transaction.get('unit',''),
-        #         des = transaction.get('description', ''),
-        #         rate=str(transaction.get('rate', '')),
-        #         amount = str(transaction.get('amount', '')),
-        #         gst = str(transaction.get('gst', '')),
-        #         gst_amount = str(transaction.get('gst_amount','')),
-        #         total_amount = str(transaction.get('total_amount', ''))
-
-        #         date = date[0]
-        #         invoice_number = invoice_number[0]
-        #         voucher_number = voucher_number[0]
-        #         account_receivable = account_receivable[0]
-        #         item = item[0]
-        #         quant = quant[0]
-        #         unit = unit[0]
-        #         des = des[0]
-        #         rate = rate[0]
-        #         amount = amount[0]
-        #         gst = gst[0]
-        #         gst_amount = gst_amount[0]
+                    date = date[0]
+                    invoice_number = invoice_number[0]
+                    voucher_number = voucher_number[0]
+                    account_receivable = account_receivable[0]
+                    item = item[0]
+                    quant = quant[0]
+                    unit = unit[0]
+                    des = des[0]
+                    rate = rate[0]
+                    amount = amount[0]
+                    gst = gst[0]
+                    gst_amount = gst_amount[0]
         
         
-        # file_path = filedialog.asksaveasfilename(
-        #     defaultextension=".pdf",
-        #     filetypes=[("PDF files", "*.pdf"), ("All files", "*.*")],
-        #     title="Save Invoice As"
-        # )
+            file_path = filedialog.asksaveasfilename(
+                defaultextension=".pdf",
+                filetypes=[("PDF files", "*.pdf"), ("All files", "*.*")],
+                title="Save Invoice As"
+            )
 
-        # if not file_path:
-        #     messagebox.showwarning("Warning", "No file path selected. Invoice not saved.")
-        #     return
-            
-        # generate_invoice_pdf(date,invoice_type,voucher_number,invoice_number,account_receivable,des,item,quant,unit,rate,amount,gst,gst_amount,total_amount,file_path)
-        # messagebox.showinfo("Success", f"Invoice saved successfully at:\n{file_path}")
+            if not file_path:
+                messagebox.showwarning("Warning", "No file path selected. Invoice not saved.")
+                return
+                
+            generate_invoice_pdf(date,invoice_type,voucher_number,invoice_number,account_receivable,des,item,quant,unit,rate,amount,gst,gst_amount,total_amount,file_path)
+            messagebox.showinfo("Success", f"Invoice saved successfully at:\n{file_path}")
+            popup.destroy()
 
 def load_transactions(table_inventory,table_account_receivble,new_transactions,inventory,invoice_type):
     #removing existing data from cheque table
