@@ -429,7 +429,7 @@ def generate_contract(root,sale_contract,account,contract_type,window,inventory,
     tk.Button(button_frame, text="Back", width=10, command=lambda:window(root)).grid(row=1, column=0,padx=5)
     tk.Button(button_frame, text="Exit", width=10, command=root.quit).grid(row=1, column=1,padx=5)
 
-def create_contract_pdf(contract_no,date,name,party_address,item, quantity, rate, gst_amount,ft_amount,total_amount,tolerence,payment_terms,shipment,contract_type,filename):
+def create_contract_pdf(contract_no,date,name,party_address,item, quantity, rate,gst_amount,ft_amount,total_amount,tolerence,payment_terms,shipment,contract_type,filename):
 
     # Create a PDF document
     pdf = SimpleDocTemplate(filename, pagesize=A4)
@@ -516,13 +516,13 @@ def create_contract_pdf(contract_no,date,name,party_address,item, quantity, rate
     content.append(Spacer(1, 30))
     
     bed_sets_data = [
-        ["ITEM", "QUANTITY", "RATE","GST Amount", "Further Tax Amount"],
-        [item, quantity, rate, gst_amount,ft_amount ],
-        [".","","","",""],
-        ["TOTAL INVOICE VALUE ","","","",total_amount]       
+        ["ITEM", "QUANTITY", "RATE","GST Amount", "Further Tax Amount","Total Amount"],
+        [item, quantity, rate, gst_amount, ft_amount,total_amount ],
+        [".","","","","",""],
+        ["TOTAL INVOICE VALUE ","","","","",total_amount]       
     ]
     
-    bed_sets_table = Table(bed_sets_data, colWidths=[120, 70, 60, 90, 110],rowHeights=[30,20,20,25])
+    bed_sets_table = Table(bed_sets_data, colWidths=[120,70,60,90,110,70],rowHeights=[30,20,20,25])
     bed_sets_table.setStyle(TableStyle([
         ('FONT', (0, 0), (-1, 0), 'Helvetica-Bold', 10), 
         ('FONT', (0, 1), (-1, -1), 'Helvetica', 8),
@@ -597,41 +597,61 @@ def print_contracts(root,contracts,contract_type):
     if len(contracts) == 0:
         messagebox.showinfo("Error","No contracts to print")
     else:
-        contract_no = simpledialog.askstring("Input", "Enter Contract NO:", parent=root)
-        current_date = datetime.now()
-        year = current_date.year
-        if contract_type == "SALE":
-            contract_no = f"SL{contract_no.zfill(5)}/{year}"
-        else:
-            contract_no = f"PU{contract_no.zfill(5)}/{year}"
+        popup_print_contract = tk.Toplevel(root)
 
+        popup_print_contract.geometry("300x100")
+        popup_print_contract.minsize(300,100)
+
+        popup_print_contract.title("Print Contract")
+
+        frame = tk.Frame(popup_print_contract)
+        frame.pack()
+        tk.Label(frame,text=f"Contract No:",font=("Helvetica",10)).grid(row=0,column=0,pady=5)
+        contract_options = []
         for contract in contracts.values():
-            if contract.get("contract_no","") == contract_no:
-                date = contract.get("date","")
-                name = contract.get("account_receivable","")
-                address = contract.get("party_address","")
-                item = contract.get("item","")
-                quantity = contract.get("quantity","")
-                rate = contract.get("rate","")
-                gst_amount = contract.get("gst_amount","")
-                ft_amount = contract.get("further_tax_amount","")
-                total_amount = contract.get("total_amount","")
-                tolerence = contract.get("tolerence","")
-                payment_terms = contract.get("terms_payment","")
-                shipment = contract.get("shipment","")
-                break
+                contract_options.append(contract.get('contract_no',''))  
+        contract_options.sort()    
+        contract_opt = tk.StringVar(value="Contract No")
+        contract_entry = tk.OptionMenu(frame, contract_opt, *contract_options)
+        contract_entry.grid(row=0,column=1,pady=5)
 
-        file_path = filedialog.asksaveasfilename(
-            defaultextension=".pdf",
-            filetypes=[("PDF files", "*.pdf"), ("All files", "*.*")],
-            title="Save Invoice As"
-        )
+        btn = tk.Frame(popup_print_contract)
+        btn.pack()
+        tk.Button(btn, text="Print", font=("Helvetica",8), width=10 ,command=lambda:prin()).grid(column=0,row=0,padx=5,pady=5)
+        tk.Button(btn, text="Back", font=("Helvetica",8), width=10,command=popup_print_contract.destroy).grid(column=1,row=0,padx=5,pady=5)
 
-        if not file_path:
-            messagebox.showwarning("Warning", "No file path selected. Contract not saved.")
-            return
-        create_contract_pdf(contract_no,date,name,address,item, quantity, rate, gst_amount,ft_amount,total_amount,tolerence,payment_terms,shipment,contract_type,file_path)
-        messagebox.showinfo("Success", f"Contract saved successfully at:\n{file_path}")
+        def prin():
+
+            contract_no = contract_opt.get()
+
+            for contract in contracts.values():
+                if contract.get("contract_no","") == contract_no:
+                    date = contract.get("date","")
+                    name = contract.get("account_receivable","")
+                    address = contract.get("party_address","")
+                    item = contract.get("item","")
+                    quantity = contract.get("quantity","")
+                    rate = contract.get("rate","")
+                    gst_amount = contract.get("gst_amount","")
+                    ft_amount = contract.get("further_tax_amount","")
+                    total_amount = contract.get("total_amount","")
+                    tolerence = contract.get("tolerence","")
+                    payment_terms = contract.get("terms_payment","")
+                    shipment = contract.get("shipment","")
+                    break
+
+            file_path = filedialog.asksaveasfilename(
+                defaultextension=".pdf",
+                filetypes=[("PDF files", "*.pdf"), ("All files", "*.*")],
+                title="Save Invoice As"
+            )
+
+            if not file_path:
+                messagebox.showwarning("Warning", "No file path selected. Contract not saved.")
+                return
+            create_contract_pdf(contract_no,date,name,address,item, quantity, rate,gst_amount,ft_amount,total_amount,tolerence,payment_terms,shipment,contract_type,file_path)
+            messagebox.showinfo("Success", f"Contract saved successfully at:\n{file_path}")
+            popup_print_contract.destroy()
 
 def generate_invoice(root,invoices_to_save,account,inventory_sale,operator,invoice_type,window,contracts,inventory,customers):
 
@@ -1160,14 +1180,14 @@ def print_invoice(invoices,invoice_type,root):
         messagebox.showinfo("Error","No invoices to print")
     else:
 
-        popup =tk.Toplevel(root)
+        popup_print_invoice = tk.Toplevel(root)
 
-        popup.geometry("300x100")
-        popup.minsize(300,100)
+        popup_print_invoice.geometry("300x100")
+        popup_print_invoice.minsize(300,100)
 
-        popup.title("Print Invoice")
+        popup_print_invoice.title("Print Invoice")
 
-        frame = tk.Frame(popup)
+        frame = tk.Frame(popup_print_invoice )
         frame.pack()
         tk.Label(frame,text=f"Invoice No:",font=("Helvetica",10)).grid(row=0,column=0,pady=5)
         invoice_options = []
@@ -1178,10 +1198,10 @@ def print_invoice(invoices,invoice_type,root):
         invoice_entry = tk.OptionMenu(frame, invoice_opt, *invoice_options)
         invoice_entry.grid(row=0,column=1,pady=5)
 
-        btn = tk.Frame(popup)
+        btn = tk.Frame(popup_print_invoice )
         btn.pack()
         tk.Button(btn, text="Print", font=("Helvetica",8), width=10 ,command=lambda:prin()).grid(column=0,row=0,padx=5,pady=5)
-        tk.Button(btn, text="Back", font=("Helvetica",8), width=10,command=popup.destroy).grid(column=1,row=0,padx=5,pady=5)
+        tk.Button(btn, text="Back", font=("Helvetica",8), width=10,command=popup_print_invoice.destroy).grid(column=1,row=0,padx=5,pady=5)
         
         def prin():
             invoice_no = invoice_opt.get()
@@ -1227,7 +1247,7 @@ def print_invoice(invoices,invoice_type,root):
                 
             generate_invoice_pdf(date,invoice_type,voucher_number,invoice_number,account_receivable,des,item,quant,unit,rate,amount,gst,gst_amount,total_amount,file_path)
             messagebox.showinfo("Success", f"Invoice saved successfully at:\n{file_path}")
-            popup.destroy()
+            popup_print_invoice.destroy()
 
 def load_transactions(table_inventory,table_account_receivble,new_transactions,inventory,invoice_type):
     #removing existing data from cheque table
