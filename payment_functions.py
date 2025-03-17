@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import *
 from tkinter import ttk, messagebox, simpledialog,filedialog
 from datetime import datetime
+from num2words import num2words
 
 def go_back(root,window,payments):
     if len(payments) == 0:
@@ -12,7 +13,7 @@ def go_back(root,window,payments):
             payments.clear()
             window(root)
 
-def generate_cash_payments(root):
+def generate_cash_payments(root,window,payments_temp,payment):
     
     for widget in root.winfo_children():
         widget.destroy()
@@ -51,7 +52,7 @@ def generate_cash_payments(root):
     amount_entry = tk.Entry(entry_frame, width=20)
     amount_entry.grid(row=2,column=1,padx=5)
 
-    tk.Button(root,text="Generate" ,font=("helvetica",10),width=20).pack(pady=10)    
+    tk.Button(root,text="Generate" ,font=("helvetica",10),width=20,command=lambda:generate(root,window,payments_temp,payment)).pack(pady=10)    
     
     btn_frame = tk.Frame(root) 
     btn_frame.pack()
@@ -59,8 +60,44 @@ def generate_cash_payments(root):
     tk.Button(btn_frame,text="Back" ,font=("helvetica",10),width=10).grid(row=0,column=0,padx=5)
     tk.Button(btn_frame,text="Exit" ,font=("helvetica",10),width=10,command=root.quit).grid(row=0,column=1,padx=5)
 
-    
+    def generate(root,window,payments_temp,payment):
+        
+        date = date_entry.get()
+        voucher_no = voucher_no_entry.get()
+        exp_type = exp_type_option.get()
+        description = description_entry.get()
+        amount = int(amount_entry.get())
 
-root = tk.Tk()
-generate_cash_payments(root)
-root.mainloop()
+        no_entries = payment.count_documents({})
+        if len(payments_temp)==0:
+            if no_entries == 0:
+                balance = 0 
+            else:
+                last_entry = payment.find_one(sort=[("_id", -1)])
+                balance = last_entry.get("balance","")
+        else: 
+            balance = payments_temp[len(payments_temp)]["balance"]
+
+        if len(payments_temp) == 0:
+            sno = no_entries + 1
+        else:
+            sno = no_entries + len(payments_temp) + 1
+
+        amountiw = num2words(amount, to='currency', lang='en_IN')
+        balance -= amount 
+
+        payments_temp[len(payments_temp)+1] = {
+
+            "s_no":sno,
+            "date":date,
+            "voucher_no":voucher_no,
+            "exp_type":exp_type,
+            "description":description,
+            "amount":amount,
+            "amountiw":amountiw,
+            "balance":balance
+        }
+
+        print(payments_temp)
+        messagebox.showinfo("Success","Cash Payment Generated Succesfully!")
+        window(root)

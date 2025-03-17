@@ -13,6 +13,7 @@ client = pm.MongoClient("mongodb://localhost:27017/")
 db = client["financial_records"]
 inventory = client['inventory']
 customers = client['Customer']
+payment = client['payment']
 
 sale_contracts = {}
 purchase_contracts = {}
@@ -20,8 +21,8 @@ sale_transaction = {}
 purchase_transaction = {}
 inventory_sale = {}
 existing_contracts = {}
-payments = {}
-receipt ={}
+payments_temp = {}
+receipt_temp ={}
 
 def main_window(root):
 
@@ -758,11 +759,13 @@ def bank_payment_window(root):
     btn_frame = tk.Frame()
     btn_frame.pack()
 
-    tk.Button(btn_frame,text="Back", font=("Helvetica",10),width=10,command=lambda:go_back(root,payment_module_window,payments)).grid(padx=5,row=0)
+    tk.Button(btn_frame,text="Back", font=("Helvetica",10),width=10,command=lambda:go_back(root,payment_module_window,payments_temp)).grid(padx=5,row=0)
     tk.Button(btn_frame,text="Exit", font=("Helvetica",10),width=10,command=root.quit).grid(padx=5,row=0,column=1)
 
 def cash_payment_window(root):
     
+    account = payment['cash_payments']
+
     for widget in root.winfo_children():
         widget.destroy()
 
@@ -776,9 +779,9 @@ def cash_payment_window(root):
     btn_frame = tk.Frame()
     btn_frame.pack()
 
-    tk.Button(btn_frame,text="Generate Payment", font=("Helvetica",10),width=15, command=lambda:generate_cash_payments(root,payments)).grid(padx=5,row=0,column=0)
+    tk.Button(btn_frame,text="Generate Payment", font=("Helvetica",10),width=15, command=lambda:generate_cash_payments(root,cash_payment_window,payments_temp,account)).grid(padx=5,row=0,column=0)
     tk.Button(btn_frame,text="Save", font=("Helvetica",10),width=15).grid(padx=5,row=0,column=1)
-    tk.Button(btn_frame,text="Back", font=("Helvetica",10),width=10,command=lambda:go_back(root,payment_module_window,payments)).grid(padx=5,row=0,column=2)
+    tk.Button(btn_frame,text="Back", font=("Helvetica",10),width=10,command=lambda:go_back(root,payment_module_window,payments_temp)).grid(padx=5,row=0,column=2)
     tk.Button(btn_frame,text="Exit", font=("Helvetica",10),width=10,command=root.quit).grid(padx=5,row=0,column=3)
 
     style = ttk.Style()
@@ -816,7 +819,7 @@ def bank_receipt_window(root):
     btn_frame = tk.Frame()
     btn_frame.pack()
 
-    tk.Button(btn_frame,text="Back", font=("Helvetica",10),width=10,command=lambda:go_back(root,payment_module_window,receipt)).grid(padx=5,row=0)
+    tk.Button(btn_frame,text="Back", font=("Helvetica",10),width=10,command=lambda:go_back(root,payment_module_window,receipt_temp)).grid(padx=5,row=0)
     tk.Button(btn_frame,text="Exit", font=("Helvetica",10),width=10,command=root.quit).grid(padx=5,row=0,column=1)
 
 def cash_receipt_window(root):
@@ -834,5 +837,5 @@ def cash_receipt_window(root):
     btn_frame = tk.Frame()
     btn_frame.pack()
 
-    tk.Button(btn_frame,text="Back", font=("Helvetica",10),width=10,command=lambda:go_back(root,payment_module_window,receipt)).grid(padx=5,row=0)
+    tk.Button(btn_frame,text="Back", font=("Helvetica",10),width=10,command=lambda:go_back(root,payment_module_window,receipt_temp)).grid(padx=5,row=0)
     tk.Button(btn_frame,text="Exit", font=("Helvetica",10),width=10,command=root.quit).grid(padx=5,row=0,column=1)
