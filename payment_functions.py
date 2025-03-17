@@ -98,6 +98,37 @@ def generate_cash_payments(root,window,payments_temp,payment):
             "balance":balance
         }
 
-        print(payments_temp)
         messagebox.showinfo("Success","Cash Payment Generated Succesfully!")
         window(root)
+
+def load_payments(table_entry,payments_temp,pay_type):
+    for row in table_entry.get_children():
+        table_entry.delete(row)
+
+    i = 1
+    if pay_type == "bank":
+        for payment in payments_temp.values():
+            table_entry.insert("", tk.END, values=(
+                i,
+                payment.get("date", ""),
+                payment.get("voucher_no", ""),
+                payment.get("bank", ""),
+                payment.get("account_receivable", ""),
+                payment.get("exp_type", ""),
+                payment.get("description",""),
+                payment.get("amount",""),
+                payment.get("balance","")            
+            ))
+            i+=1
+    else:
+        for payment in payments_temp.values():
+            table_entry.insert("", tk.END, values=(
+                i,
+                payment.get("date", ""),
+                payment.get("voucher_no", ""),
+                payment.get("exp_type", ""),
+                payment.get("description",""),
+                payment.get("amount",""),
+                payment.get("balance","")
+            ))
+            i+=1 

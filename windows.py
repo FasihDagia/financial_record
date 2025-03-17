@@ -6,7 +6,7 @@ import pymongo as pm
 from functions import generate_contract, print_contracts, generate_invoice ,save, load_transactions ,table, back, return_invoice,print_invoice,table_contract,load_contracts,save_contract
 from inventory_functions import inventory_check,existing_products,add_product,remove_product
 from client_function import client_check,existing_clients,add_client,remove_client
-from payment_functions import go_back, generate_cash_payments
+from payment_functions import go_back, generate_cash_payments, load_payments
 
 #data base set up
 client = pm.MongoClient("mongodb://localhost:27017/")
@@ -746,21 +746,53 @@ def remove_client_window(root):
 
 def bank_payment_window(root):
     
+    account = payment['cash_payments']
+
     for widget in root.winfo_children():
         widget.destroy()
 
     root.title("Bank Payments")
 
-    root.geometry("1000x600")
-    root.minsize(1000,600)
+    root.geometry("1100x600")
+    root.minsize(1100,600)
 
     tk.Label(root, text="Bank Payments", font=("Helvetica",24,"bold")).pack(pady=30)
 
     btn_frame = tk.Frame()
     btn_frame.pack()
 
-    tk.Button(btn_frame,text="Back", font=("Helvetica",10),width=10,command=lambda:go_back(root,payment_module_window,payments_temp)).grid(padx=5,row=0)
-    tk.Button(btn_frame,text="Exit", font=("Helvetica",10),width=10,command=root.quit).grid(padx=5,row=0,column=1)
+    tk.Button(btn_frame,text="Generate Payment", font=("Helvetica",10),width=15, command=lambda:generate_cash_payments(root,cash_payment_window,payments_temp,account)).grid(padx=5,row=0,column=0)
+    tk.Button(btn_frame,text="Save", font=("Helvetica",10),width=15).grid(padx=5,row=0,column=1)
+    tk.Button(btn_frame,text="Back", font=("Helvetica",10),width=10,command=lambda:go_back(root,payment_module_window,payments_temp)).grid(padx=5,row=0,column=2)
+    tk.Button(btn_frame,text="Exit", font=("Helvetica",10),width=10,command=root.quit).grid(padx=5,row=0,column=3)
+
+    style = ttk.Style()
+    style.configure("Treeview.Heading", font=("Helvetica", 10, "bold"))  
+    style.configure("Treeview", font=("Helvetica", 8)) 
+
+    table_payment = ttk.Treeview(root, columns=("S.NO","Date","Voucher No","Bank","Account Receivable","Expense Type","Description","Amount","Balance"), show="headings")
+    table_payment.pack(fill=tk.BOTH, pady=50)
+
+    table_payment.heading("S.NO", text="S.NO")
+    table_payment.column("S.NO", anchor="center", width=10)
+    table_payment.heading("Date", text="Date")
+    table_payment.column("Date", anchor="center", width=20)
+    table_payment.heading("Voucher No", text="Voucher No")
+    table_payment.column("Voucher No", anchor="center", width=50)
+    table_payment.heading("Bank", text="Bank")
+    table_payment.column("Bank", anchor="center", width=75)
+    table_payment.heading("Account Receivable", text="Account Receivable")
+    table_payment.column("Account Receivable", anchor="center", width=75)
+    table_payment.heading("Expense Type", text="Expense Type")
+    table_payment.column("Expense Type", anchor="center", width=100)
+    table_payment.heading("Description", text="Description")
+    table_payment.column("Description", anchor="center", width=300)
+    table_payment.heading("Amount", text="Amount")
+    table_payment.column("Amount", anchor="center", width=75)
+    table_payment.heading("Balance", text="Balance")
+    table_payment.column("Balance", anchor="center", width=75)
+
+    load_payments(table_payment,payments_temp,"bank")
 
 def cash_payment_window(root):
     
@@ -788,7 +820,7 @@ def cash_payment_window(root):
     style.configure("Treeview.Heading", font=("Helvetica", 10, "bold"))  
     style.configure("Treeview", font=("Helvetica", 8)) 
 
-    table_payment = ttk.Treeview(root, columns=("S.NO","Date","Voucher No","Expense Type","Description","Amount"), show="headings")
+    table_payment = ttk.Treeview(root, columns=("S.NO","Date","Voucher No","Expense Type","Description","Amount","Balance"), show="headings")
     table_payment.pack(fill=tk.BOTH, pady=50)
 
     table_payment.heading("S.NO", text="S.NO")
@@ -802,7 +834,11 @@ def cash_payment_window(root):
     table_payment.heading("Description", text="Description")
     table_payment.column("Description", anchor="center", width=300)
     table_payment.heading("Amount", text="Amount")
-    table_payment.column("Amount", anchor="center", width=100)
+    table_payment.column("Amount", anchor="center", width=75)
+    table_payment.heading("Balance", text="Balance")
+    table_payment.column("Balance", anchor="center", width=75)
+
+    load_payments(table_payment,payments_temp,"cash")
 
 def bank_receipt_window(root):
     
