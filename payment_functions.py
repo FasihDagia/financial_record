@@ -4,16 +4,17 @@ from tkinter import ttk, messagebox, simpledialog,filedialog
 from datetime import datetime
 from num2words import num2words
 
-def go_back(root,window,payments):
-    if len(payments) == 0:
+def go_back(root,window,payments,pay_receip_temp):
+    if len(payments) == 0 and len(pay_receip_temp) == 0:
         window(root)
     else:
         confirm = messagebox.askyesno("Confirm", f"You have not saved the payments yet!\n Are you sure you want to go back?")
         if confirm:
             payments.clear()
+            pay_receip_temp.clear()
             window(root)
 
-def generate_cash_payments(root,window,payments_temp,payment):
+def generate_cash_payments(root,window,payments_temp,payment,pay_receip,pay_receip_temp):
     
     for widget in root.winfo_children():
         widget.destroy()
@@ -52,15 +53,15 @@ def generate_cash_payments(root,window,payments_temp,payment):
     amount_entry = tk.Entry(entry_frame, width=20)
     amount_entry.grid(row=2,column=1,padx=5)
 
-    tk.Button(root,text="Generate" ,font=("helvetica",10),width=20,command=lambda:generate(root,window,payments_temp,payment)).pack(pady=10)    
+    tk.Button(root,text="Generate" ,font=("helvetica",10),width=20,command=lambda:generate(root,window,payments_temp,payment,pay_receip,pay_receip_temp)).pack(pady=10)    
     
     btn_frame = tk.Frame(root) 
     btn_frame.pack()
 
-    tk.Button(btn_frame,text="Back" ,font=("helvetica",10),width=10).grid(row=0,column=0,padx=5)
+    tk.Button(btn_frame,text="Back" ,font=("helvetica",10),width=10,command=lambda:window(root)).grid(row=0,column=0,padx=5)
     tk.Button(btn_frame,text="Exit" ,font=("helvetica",10),width=10,command=root.quit).grid(row=0,column=1,padx=5)
 
-    def generate(root,window,payments_temp,payment):
+    def generate(root,window,payments_temp,payment,pay_receip,pay_receip_temp):
         
         date = date_entry.get()
         voucher_no = voucher_no_entry.get()
@@ -82,9 +83,39 @@ def generate_cash_payments(root,window,payments_temp,payment):
             sno = no_entries + 1
         else:
             sno = no_entries + len(payments_temp) + 1
+       
+        balance += amount 
 
-        amountiw = num2words(amount, to='currency', lang='en_IN')
-        balance -= amount 
+        no_entries_1 = pay_receip.count_documents({})
+        if len(pay_receip_temp)==0:
+            if no_entries_1 == 0:
+                balance1 = 0 
+            else:
+                last_entry_1 = pay_receip.find_one(sort=[("_id", -1)])
+                balance1 = last_entry_1.get("balance","")
+        else: 
+            balance1 = pay_receip_temp[len(pay_receip_temp)]["balance"]    
+
+        if len(pay_receip_temp) == 0:
+            sno1 = no_entries_1 + 1
+        else:
+            sno1 = no_entries_1 + len(pay_receip_temp) + 1
+        
+        balance1-=amount
+
+        amountiw = num2words(amount).upper()
+
+        pay_receip_temp[len(pay_receip_temp)+1] = {
+
+            "s_no":sno1,
+            "date":date,
+            "voucher_no":voucher_no,
+            "exp_type":exp_type,
+            "description":description,
+            "amount":amount,
+            "amountiw":amountiw,
+            "balance":balance1
+        }
 
         payments_temp[len(payments_temp)+1] = {
 
@@ -101,7 +132,7 @@ def generate_cash_payments(root,window,payments_temp,payment):
         messagebox.showinfo("Success","Cash Payment Generated Succesfully!")
         window(root)
 
-def generate_bank_payments(root,window,payments_temp,payment,customers):
+def generate_bank_payments(root,window,payments_temp,payment,customers,pay_receip,pay_receip_temp):
     
     for widget in root.winfo_children():
         widget.destroy()
@@ -160,15 +191,15 @@ def generate_bank_payments(root,window,payments_temp,payment,customers):
     amount_entry = tk.Entry(entry_frame, width=20)
     amount_entry.grid(row=3,column=1,padx=5)
 
-    tk.Button(root,text="Generate" ,font=("helvetica",10),width=20,command=lambda:generate(root,window,payments_temp,payment)).pack(pady=10)    
+    tk.Button(root,text="Generate" ,font=("helvetica",10),width=20,command=lambda:generate(root,window,payments_temp,payment,pay_receip,pay_receip_temp)).pack(pady=10)    
     
     btn_frame = tk.Frame(root) 
     btn_frame.pack()
 
-    tk.Button(btn_frame,text="Back" ,font=("helvetica",10),width=10).grid(row=0,column=0,padx=5)
+    tk.Button(btn_frame,text="Back" ,font=("helvetica",10),width=10,command=lambda:window(root)).grid(row=0,column=0,padx=5)
     tk.Button(btn_frame,text="Exit" ,font=("helvetica",10),width=10,command=root.quit).grid(row=0,column=1,padx=5)
 
-    def generate(root,window,payments_temp,payment):
+    def generate(root,window,payments_temp,payment,pay_receip,pay_receip_temp):
         
         date = date_entry.get()
         voucher_no = voucher_no_entry.get()
@@ -192,9 +223,41 @@ def generate_bank_payments(root,window,payments_temp,payment,customers):
             sno = no_entries + 1
         else:
             sno = no_entries + len(payments_temp) + 1
+        
+        balance += amount 
 
-        amountiw = num2words(amount, to='currency', lang='en_IN')
-        balance -= amount 
+        no_entries_1 = pay_receip.count_documents({})
+        if len(pay_receip_temp)==0:
+            if no_entries_1 == 0:
+                balance1 = 0 
+            else:
+                last_entry_1 = pay_receip.find_one(sort=[("_id", -1)])
+                balance1 = last_entry_1.get("balance","")
+        else: 
+            balance1 = pay_receip_temp[len(pay_receip_temp)]["balance"]    
+
+        if len(pay_receip_temp) == 0:
+            sno1 = no_entries_1 + 1
+        else:
+            sno1 = no_entries_1 + len(pay_receip_temp) + 1
+        
+        balance1-=amount
+
+        amountiw = num2words(amount).upper()
+
+        pay_receip_temp[len(pay_receip_temp)+1] = {
+
+            "s_no":sno1,
+            "date":date,
+            "voucher_no":voucher_no,
+            "bank":bank,
+            "account_receviable":acc_recev,
+            "exp_type":exp_type,
+            "description":description,
+            "amount":amount,
+            "amountiw":amountiw,
+            "balance":balance1
+        }
 
         payments_temp[len(payments_temp)+1] = {
 
@@ -225,7 +288,7 @@ def load_payments(table_entry,payments_temp,pay_type):
                 payment.get("date", ""),
                 payment.get("voucher_no", ""),
                 payment.get("bank", ""),
-                payment.get("account_receivable", ""),
+                payment.get("account_receviable", ""),
                 payment.get("exp_type", ""),
                 payment.get("description",""),
                 payment.get("amount",""),
@@ -244,3 +307,4 @@ def load_payments(table_entry,payments_temp,pay_type):
                 payment.get("balance","")
             ))
             i+=1 
+            
