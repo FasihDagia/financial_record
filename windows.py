@@ -764,7 +764,7 @@ def bank_payment_window(root):
     btn_frame.pack()
 
     tk.Button(btn_frame,text="Generate Payment", font=("Helvetica",10),width=15, command=lambda:generate_bank_payments(root,bank_payment_window,payments_temp,account,customers,pay_receip,pay_receip_temp)).grid(padx=5,row=0,column=0)
-    tk.Button(btn_frame,text="Save", font=("Helvetica",10),width=15).grid(padx=5,row=0,column=1)
+    tk.Button(btn_frame,text="Save", font=("Helvetica",10),width=15,command=lambda:save_payments(payments_temp,account,pay_receip,pay_receip_temp)).grid(padx=5,row=0,column=1)
     tk.Button(btn_frame,text="Back", font=("Helvetica",10),width=10,command=lambda:go_back(root,payment_module_window,payments_temp,pay_receip_temp)).grid(padx=5,row=0,column=2)
     tk.Button(btn_frame,text="Exit", font=("Helvetica",10),width=10,command=root.quit).grid(padx=5,row=0,column=3)
 
@@ -815,7 +815,7 @@ def cash_payment_window(root):
     btn_frame.pack()
 
     tk.Button(btn_frame,text="Generate Payment", font=("Helvetica",10),width=15, command=lambda:generate_cash_payments(root,cash_payment_window,payments_temp,account,pay_receip,pay_receip_temp)).grid(padx=5,row=0,column=0)
-    tk.Button(btn_frame,text="Save", font=("Helvetica",10),width=15).grid(padx=5,row=0,column=1)
+    tk.Button(btn_frame,text="Save", font=("Helvetica",10),width=15,command=lambda:save_payments(payments_temp,account,pay_receip,pay_receip_temp)).grid(padx=5,row=0,column=1)
     tk.Button(btn_frame,text="Back", font=("Helvetica",10),width=10,command=lambda:go_back(root,payment_module_window,payments_temp,pay_receip_temp)).grid(padx=5,row=0,column=2)
     tk.Button(btn_frame,text="Exit", font=("Helvetica",10),width=10,command=root.quit).grid(padx=5,row=0,column=3)
 

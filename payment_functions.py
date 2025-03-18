@@ -307,4 +307,17 @@ def load_payments(table_entry,payments_temp,pay_type):
                 payment.get("balance","")
             ))
             i+=1 
-            
+
+def save_payments(payments_temp,payment,pay_receip,pay_receip_temp):
+    
+    if len(payments_temp) != 0 and len(pay_receip_temp) != 0:
+        confirm = messagebox.askyesno("Confirm", f"Once the Payments are saved you wont be able to cahnge them\nAre you sure you want to save invoices?")
+        if confirm:
+
+            for pay in payments_temp.values():
+                payment.insert_one(pay)
+            for pay in pay_receip_temp.values():
+                pay_receip.insert_one(pay)
+
+            pay_receip_temp.clear()
+            payments_temp.clear()
