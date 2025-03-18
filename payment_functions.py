@@ -294,7 +294,7 @@ def generate_bank_payments(root,window,payments_temp,payment,customers,pay_recei
         messagebox.showinfo("Success","Cash Payment Generated Succesfully!")
         window(root)
 
-def load_payments(table_entry,payments_temp,pay_type):
+def load_payments_receipt(table_entry,payments_temp,pay_type):
     for row in table_entry.get_children():
         table_entry.delete(row)
 
@@ -326,7 +326,7 @@ def load_payments(table_entry,payments_temp,pay_type):
             ))
             i+=1 
 
-def save_payments(payments_temp,payment,pay_receip,pay_receip_temp,type):
+def save_payments_receipt(payments_temp,payment,pay_receip,pay_receip_temp,type):
     
     if len(payments_temp) != 0 and len(pay_receip_temp) != 0:
         confirm = messagebox.askyesno("Confirm", f"Once the Payments are saved you wont be able to cahnge them\nAre you sure you want to save invoices?")
