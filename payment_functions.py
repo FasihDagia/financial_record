@@ -326,7 +326,7 @@ def load_payments(table_entry,payments_temp,pay_type):
             ))
             i+=1 
 
-def save_payments(payments_temp,payment,pay_receip,pay_receip_temp):
+def save_payments(payments_temp,payment,pay_receip,pay_receip_temp,type):
     
     if len(payments_temp) != 0 and len(pay_receip_temp) != 0:
         confirm = messagebox.askyesno("Confirm", f"Once the Payments are saved you wont be able to cahnge them\nAre you sure you want to save invoices?")
@@ -339,3 +339,13 @@ def save_payments(payments_temp,payment,pay_receip,pay_receip_temp):
 
             pay_receip_temp.clear()
             payments_temp.clear()
+
+            if type == "pay":
+                messagebox.showinfo("Success","Payments saved succesfully!")
+            elif type == "recep":
+                messagebox.showerror("Success","Receipts saved succesfully")
+    else:
+        if type == "pay":
+            messagebox.showerror("Error","No Payments to save!")
+        elif type == "recep":
+            messagebox.showerror("Error","No Receipts to save!")
