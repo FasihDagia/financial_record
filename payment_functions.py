@@ -35,9 +35,18 @@ def generate_cash_payments(root,window,payments_temp,payment,pay_receip,pay_rece
     date_entry.grid(row=0,column=1,padx=5)
 
     tk.Label(entry_frame, text="Voucher No:", font=("helvetica",10)).grid(padx=5,pady=10,row=0,column=2)
-    voucher_no_entry = tk.Entry(entry_frame, width=20)
-    voucher_no_entry.grid(row=0,column=3)
+    no_payments = payment.count_documents({})
+    if len(payments_temp) == 0:
+        voucher_no = no_payments+1
+    else:
+        voucher_no = len(payments_temp)+no_payments+1
 
+    current_date = datetime.now()
+    year = current_date.year
+    voucher = f"CP{str(voucher_no).zfill(5)}/{year}"
+
+    tk.Label(entry_frame,text=voucher,font=("Helvetica", 11)).grid(row=0,column=3)
+    
     tk.Label(entry_frame, text="Expense Type:", font=("helvetica",10)).grid(pady=10,row=1,column=0)
     exp_type_options = ["CONVEYANCE EXPENSE"]
     exp_type_option = tk.StringVar(value="Expense Types")
@@ -64,7 +73,7 @@ def generate_cash_payments(root,window,payments_temp,payment,pay_receip,pay_rece
     def generate(root,window,payments_temp,payment,pay_receip,pay_receip_temp):
         
         date = date_entry.get()
-        voucher_no = voucher_no_entry.get()
+        vouch_no = voucher
         exp_type = exp_type_option.get()
         description = description_entry.get()
         amount = int(amount_entry.get())
@@ -109,7 +118,7 @@ def generate_cash_payments(root,window,payments_temp,payment,pay_receip,pay_rece
 
             "s_no":sno1,
             "date":date,
-            "voucher_no":voucher_no,
+            "voucher_no":vouch_no,
             "exp_type":exp_type,
             "description":description,
             "amount":amount,
@@ -121,7 +130,7 @@ def generate_cash_payments(root,window,payments_temp,payment,pay_receip,pay_rece
 
             "s_no":sno,
             "date":date,
-            "voucher_no":voucher_no,
+            "voucher_no":vouch_no,
             "exp_type":exp_type,
             "description":description,
             "amount":amount,
@@ -153,8 +162,17 @@ def generate_bank_payments(root,window,payments_temp,payment,customers,pay_recei
     date_entry.grid(row=0,column=1,padx=5)
 
     tk.Label(entry_frame, text="Voucher No:", font=("helvetica",10)).grid(padx=5,pady=10,row=0,column=2)
-    voucher_no_entry = tk.Entry(entry_frame, width=20)
-    voucher_no_entry.grid(row=0,column=3)
+    no_payments = payment.count_documents({})
+    if len(payments_temp) == 0:
+        voucher_no = no_payments+1
+    else:
+        voucher_no = len(payments_temp)+no_payments+1
+
+    current_date = datetime.now()
+    year = current_date.year
+    voucher = f"BP{str(voucher_no).zfill(5)}/{year}"
+
+    tk.Label(entry_frame,text=voucher,font=("Helvetica", 11)).grid(row=0,column=3)
 
     tk.Label(entry_frame,text="Bank:",font=('helvetica',10)).grid(pady=10,row=1,column=0)
     bank_options = ["Bank1","Bank2","Bank3"]
@@ -202,7 +220,7 @@ def generate_bank_payments(root,window,payments_temp,payment,customers,pay_recei
     def generate(root,window,payments_temp,payment,pay_receip,pay_receip_temp):
         
         date = date_entry.get()
-        voucher_no = voucher_no_entry.get()
+        vouch_no = voucher
         bank = bank_option.get()
         acc_recev =acc_recev_option.get()
         exp_type = exp_type_option.get()
@@ -249,7 +267,7 @@ def generate_bank_payments(root,window,payments_temp,payment,customers,pay_recei
 
             "s_no":sno1,
             "date":date,
-            "voucher_no":voucher_no,
+            "voucher_no":vouch_no,
             "bank":bank,
             "account_receviable":acc_recev,
             "exp_type":exp_type,
@@ -263,7 +281,7 @@ def generate_bank_payments(root,window,payments_temp,payment,customers,pay_recei
 
             "s_no":sno,
             "date":date,
-            "voucher_no":voucher_no,
+            "voucher_no":vouch_no,
             "bank":bank,
             "account_receviable":acc_recev,
             "exp_type":exp_type,

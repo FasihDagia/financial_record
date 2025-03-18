@@ -13,7 +13,7 @@ client = pm.MongoClient("mongodb://localhost:27017/")
 db = client["financial_records"]
 inventory = client['inventory']
 customers = client['Customer']
-payment = client['payment/receipt']
+payment = client['payment_receipt']
 
 sale_contracts = {}
 purchase_contracts = {}
