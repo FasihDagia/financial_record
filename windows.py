@@ -7,6 +7,7 @@ from functions import generate_contract,print_contracts,generate_invoice,save,lo
 from inventory_functions import inventory_check,existing_products,add_product,remove_product
 from client_function import client_check,existing_clients,add_client,remove_client
 from payment_functions import go_back,generate_cash_payments,generate_bank_payments,load_payments,save_payments
+from receipt_function import generate_bank_receipt
 
 #data base set up
 client = pm.MongoClient("mongodb://localhost:27017/")
@@ -844,6 +845,9 @@ def cash_payment_window(root):
     load_payments(table_payment,payments_temp,"cash")
 
 def bank_receipt_window(root):
+
+    account = payment['bank_receipt']
+    pay_receip = payment['pay_receip']
     
     for widget in root.winfo_children():
         widget.destroy()
@@ -857,11 +861,44 @@ def bank_receipt_window(root):
 
     btn_frame = tk.Frame()
     btn_frame.pack()
+                                    
+    tk.Button(btn_frame,text="Generate Payment", font=("Helvetica",10),width=15, command=lambda:generate_bank_receipt(root,bank_receipt_window,receipt_temp,account,customers,pay_receip,pay_receip_temp)).grid(padx=5,row=0,column=0)
+    tk.Button(btn_frame,text="Save", font=("Helvetica",10),width=15,command=lambda:save_payments(receipt_temp,account,pay_receip,pay_receip_temp)).grid(padx=5,row=0,column=1)
+    tk.Button(btn_frame,text="Back", font=("Helvetica",10),width=10,command=lambda:go_back(root,payment_module_window,receipt_temp,pay_receip_temp)).grid(padx=5,row=0,column=2)
+    tk.Button(btn_frame,text="Exit", font=("Helvetica",10),width=10,command=root.quit).grid(padx=5,row=0,column=3)
 
-    tk.Button(btn_frame,text="Back", font=("Helvetica",10),width=10,command=lambda:go_back(root,payment_module_window,receipt_temp)).grid(padx=5,row=0)
-    tk.Button(btn_frame,text="Exit", font=("Helvetica",10),width=10,command=root.quit).grid(padx=5,row=0,column=1)
+    style = ttk.Style()
+    style.configure("Treeview.Heading", font=("Helvetica", 10, "bold"))  
+    style.configure("Treeview", font=("Helvetica", 8)) 
+
+    table_receipt = ttk.Treeview(root, columns=("S.NO","Date","Voucher No","Bank","Account Receivable","Expense Type","Description","Amount","Balance"), show="headings")
+    table_receipt.pack(fill=tk.BOTH, pady=50)
+
+    table_receipt.heading("S.NO", text="S.NO")
+    table_receipt.column("S.NO", anchor="center", width=10)
+    table_receipt.heading("Date", text="Date")
+    table_receipt.column("Date", anchor="center", width=20)
+    table_receipt.heading("Voucher No", text="Voucher No")
+    table_receipt.column("Voucher No", anchor="center", width=50)
+    table_receipt.heading("Bank", text="Bank")
+    table_receipt.column("Bank", anchor="center", width=75)
+    table_receipt.heading("Account Receivable", text="Account Receivable")
+    table_receipt.column("Account Receivable", anchor="center", width=75)
+    table_receipt.heading("Expense Type", text="Expense Type")
+    table_receipt.column("Expense Type", anchor="center", width=100)
+    table_receipt.heading("Description", text="Description")
+    table_receipt.column("Description", anchor="center", width=300)
+    table_receipt.heading("Amount", text="Amount")
+    table_receipt.column("Amount", anchor="center", width=75)
+    table_receipt.heading("Balance", text="Balance")
+    table_receipt.column("Balance", anchor="center", width=75)
+
+    load_payments(table_receipt,receipt_temp,"bank")
 
 def cash_receipt_window(root):
+
+    account = payment['cash_receipt']
+    pay_receip = payment['pay_receip']
 
     for widget in root.winfo_children():
         widget.destroy()
@@ -876,5 +913,29 @@ def cash_receipt_window(root):
     btn_frame = tk.Frame()
     btn_frame.pack()
 
-    tk.Button(btn_frame,text="Back", font=("Helvetica",10),width=10,command=lambda:go_back(root,payment_module_window,receipt_temp)).grid(padx=5,row=0)
+    tk.Button(btn_frame,text="Back", font=("Helvetica",10),width=10,command=lambda:go_back(root,payment_module_window,receipt_temp,pay_receip_temp)).grid(padx=5,row=0)
     tk.Button(btn_frame,text="Exit", font=("Helvetica",10),width=10,command=root.quit).grid(padx=5,row=0,column=1)
+
+    style = ttk.Style()
+    style.configure("Treeview.Heading", font=("Helvetica", 10, "bold"))  
+    style.configure("Treeview", font=("Helvetica", 8)) 
+
+    table_receipt = ttk.Treeview(root, columns=("S.NO","Date","Voucher No","Expense Type","Description","Amount","Balance"), show="headings")
+    table_receipt.pack(fill=tk.BOTH, pady=50)
+
+    table_receipt.heading("S.NO", text="S.NO")
+    table_receipt.column("S.NO", anchor="center", width=10)
+    table_receipt.heading("Date", text="Date")
+    table_receipt.column("Date", anchor="center", width=20)
+    table_receipt.heading("Voucher No", text="Voucher No")
+    table_receipt.column("Voucher No", anchor="center", width=50)
+    table_receipt.heading("Expense Type", text="Expense Type")
+    table_receipt.column("Expense Type", anchor="center", width=100)
+    table_receipt.heading("Description", text="Description")
+    table_receipt.column("Description", anchor="center", width=300)
+    table_receipt.heading("Amount", text="Amount")
+    table_receipt.column("Amount", anchor="center", width=75)
+    table_receipt.heading("Balance", text="Balance")
+    table_receipt.column("Balance", anchor="center", width=75)
+
+    load_payments(table_receipt,receipt_temp,"cash")
