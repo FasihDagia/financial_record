@@ -93,7 +93,7 @@ def generate_cash_payments(root,window,payments_temp,payment,pay_receip,pay_rece
         else:
             sno = no_entries + len(payments_temp) + 1
        
-        balance += amount 
+        balance -= amount 
 
         no_entries_1 = pay_receip.count_documents({})
         if len(pay_receip_temp)==0:
@@ -141,7 +141,7 @@ def generate_cash_payments(root,window,payments_temp,payment,pay_receip,pay_rece
         messagebox.showinfo("Success","Cash Payment Generated Succesfully!")
         window(root)
 
-def generate_bank_payments(root,window,payments_temp,payment,customers,pay_receip,pay_receip_temp):
+def generate_bank_payments(root,window,payments_temp,payment,customers,pay_receip,pay_receip_temp,bank_temp,bank):
     
     for widget in root.winfo_children():
         widget.destroy()
@@ -221,7 +221,7 @@ def generate_bank_payments(root,window,payments_temp,payment,customers,pay_recei
         
         date = date_entry.get()
         vouch_no = voucher
-        bank = bank_option.get()
+        bank_name = bank_option.get()
         acc_recev =acc_recev_option.get()
         exp_type = exp_type_option.get()
         description = description_entry.get()
@@ -242,7 +242,7 @@ def generate_bank_payments(root,window,payments_temp,payment,customers,pay_recei
         else:
             sno = no_entries + len(payments_temp) + 1
         
-        balance += amount 
+        balance -= amount 
 
         no_entries_1 = pay_receip.count_documents({})
         if len(pay_receip_temp)==0:
@@ -268,7 +268,7 @@ def generate_bank_payments(root,window,payments_temp,payment,customers,pay_recei
             "s_no":sno1,
             "date":date,
             "voucher_no":vouch_no,
-            "bank":bank,
+            "bank":bank_name,
             "account_receviable":acc_recev,
             "exp_type":exp_type,
             "description":description,
@@ -282,7 +282,7 @@ def generate_bank_payments(root,window,payments_temp,payment,customers,pay_recei
             "s_no":sno,
             "date":date,
             "voucher_no":vouch_no,
-            "bank":bank,
+            "bank":bank_name,
             "account_receviable":acc_recev,
             "exp_type":exp_type,
             "description":description,
@@ -329,7 +329,7 @@ def load_payments_receipt(table_entry,payments_temp,pay_type):
 def save_payments_receipt(payments_temp,payment,pay_receip,pay_receip_temp,type):
     
     if len(payments_temp) != 0 and len(pay_receip_temp) != 0:
-        confirm = messagebox.askyesno("Confirm", f"Once the Payments are saved you wont be able to cahnge them\nAre you sure you want to save invoices?")
+        confirm = messagebox.askyesno("Confirm", f"Once the Particulars are saved you wont be able to cahnge them\nAre you sure you want to save?")
         if confirm:
 
             for pay in payments_temp.values():

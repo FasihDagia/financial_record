@@ -25,6 +25,7 @@ existing_contracts = {}
 payments_temp = {}
 receipt_temp ={}
 pay_receip_temp = {}
+bank_temp = {}
 
 def main_window(root):
 
@@ -748,7 +749,7 @@ def remove_client_window(root):
 
 def bank_payment_window(root):
     
-    account = payment['bank_payments']
+    account = payment['bank']
     pay_receip = payment['pay_receip']
 
     for widget in root.winfo_children():
@@ -764,7 +765,7 @@ def bank_payment_window(root):
     btn_frame = tk.Frame()
     btn_frame.pack()
 
-    tk.Button(btn_frame,text="Generate Payment", font=("Helvetica",10),width=15, command=lambda:generate_bank_payments(root,bank_payment_window,payments_temp,account,customers,pay_receip,pay_receip_temp)).grid(padx=5,row=0,column=0)
+    tk.Button(btn_frame,text="Generate Payment", font=("Helvetica",10),width=15, command=lambda:generate_bank_payments(root,bank_payment_window,payments_temp,account,customers,pay_receip,pay_receip_temp,bank_temp,payment)).grid(padx=5,row=0,column=0)
     tk.Button(btn_frame,text="Save", font=("Helvetica",10),width=15,command=lambda:save_payments_receipt(payments_temp,account,pay_receip,pay_receip_temp,"pay")).grid(padx=5,row=0,column=1)
     tk.Button(btn_frame,text="Back", font=("Helvetica",10),width=10,command=lambda:go_back(root,payment_module_window,payments_temp,pay_receip_temp)).grid(padx=5,row=0,column=2)
     tk.Button(btn_frame,text="Exit", font=("Helvetica",10),width=10,command=root.quit).grid(padx=5,row=0,column=3)
@@ -799,7 +800,7 @@ def bank_payment_window(root):
 
 def cash_payment_window(root):
     
-    account = payment['cash_payments']
+    account = payment['cash']
     pay_receip = payment['pay_receip']
 
     for widget in root.winfo_children():
@@ -846,7 +847,7 @@ def cash_payment_window(root):
 
 def bank_receipt_window(root):
 
-    account = payment['bank_receipt']
+    account = payment['bank']
     pay_receip = payment['pay_receip']
     
     for widget in root.winfo_children():
@@ -897,7 +898,7 @@ def bank_receipt_window(root):
 
 def cash_receipt_window(root):
 
-    account = payment['cash_receipt']
+    account = payment['cash']
     pay_receip = payment['pay_receip']
 
     for widget in root.winfo_children():
