@@ -21,10 +21,26 @@ def generate_cash_payments(root,window,payments_temp,payment,pay_receip,pay_rece
 
     root.title("Generate Payment")
 
-    root.geometry("500x325")
-    root.minsize(500,325)
+    root.geometry("500x450")
+    root.minsize(500,450)
 
-    tk.Label(root,text="Generate Cash Payments",font=("helvetica",18,"bold")).pack(pady=30)
+    tk.Label(root,text="Generate Cash Payment Voucher",font=("helvetica",18,"bold")).pack(pady=30)
+
+    def calculate_total(*args):
+
+        try:
+            amount = float(amount_entry.get())
+            tax_p = float(tax_p_entry.get())
+
+            tax_amount = (tax_p/100)*amount
+            tax_amount_var.set(f"{tax_amount:.2f}")
+
+            total = amount - tax_amount
+            total_var.set(f"{total:.2f}")
+        except ValueError:
+            tax_amount_var.set("Invalid input")
+            total_var.set("Invalid input")
+                
 
     entry_frame = tk.Frame(root)
     entry_frame.pack()
@@ -47,20 +63,40 @@ def generate_cash_payments(root,window,payments_temp,payment,pay_receip,pay_rece
 
     tk.Label(entry_frame,text=voucher,font=("Helvetica", 11)).grid(row=0,column=3)
     
-    tk.Label(entry_frame, text="Expense Type:", font=("helvetica",10)).grid(pady=10,row=1,column=0)
+    tk.Label(entry_frame, text="Head Type:", font=("helvetica",10)).grid(pady=10,row=1,column=0)
     exp_type_options = ["CONVEYANCE EXPENSE"]
-    exp_type_option = tk.StringVar(value="Expense Types")
+    exp_type_option = tk.StringVar(value="Head Types")
     exp_type_entry = OptionMenu(entry_frame, exp_type_option , *exp_type_options)
     exp_type_entry.config(width=19)
     exp_type_entry.grid(row=1,column=1,padx=5)
 
-    tk.Label(entry_frame, text="Description:", font=("helvetica",10)).grid(padx=5,pady=10,row=1,column=2)
-    description_entry = tk.Entry(entry_frame, width=20)
-    description_entry.grid(row=1,column=3)
-
-    tk.Label(entry_frame, text="Amount:", font=("helvetica",10)).grid(pady=10,row=2,column=0)
+    tk.Label(entry_frame, text="Amount:", font=("helvetica",10)).grid(pady=10,row=1,column=2)
     amount_entry = tk.Entry(entry_frame, width=20)
-    amount_entry.grid(row=2,column=1,padx=5)
+    amount_entry.grid(row=1,column=3,padx=5)
+
+    tk.Label(entry_frame,text="Tax Percent:",font=("helvetica",10)).grid(pady=10,row=2,column=0)
+    tax_p_entry= tk.Entry(entry_frame, width=20)
+    tax_p_entry.grid(row=2,column=1,padx=5)
+
+    tk.Label(entry_frame, text="Tax Amount:", font=("helvetica",10)).grid(pady=10,row=2,column=2)
+    tax_amount_var = tk.StringVar(value=0.00)
+    tax_amount_entry = tk.Entry(entry_frame, width=20,textvariable=tax_amount_var)
+    tax_amount_entry.grid(row=2,column=3,padx=5)
+    
+    des_frame = tk.Frame(root)
+    des_frame.pack(pady=5)
+
+    tk.Label(des_frame, text="Description:", font=("helvetica",10)).grid(padx=5,pady=10,row=0,column=0)
+    description_entry = tk.Text(des_frame,font=("helvetica",10),width=50,height=5)
+    description_entry.grid(row=0,column=1)
+
+    tax_p_entry.bind("<KeyRelease>", calculate_total)
+
+    total_frame = tk.Frame()
+    total_frame.pack()
+    tk.Label(total_frame,text="Total Amount:",font=9).grid(row=0,column=0)
+    total_var = tk.StringVar(value=0)
+    tk.Label(total_frame,textvariable=total_var,font=9).grid(row=0,column=1,pady=10)
 
     tk.Button(root,text="Generate" ,font=("helvetica",10),width=20,command=lambda:generate(root,window,payments_temp,payment,pay_receip,pay_receip_temp)).pack(pady=10)    
     
@@ -77,6 +113,9 @@ def generate_cash_payments(root,window,payments_temp,payment,pay_receip,pay_rece
         exp_type = exp_type_option.get()
         description = description_entry.get()
         amount = int(amount_entry.get())
+        tax_percent = float(tax_p_entry.get())
+        tax_amount = float(tax_amount_entry.get())
+        total_amount = float(total_var.get())
 
         no_entries = payment.count_documents({})
         if len(payments_temp)==0:
@@ -119,10 +158,13 @@ def generate_cash_payments(root,window,payments_temp,payment,pay_receip,pay_rece
             "s_no":sno1,
             "date":date,
             "voucher_no":vouch_no,
-            "exp_type":exp_type,
+            "head_type":exp_type,
             "description":description,
             "amount":amount,
             "amountiw":amountiw,
+            "tax_percent":tax_percent,
+            "tax_amount":tax_amount,
+            "total_amount":total_amount,
             "balance":balance1
         }
 
@@ -131,10 +173,13 @@ def generate_cash_payments(root,window,payments_temp,payment,pay_receip,pay_rece
             "s_no":sno,
             "date":date,
             "voucher_no":vouch_no,
-            "exp_type":exp_type,
+            "head_type":exp_type,
             "description":description,
             "amount":amount,
             "amountiw":amountiw,
+            "tax_percent":tax_percent,
+            "tax_amount":tax_amount,
+            "total_amount":total_amount,
             "balance":balance
         }
 

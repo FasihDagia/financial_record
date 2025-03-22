@@ -411,6 +411,9 @@ def generate_contract(root,sale_contract,account,contract_type,window,inventory,
         terms_payment = term_payment_entry.get()
         tolerence = tolerence_entry.get()
         shipment = shipment_entry.get()
+        additional_clauses = add_clause_entry.get("1.0", "end-1c")
+        if additional_clauses == "Optional":
+            additional_clauses =None
 
         if not date or not terms_payment or not amount or party_name == 'Name' or not quantity or unit == 'Unit' or not rate or not gst or item == 'Product Name':
             messagebox.showerror("Error", "Fields can't be empty")
@@ -437,6 +440,7 @@ def generate_contract(root,sale_contract,account,contract_type,window,inventory,
                 'terms_payment': terms_payment,
                 'tolerence': tolerence,
                 'shipment': shipment,
+                'additional_clauses':additional_clauses,
                 'delivered_qant': 0,
                 'progress': 'in_progress'
             }})
@@ -680,9 +684,9 @@ def generate_invoice(root,invoices_to_save,account,inventory_sale,operator,invoi
     for widget in root.winfo_children():
         widget.destroy()
     
-    root.geometry("500x620")
-    root.minsize(500,430)
-    root.maxsize(600,700)
+    root.geometry("500x700")
+    root.minsize(500,700)
+    root.maxsize(600,750)
 
 
     root.title("Generate Invoice")
@@ -928,9 +932,26 @@ def generate_invoice(root,invoices_to_save,account,inventory_sale,operator,invoi
     Further_tax_amount_entry = tk.Entry(contract_info, width=width,textvariable=Further_tax_amount_var)
     Further_tax_amount_entry.grid(row=4, column=1,padx=5)
 
-    tk.Label(contract_info, text="Description:",font=("Helvetica",10)).grid(row=4,column=2,pady=10)
-    description_entry = tk.Entry(contract_info,width=width)  
-    description_entry.grid(row=4,column=3,pady=10)
+    des_frame = tk.Frame(root)
+    des_frame.pack(pady=5)
+
+    def on_text_click(event):
+        if description_entry.get("1.0", "end-1c") == placeholder:
+            description_entry.delete("1.0", "end")
+            description_entry.config(fg='black')
+
+    def on_focusout(event):
+        if description_entry.get("1.0", "end-1c").strip() == "":
+            description_entry.insert("1.0", placeholder)
+            description_entry.config(fg='grey')
+
+    tk.Label(des_frame, text="Description:", font=("helvetica",10)).grid(padx=5,pady=10,row=0,column=0)
+    placeholder = "Optional"
+    description_entry = tk.Text(des_frame,font=("helvetica",10),width=50,height=5,fg='grey')
+    description_entry.insert("1.0", placeholder)
+    description_entry.bind("<FocusIn>", on_text_click)
+    description_entry.bind("<FocusOut>", on_focusout)
+    description_entry.grid(row=0,column=1)
 
     amount_entry.bind("<KeyRelease>", calculate_total)
     gst_default_value_assign.trace_add("write", calculate_total)
@@ -992,9 +1013,11 @@ def generate_invoice(root,invoices_to_save,account,inventory_sale,operator,invoi
             return
 
         total_amount = float(total_var.get())
-        description = description_entry.get()
+        description = description_entry.get("1.0", "end-1c")
+        if description == "Optional":
+            description = None
 
-        if not date or not description or not amount or account_recevible == 'Name' or not quantity or unit == 'Unit' or not rate or not gst or item == 'Product Name':
+        if not date or not amount or account_recevible == 'Name' or not quantity or unit == 'Unit' or not rate or not gst or item == 'Product Name':
             messagebox.showerror("Error", "Fields can't be empty")
             return
         else:
