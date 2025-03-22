@@ -125,9 +125,9 @@ def generate_contract(root,sale_contract,account,contract_type,window,inventory,
     for widget in root.winfo_children():
         widget.destroy()
     
-    root.geometry("525x625")
-    root.minsize(500,625)
-    root.maxsize(600,700)
+    root.geometry("525x700")
+    root.minsize(500,700)
+    root.maxsize(600,800)
 
 
     root.title("Generate Contract")
@@ -328,6 +328,28 @@ def generate_contract(root,sale_contract,account,contract_type,window,inventory,
     tk.Label(contract_info,text="Shipment:").grid(row=5,column=2,padx=5)
     shipment_entry = tk.Entry(contract_info,width=width)
     shipment_entry.grid(row=5,column=3)
+
+    des_frame = tk.Frame(root)
+    des_frame.pack()
+
+    def on_text_click(event):
+        if add_clause_entry.get("1.0", "end-1c") == placeholder:
+            add_clause_entry.delete("1.0", "end")
+            add_clause_entry.config(fg='black')
+
+    def on_focusout(event):
+        if add_clause_entry.get("1.0", "end-1c").strip() == "":
+            add_clause_entry.insert("1.0", placeholder)
+            add_clause_entry.config(fg='grey')
+
+    tk.Label(des_frame, text="Aditional Clauses:", font=("helvetica",10)).grid(padx=5,pady=10,row=0,column=0)
+    placeholder = "Optional"
+    add_clause_entry = tk.Text(des_frame,font=("helvetica",10),width=50,height=5,fg='grey')
+    add_clause_entry.insert("1.0", placeholder)
+    add_clause_entry.bind("<FocusIn>", on_text_click)
+    add_clause_entry.bind("<FocusOut>", on_focusout)
+    add_clause_entry.grid(row=0,column=1)
+
     # Total Label
     total_frame = tk.Frame()
     total_frame.pack()
