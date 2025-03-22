@@ -221,8 +221,8 @@ def generate_bank_payments(root,window,payments_temp,payment,customers,pay_recei
 
     tk.Label(entry_frame,text="Bank:",font=('helvetica',10)).grid(pady=10,row=1,column=0)
     bank_options = ["Bank1","Bank2","Bank3"]
-    bank_option = tk.StringVar(value="Banks")
-    bank_entry = OptionMenu(entry_frame, bank_option , *bank_options)
+    bank_entry =  ttk.Combobox(entry_frame, values=bank_options)
+    bank_entry.set("Select a Bank")
     bank_entry.config(width=19)
     bank_entry.grid(row=1,column=1,padx=5)
 
@@ -266,7 +266,7 @@ def generate_bank_payments(root,window,payments_temp,payment,customers,pay_recei
         
         date = date_entry.get()
         vouch_no = voucher
-        bank_name = bank_option.get()
+        bank_name = bank_entry.get()
         acc_recev =acc_recev_option.get()
         exp_type = exp_type_option.get()
         description = description_entry.get()
