@@ -1027,7 +1027,6 @@ def generate_invoice(root,invoices_to_save,account,inventory_sale,operator,invoi
                     last_save_transaction = account.find_one({'s_no': saved_transactions})
                     balance = last_save_transaction.get('balance', 0)
             else:
-                len(invoices_to_save)
                 balance = invoices_to_save[len(invoices_to_save)]['balance']
             
             balance += total_amount 

@@ -6,7 +6,7 @@ import pymongo as pm
 from functions import generate_contract,print_contracts,generate_invoice,save,load_transactions,table,back,return_invoice,print_invoice,table_contract,load_contracts,save_contract
 from inventory_functions import inventory_check,existing_products,add_product,remove_product
 from client_function import client_check,existing_clients,add_client,remove_client
-from payment_functions import go_back,generate_cash_payments,generate_bank_payments,load_payments_receipt,save_payments_receipt
+from payment_functions import go_back,generate_cash_payments,generate_bank_payments,load_payments_receipt,save_cash_payments_receipt,save_bank_payment_receipt
 from receipt_function import generate_bank_receipt,generate_cash_receipt
 
 #data base set up
@@ -15,6 +15,7 @@ db = client["financial_records"]
 inventory = client['inventory']
 customers = client['Customer']
 payment = client['payment_receipt']
+banks = client['banks']
 
 sale_contracts = {}
 purchase_contracts = {}
@@ -28,6 +29,7 @@ pay_receip_temp = {}
 bank_temp = {}
 cash_temp = {}
 client_temp ={}
+bank_ind_temp = {}
 
 def main_window(root):
 
@@ -750,9 +752,10 @@ def remove_client_window(root):
     existing_clients(table_client,customers)
 
 def bank_payment_window(root):
-    
-    account = payment['bank']
+
+    account = payment['bank_payment']
     pay_receip = payment['pay_receip']
+    bank = payment['bank']
 
     for widget in root.winfo_children():
         widget.destroy()
@@ -767,8 +770,8 @@ def bank_payment_window(root):
     btn_frame = tk.Frame()
     btn_frame.pack()
 
-    tk.Button(btn_frame,text="Generate Payment", font=("Helvetica",10),width=15, command=lambda:generate_bank_payments(root,bank_payment_window,payments_temp,account,customers,pay_receip,pay_receip_temp,bank_temp,payment)).grid(padx=5,row=0,column=0)
-    tk.Button(btn_frame,text="Save", font=("Helvetica",10),width=15,command=lambda:save_payments_receipt(payments_temp,account,pay_receip,pay_receip_temp,"pay")).grid(padx=5,row=0,column=1)
+    tk.Button(btn_frame,text="Generate Payment", font=("Helvetica",10),width=15, command=lambda:generate_bank_payments(root,bank_payment_window,payments_temp,account,pay_receip,pay_receip_temp,customers,client_temp,bank,bank_temp,banks,bank_ind_temp)).grid(padx=5,row=0,column=0)
+    tk.Button(btn_frame,text="Save", font=("Helvetica",10),width=15,command=lambda:save_bank_payment_receipt(payments_temp,account,pay_receip,pay_receip_temp,"pay",customers,client_temp,bank,bank_temp,banks,bank_ind_temp)).grid(padx=5,row=0,column=1)
     tk.Button(btn_frame,text="Back", font=("Helvetica",10),width=10,command=lambda:go_back(root,payment_module_window,payments_temp,pay_receip_temp)).grid(padx=5,row=0,column=2)
     tk.Button(btn_frame,text="Exit", font=("Helvetica",10),width=10,command=root.quit).grid(padx=5,row=0,column=3)
 
@@ -820,7 +823,7 @@ def cash_payment_window(root):
     btn_frame.pack()
 
     tk.Button(btn_frame,text="Generate Payment", font=("Helvetica",10),width=15, command=lambda:generate_cash_payments(root,cash_payment_window,payments_temp,account,pay_receip,pay_receip_temp,customers,client_temp,cash,cash_temp)).grid(padx=5,row=0,column=0)
-    tk.Button(btn_frame,text="Save", font=("Helvetica",10),width=15,command=lambda:save_payments_receipt(payments_temp,account,pay_receip,pay_receip_temp,"pay",customers,client_temp,cash,cash_temp)).grid(padx=5,row=0,column=1)
+    tk.Button(btn_frame,text="Save", font=("Helvetica",10),width=15,command=lambda:save_cash_payments_receipt(payments_temp,account,pay_receip,pay_receip_temp,"pay",customers,client_temp,cash,cash_temp)).grid(padx=5,row=0,column=1)
     tk.Button(btn_frame,text="Back", font=("Helvetica",10),width=10,command=lambda:go_back(root,payment_module_window,payments_temp,pay_receip_temp)).grid(padx=5,row=0,column=2)
     tk.Button(btn_frame,text="Exit", font=("Helvetica",10),width=10,command=root.quit).grid(padx=5,row=0,column=3)
 
@@ -871,7 +874,7 @@ def bank_receipt_window(root):
     btn_frame.pack()
                                     
     tk.Button(btn_frame,text="Generate Receipt", font=("Helvetica",10),width=15, command=lambda:generate_bank_receipt(root,bank_receipt_window,receipt_temp,account,customers,pay_receip,pay_receip_temp)).grid(padx=5,row=0,column=0)
-    tk.Button(btn_frame,text="Save", font=("Helvetica",10),width=15,command=lambda:save_payments_receipt(receipt_temp,account,pay_receip,pay_receip_temp,"recep")).grid(padx=5,row=0,column=1)
+    tk.Button(btn_frame,text="Save", font=("Helvetica",10),width=15,command=lambda:save_cash_payments_receipt(receipt_temp,account,pay_receip,pay_receip_temp,"recep")).grid(padx=5,row=0,column=1)
     tk.Button(btn_frame,text="Back", font=("Helvetica",10),width=10,command=lambda:go_back(root,payment_module_window,receipt_temp,pay_receip_temp)).grid(padx=5,row=0,column=2)
     tk.Button(btn_frame,text="Exit", font=("Helvetica",10),width=10,command=root.quit).grid(padx=5,row=0,column=3)
 
@@ -922,7 +925,7 @@ def cash_receipt_window(root):
     btn_frame.pack()
 
     tk.Button(btn_frame,text="Generate Receipt", font=("Helvetica",10),width=15, command=lambda:generate_cash_receipt(root,cash_receipt_window,receipt_temp,account,pay_receip,pay_receip_temp)).grid(padx=5,row=0,column=0)
-    tk.Button(btn_frame,text="Save", font=("Helvetica",10),width=15,command=lambda:save_payments_receipt(receipt_temp,account,pay_receip,pay_receip_temp,"recep")).grid(padx=5,row=0,column=1)
+    tk.Button(btn_frame,text="Save", font=("Helvetica",10),width=15,command=lambda:save_cash_payments_receipt(receipt_temp,account,pay_receip,pay_receip_temp,"recep")).grid(padx=5,row=0,column=1)
     tk.Button(btn_frame,text="Back", font=("Helvetica",10),width=10,command=lambda:go_back(root,payment_module_window,receipt_temp,pay_receip_temp)).grid(padx=5,row=0,column=2)
     tk.Button(btn_frame,text="Exit", font=("Helvetica",10),width=10,command=root.quit).grid(padx=5,row=0,column=3)
 
