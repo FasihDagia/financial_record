@@ -129,7 +129,6 @@ def generate_contract(root,sale_contract,account,contract_type,window,inventory,
     root.minsize(500,700)
     root.maxsize(600,800)
 
-
     root.title("Generate Contract")
 
     tk.Label(root, text=f"{contract_type} Contract", font=("Helvetica", 16)).pack(pady=10)
