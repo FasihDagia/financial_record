@@ -588,6 +588,8 @@ def load_payments_receipt(table_entry,payments_temp):
             payment.get("head_type", ""),
             payment.get("description",""),
             payment.get("amount",""),
+            payment.get("tax_amount",""),
+            payment.get("total_amount",""),
             payment.get("balance","")            
         ))
         i+=1

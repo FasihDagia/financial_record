@@ -779,7 +779,7 @@ def bank_payment_window(root):
     style.configure("Treeview.Heading", font=("Helvetica", 10, "bold"))  
     style.configure("Treeview", font=("Helvetica", 8)) 
 
-    table_payment = ttk.Treeview(root, columns=("S.NO","Date","Voucher No","Bank","Account Receivable","Expense Type","Description","Amount","Balance"), show="headings")
+    table_payment = ttk.Treeview(root, columns=("S.NO","Date","Voucher No","Bank","Account Receivable","Expense Type","Description","Amount","Tax Amount","Total Amount","Balance"), show="headings")
     table_payment.pack(fill=tk.BOTH, pady=50)
 
     table_payment.heading("S.NO", text="S.NO")
@@ -798,10 +798,14 @@ def bank_payment_window(root):
     table_payment.column("Description", anchor="center", width=300)
     table_payment.heading("Amount", text="Amount")
     table_payment.column("Amount", anchor="center", width=75)
+    table_payment.heading("Tax Amount", text="Tax Amount")
+    table_payment.column("Tax Amount", anchor="center", width=75)
+    table_payment.heading("Total Amount", text="Total Amount")
+    table_payment.column("Total Amount", anchor="center", width=75)
     table_payment.heading("Balance", text="Balance")
     table_payment.column("Balance", anchor="center", width=75)
 
-    load_payments_receipt(table_payment,payments_temp)
+    load_payments_receipt(table_payment,bank_temp)
 
 def cash_payment_window(root):
     
@@ -831,7 +835,7 @@ def cash_payment_window(root):
     style.configure("Treeview.Heading", font=("Helvetica", 10, "bold"))  
     style.configure("Treeview", font=("Helvetica", 8)) 
 
-    table_payment = ttk.Treeview(root, columns=("S.NO","Date","Voucher No","Bank","Account Receivable","Expense Type","Description","Amount","Balance"), show="headings")
+    table_payment = ttk.Treeview(root, columns=("S.NO","Date","Voucher No","Bank","Account Receivable","Expense Type","Description","Amount","Tax Amount","Total Amount","Balance"), show="headings")
     table_payment.pack(fill=tk.BOTH, pady=50)
 
     table_payment.heading("S.NO", text="S.NO")
@@ -850,10 +854,14 @@ def cash_payment_window(root):
     table_payment.column("Description", anchor="center", width=300)
     table_payment.heading("Amount", text="Amount")
     table_payment.column("Amount", anchor="center", width=75)
+    table_payment.heading("Tax Amount", text="Tax Amount")
+    table_payment.column("Tax Amount", anchor="center", width=75)
+    table_payment.heading("Total Amount", text="Total Amount")
+    table_payment.column("Total Amount", anchor="center", width=75)
     table_payment.heading("Balance", text="Balance")
     table_payment.column("Balance", anchor="center", width=75)
 
-    load_payments_receipt(table_payment,payments_temp)
+    load_payments_receipt(table_payment,cash_temp)
 
 def bank_receipt_window(root):
 
@@ -882,7 +890,7 @@ def bank_receipt_window(root):
     style.configure("Treeview.Heading", font=("Helvetica", 10, "bold"))  
     style.configure("Treeview", font=("Helvetica", 8)) 
 
-    table_receipt = ttk.Treeview(root, columns=("S.NO","Date","Voucher No","Bank","Account Receivable","Expense Type","Description","Amount","Balance"), show="headings")
+    table_receipt = ttk.Treeview(root, columns=("S.NO","Date","Voucher No","Bank","Account Receivable","Expense Type","Description","Amount","Tax Amount","Total Amount","Balance"), show="headings")
     table_receipt.pack(fill=tk.BOTH, pady=50)
 
     table_receipt.heading("S.NO", text="S.NO")
@@ -901,10 +909,14 @@ def bank_receipt_window(root):
     table_receipt.column("Description", anchor="center", width=300)
     table_receipt.heading("Amount", text="Amount")
     table_receipt.column("Amount", anchor="center", width=75)
+    table_receipt.heading("Tax Amount", text="Tax Amount")
+    table_receipt.column("Tax Amount", anchor="center", width=75)
+    table_receipt.heading("Total Amount", text="Total Amount")
+    table_receipt.column("Total Amount", anchor="center", width=75)
     table_receipt.heading("Balance", text="Balance")
     table_receipt.column("Balance", anchor="center", width=75)
 
-    load_payments_receipt(table_receipt,receipt_temp,"bank")
+    load_payments_receipt(table_receipt,bank_temp)
 
 def cash_receipt_window(root):
 
@@ -933,7 +945,7 @@ def cash_receipt_window(root):
     style.configure("Treeview.Heading", font=("Helvetica", 10, "bold"))  
     style.configure("Treeview", font=("Helvetica", 8)) 
 
-    table_receipt = ttk.Treeview(root, columns=("S.NO","Date","Voucher No","Expense Type","Description","Amount","Balance"), show="headings")
+    table_receipt = ttk.Treeview(root, columns=("S.NO","Date","Voucher No","Bank","Account Receivable","Expense Type","Description","Amount","Tax Amount","Total Amount","Balance"), show="headings")
     table_receipt.pack(fill=tk.BOTH, pady=50)
 
     table_receipt.heading("S.NO", text="S.NO")
@@ -942,13 +954,21 @@ def cash_receipt_window(root):
     table_receipt.column("Date", anchor="center", width=20)
     table_receipt.heading("Voucher No", text="Voucher No")
     table_receipt.column("Voucher No", anchor="center", width=50)
+    table_receipt.heading("Bank", text="Bank")
+    table_receipt.column("Bank", anchor="center", width=75)
+    table_receipt.heading("Account Receivable", text="Account Receivable")
+    table_receipt.column("Account Receivable", anchor="center", width=75)
     table_receipt.heading("Expense Type", text="Expense Type")
     table_receipt.column("Expense Type", anchor="center", width=100)
     table_receipt.heading("Description", text="Description")
     table_receipt.column("Description", anchor="center", width=300)
     table_receipt.heading("Amount", text="Amount")
     table_receipt.column("Amount", anchor="center", width=75)
+    table_receipt.heading("Tax Amount", text="Tax Amount")
+    table_receipt.column("Tax Amount", anchor="center", width=75)
+    table_receipt.heading("Total Amount", text="Total Amount")
+    table_receipt.column("Total Amount", anchor="center", width=75)
     table_receipt.heading("Balance", text="Balance")
     table_receipt.column("Balance", anchor="center", width=75)
 
-    load_payments_receipt(table_receipt,receipt_temp,"cash")
+    load_payments_receipt(table_receipt,cash_temp)
