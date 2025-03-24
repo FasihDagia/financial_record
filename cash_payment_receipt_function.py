@@ -4,6 +4,16 @@ from tkinter import ttk, messagebox, simpledialog,filedialog
 from datetime import datetime
 from num2words import num2words
 
+def go_back(root,window,payments,pay_receip_temp):
+    if len(payments) == 0 and len(pay_receip_temp) == 0:
+        window(root)
+    else:
+        confirm = messagebox.askyesno("Confirm", f"You have not saved the payments yet!\n Are you sure you want to go back?")
+        if confirm:
+            payments.clear()
+            pay_receip_temp.clear()
+            window(root)
+
 def generate_cash_receipt(root,window,receipt_temp,receipt,pay_receip,pay_receip_temp,customers,client_temp,cash,cash_temp):
     
     for widget in root.winfo_children():
@@ -48,7 +58,7 @@ def generate_cash_receipt(root,window,receipt_temp,receipt,pay_receip,pay_receip
 
     current_date = datetime.now()
     year = current_date.year
-    voucher = f"CP{str(voucher_no).zfill(5)}/{year}"
+    voucher = f"CR{str(voucher_no).zfill(5)}/{year}"
 
     tk.Label(entry_frame,text=voucher,font=("Helvetica", 11)).grid(row=0,column=3)
 
@@ -148,7 +158,7 @@ def generate_cash_receipt(root,window,receipt_temp,receipt,pay_receip,pay_receip
             "voucher_no":vouch_no,
             "head_type":exp_type,
             "account":account,
-            "acc_pay":acc_pay,
+            "opp_acc":acc_pay,
             "description":description,
             "amount":amount,
             "amountiw":amountiw,
@@ -180,7 +190,7 @@ def generate_cash_receipt(root,window,receipt_temp,receipt,pay_receip,pay_receip
             "voucher_no":vouch_no,
             "head_type":exp_type,
             "account":account,
-            "acc_recev":acc_pay,
+            "opp_acc":acc_pay,
             "description":description,
             "amount":amount,
             "amountiw":amountiw,
@@ -212,7 +222,7 @@ def generate_cash_receipt(root,window,receipt_temp,receipt,pay_receip,pay_receip
             "voucher_no":vouch_no,
             "head_type":exp_type,
             "account":account,
-            "acc_recev":acc_pay,
+            "opp_acc":acc_pay,
             "description":description,
             "amount":amount,
             "amountiw":amountiw,
@@ -244,7 +254,7 @@ def generate_cash_receipt(root,window,receipt_temp,receipt,pay_receip,pay_receip
             "voucher_no":vouch_no,
             "head_type":exp_type,
             "account":account,
-            "acc_recev":acc_pay,
+            "opp_acc":acc_pay,
             "description":description,
             "amount":amount,
             "amountiw":amountiw,
@@ -401,7 +411,7 @@ def generate_cash_payments(root,window,payments_temp,payment,pay_receip,pay_rece
             "voucher_no":vouch_no,
             "head_type":exp_type,
             "account":account,
-            "acc_recev":acc_recev,
+            "opp_acc":acc_recev,
             "description":description,
             "amount":amount,
             "amountiw":amountiw,
@@ -433,7 +443,7 @@ def generate_cash_payments(root,window,payments_temp,payment,pay_receip,pay_rece
             "voucher_no":vouch_no,
             "head_type":exp_type,
             "account":account,
-            "acc_recev":acc_recev,
+            "opp_acc":acc_recev,
             "description":description,
             "amount":amount,
             "amountiw":amountiw,
@@ -465,7 +475,7 @@ def generate_cash_payments(root,window,payments_temp,payment,pay_receip,pay_rece
             "voucher_no":vouch_no,
             "head_type":exp_type,
             "account":account,
-            "acc_recev":acc_recev,
+            "opp_acc":acc_recev,
             "description":description,
             "amount":amount,
             "amountiw":amountiw,
@@ -497,7 +507,7 @@ def generate_cash_payments(root,window,payments_temp,payment,pay_receip,pay_rece
             "voucher_no":vouch_no,
             "head_type":exp_type,
             "account":account,
-            "acc_recev":acc_recev,
+            "opp_acc":acc_recev,
             "description":description,
             "amount":amount,
             "amountiw":amountiw,
