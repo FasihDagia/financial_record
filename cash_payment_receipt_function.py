@@ -536,7 +536,7 @@ def save_cash_payments_receipt(payments_temp,payment,pay_receip,pay_receip_temp,
             if type == "pay":
                 messagebox.showinfo("Success","Payments saved succesfully!")
             elif type == "recep":
-                messagebox.showerror("Success","Receipts saved succesfully")
+                messagebox.showinfo("Success","Receipts saved succesfully")
     else:
         if type == "pay":
             messagebox.showerror("Error","No Payments to save!")
