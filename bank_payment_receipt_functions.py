@@ -649,7 +649,7 @@ def save_bank_payment_receipt(payments_temp,payment,pay_receip,pay_receip_temp,t
                 bank.insert_one(pay)
             
             for customer_update in client_temp.values():
-                name = customer_update.get('acc_recev','')
+                name = customer_update.get('opp_acc','')
                 customer = customers[name]
                 customer.insert_one(customer_update)
 
@@ -666,7 +666,7 @@ def save_bank_payment_receipt(payments_temp,payment,pay_receip,pay_receip_temp,t
             if type == "pay":
                 messagebox.showinfo("Success","Payments saved succesfully!")
             elif type == "recep":
-                messagebox.showerror("Success","Receipts saved succesfully")
+                messagebox.showinfo("Success","Receipts saved succesfully")
     else:
         if type == "pay":
             messagebox.showerror("Error","No Payments to save!")
