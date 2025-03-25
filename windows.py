@@ -814,6 +814,7 @@ def cash_payment_window(root):
     account = payment['cash_payment']
     pay_receip = payment['pay_receip']
     cash = payment['cash']
+    tax = payment['tax_payment']
 
     for widget in root.winfo_children():
         widget.destroy()
@@ -828,8 +829,8 @@ def cash_payment_window(root):
     btn_frame = tk.Frame()
     btn_frame.pack()
 
-    tk.Button(btn_frame,text="Generate Payment", font=("Helvetica",10),width=15, command=lambda:generate_cash_payments(root,cash_payment_window,payments_temp,account,pay_receip,pay_receip_temp,customers,client_temp,cash,cash_temp)).grid(padx=5,row=0,column=0)
-    tk.Button(btn_frame,text="Save", font=("Helvetica",10),width=15,command=lambda:save_cash_payments_receipt(payments_temp,account,pay_receip,pay_receip_temp,"pay",customers,client_temp,cash,cash_temp)).grid(padx=5,row=0,column=1)
+    tk.Button(btn_frame,text="Generate Payment", font=("Helvetica",10),width=15, command=lambda:generate_cash_payments(root,cash_payment_window,payments_temp,account,pay_receip,pay_receip_temp,customers,client_temp,cash,cash_temp,tax,tax_temp)).grid(padx=5,row=0,column=0)
+    tk.Button(btn_frame,text="Save", font=("Helvetica",10),width=15,command=lambda:save_cash_payments_receipt(payments_temp,account,pay_receip,pay_receip_temp,"pay",customers,client_temp,cash,cash_temp,tax,tax_temp)).grid(padx=5,row=0,column=1)
     tk.Button(btn_frame,text="Back", font=("Helvetica",10),width=10,command=lambda:go_back(root,payment_module_window,payments_temp,pay_receip_temp)).grid(padx=5,row=0,column=2)
     tk.Button(btn_frame,text="Exit", font=("Helvetica",10),width=10,command=root.quit).grid(padx=5,row=0,column=3)
 
@@ -886,7 +887,7 @@ def bank_receipt_window(root):
     btn_frame.pack()
                                     
     tk.Button(btn_frame,text="Generate Receipt", font=("Helvetica",10),width=15, command=lambda:generate_bank_receipt(root,bank_receipt_window,receipt_temp,account,pay_receip,pay_receip_temp,customers,client_temp,bank,bank_temp,banks,bank_ind_temp,tax,tax_temp)).grid(padx=5,row=0,column=0)
-    tk.Button(btn_frame,text="Save", font=("Helvetica",10),width=15,command=lambda:save_bank_payment_receipt(receipt_temp,account,pay_receip,pay_receip_temp,"recep",customers,client_temp,bank,bank_temp,banks,bank_ind_temp)).grid(padx=5,row=0,column=1)
+    tk.Button(btn_frame,text="Save", font=("Helvetica",10),width=15,command=lambda:save_bank_payment_receipt(receipt_temp,account,pay_receip,pay_receip_temp,"recep",customers,client_temp,bank,bank_temp,banks,bank_ind_temp,tax,tax_temp)).grid(padx=5,row=0,column=1)
     tk.Button(btn_frame,text="Back", font=("Helvetica",10),width=10,command=lambda:go_back(root,payment_module_window,receipt_temp,pay_receip_temp)).grid(padx=5,row=0,column=2)
     tk.Button(btn_frame,text="Exit", font=("Helvetica",10),width=10,command=root.quit).grid(padx=5,row=0,column=3)
 
@@ -927,6 +928,7 @@ def cash_receipt_window(root):
     account = payment['cash_receipt']
     pay_receip = payment['pay_receip']
     cash = payment['cash']
+    tax = payment['tax_payment']
 
     for widget in root.winfo_children():
         widget.destroy()
@@ -941,8 +943,8 @@ def cash_receipt_window(root):
     btn_frame = tk.Frame()
     btn_frame.pack()
 
-    tk.Button(btn_frame,text="Generate Receipt", font=("Helvetica",10),width=15, command=lambda:generate_cash_receipt(root,cash_receipt_window,receipt_temp,account,pay_receip,pay_receip_temp,customers,client_temp,cash,cash_temp)).grid(padx=5,row=0,column=0)
-    tk.Button(btn_frame,text="Save", font=("Helvetica",10),width=15,command=lambda:save_cash_payments_receipt(receipt_temp,account,pay_receip,pay_receip_temp,"recep",customers,client_temp,cash,cash_temp)).grid(padx=5,row=0,column=1)
+    tk.Button(btn_frame,text="Generate Receipt", font=("Helvetica",10),width=15, command=lambda:generate_cash_receipt(root,cash_receipt_window,receipt_temp,account,pay_receip,pay_receip_temp,customers,client_temp,cash,cash_temp,tax,tax_temp)).grid(padx=5,row=0,column=0)
+    tk.Button(btn_frame,text="Save", font=("Helvetica",10),width=15,command=lambda:save_cash_payments_receipt(receipt_temp,account,pay_receip,pay_receip_temp,"recep",customers,client_temp,cash,cash_temp,tax,tax_temp)).grid(padx=5,row=0,column=1)
     tk.Button(btn_frame,text="Back", font=("Helvetica",10),width=10,command=lambda:go_back(root,payment_module_window,receipt_temp,pay_receip_temp)).grid(padx=5,row=0,column=2)
     tk.Button(btn_frame,text="Exit", font=("Helvetica",10),width=10,command=root.quit).grid(padx=5,row=0,column=3)
 

@@ -14,7 +14,7 @@ def go_back(root,window,payments,pay_receip_temp):
             pay_receip_temp.clear()
             window(root)
 
-def generate_cash_receipt(root,window,receipt_temp,receipt,pay_receip,pay_receip_temp,customers,client_temp,cash,cash_temp):
+def generate_cash_receipt(root,window,receipt_temp,receipt,pay_receip,pay_receip_temp,customers,client_temp,cash,cash_temp,tax,tax_temp):
     
     for widget in root.winfo_children():
         widget.destroy()
@@ -113,7 +113,7 @@ def generate_cash_receipt(root,window,receipt_temp,receipt,pay_receip,pay_receip
     total_var = tk.StringVar(value=0)
     tk.Label(total_frame,textvariable=total_var,font=9).grid(row=0,column=1,pady=10)
 
-    tk.Button(root,text="Generate" ,font=("helvetica",10),width=20,command=lambda:generate(root,window,receipt_temp,receipt,pay_receip,pay_receip_temp,customers,client_temp,cash,cash_temp)).pack(pady=10)    
+    tk.Button(root,text="Generate" ,font=("helvetica",10),width=20,command=lambda:generate(root,window,receipt_temp,receipt,pay_receip,pay_receip_temp,customers,client_temp,cash,cash_temp,tax,tax_temp)).pack(pady=10)    
     
     btn_frame = tk.Frame(root) 
     btn_frame.pack()
@@ -121,7 +121,7 @@ def generate_cash_receipt(root,window,receipt_temp,receipt,pay_receip,pay_receip
     tk.Button(btn_frame,text="Back" ,font=("helvetica",10),width=10,command=lambda:window(root)).grid(row=0,column=0,padx=5)
     tk.Button(btn_frame,text="Exit" ,font=("helvetica",10),width=10,command=root.quit).grid(row=0,column=1,padx=5)
 
-    def generate(root,window,receipt_temp,receipt,pay_receip,pay_receip_temp,customers,client_temp,cash,cash_temp):
+    def generate(root,window,receipt_temp,receipt,pay_receip,pay_receip_temp,customers,client_temp,cash,cash_temp,tax,tax_temp):
         
         date = date_entry.get()
         vouch_no = voucher
@@ -264,10 +264,41 @@ def generate_cash_receipt(root,window,receipt_temp,receipt,pay_receip,pay_receip
             "balance":balance3
         }
 
+        no_entries_4 = tax.count_documents({})
+        if len(tax_temp)==0:
+            if no_entries_4 == 0:
+                balance4 = 0 
+            else:
+                last_entry_4 = tax.find_one(sort=[("_id", -1)])
+                balance4 = last_entry_4.get("balance",0) 
+        else: 
+            balance4 = tax_temp[len(tax_temp)]["balance"]
+        
+        if len(tax_temp) == 0:
+            sno4 = no_entries_4 + 1
+        else:
+            sno4 = no_entries_4 + len(tax_temp) + 1
+        
+        balance4 += tax_amount
+        tax_temp[len(tax_temp)+1] ={
+            "s_no":sno4,
+            "date":date,
+            "voucher_no":vouch_no,
+            "head_type":exp_type,
+            "account":account,
+            "opp_acc":acc_pay,
+            "description":description,
+            "amount":amount,
+            "tax_percent":tax_percent,
+            "tax_amount":tax_amount,
+            "total_amount":total_amount,
+            "balance":balance4
+        }
+
         messagebox.showinfo("Success","Cash Payment Generated Succesfully!")
         window(root)
 
-def generate_cash_payments(root,window,payments_temp,payment,pay_receip,pay_receip_temp,customers,client_temp,cash,cash_temp):
+def generate_cash_payments(root,window,payments_temp,payment,pay_receip,pay_receip_temp,customers,client_temp,cash,cash_temp,tax,tax_temp):
     
     for widget in root.winfo_children():
         widget.destroy()
@@ -366,7 +397,7 @@ def generate_cash_payments(root,window,payments_temp,payment,pay_receip,pay_rece
     total_var = tk.StringVar(value=0)
     tk.Label(total_frame,textvariable=total_var,font=9).grid(row=0,column=1,pady=10)
 
-    tk.Button(root,text="Generate" ,font=("helvetica",10),width=20,command=lambda:generate(root,window,payments_temp,payment,pay_receip,pay_receip_temp,customers,client_temp,cash,cash_temp)).pack(pady=10)    
+    tk.Button(root,text="Generate" ,font=("helvetica",10),width=20,command=lambda:generate(root,window,payments_temp,payment,pay_receip,pay_receip_temp,customers,client_temp,cash,cash_temp,tax,tax_temp)).pack(pady=10)    
     
     btn_frame = tk.Frame(root) 
     btn_frame.pack()
@@ -374,7 +405,7 @@ def generate_cash_payments(root,window,payments_temp,payment,pay_receip,pay_rece
     tk.Button(btn_frame,text="Back" ,font=("helvetica",10),width=10,command=lambda:window(root)).grid(row=0,column=0,padx=5)
     tk.Button(btn_frame,text="Exit" ,font=("helvetica",10),width=10,command=root.quit).grid(row=0,column=1,padx=5)
 
-    def generate(root,window,payments_temp,payment,pay_receip,pay_receip_temp,customers,client_temp,cash,cash_temp):
+    def generate(root,window,payments_temp,payment,pay_receip,pay_receip_temp,customers,client_temp,cash,cash_temp,tax,tax_temp):
         
         date = date_entry.get()
         vouch_no = voucher
