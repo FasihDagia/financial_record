@@ -4,7 +4,7 @@ from tkinter import ttk, messagebox, simpledialog,filedialog
 from datetime import datetime
 from num2words import num2words
 
-def generate_bank_payments(root,window,payments_temp,payment,pay_receip,pay_receip_temp,customers,client_temp,bank,bank_temp,indvidual_bank,bank_ind_temp):
+def generate_bank_payments(root,window,payments_temp,payment,pay_receip,pay_receip_temp,customers,client_temp,bank,bank_temp,indvidual_bank,bank_ind_temp,tax,tax_temp):
     
     for widget in root.winfo_children():
         widget.destroy()
@@ -104,7 +104,7 @@ def generate_bank_payments(root,window,payments_temp,payment,pay_receip,pay_rece
     total_var = tk.StringVar(value=0)
     tk.Label(total_frame,textvariable=total_var,font=9).grid(row=0,column=1,pady=10)
 
-    tk.Button(root,text="Generate" ,font=("helvetica",10),width=20,command=lambda:generate(root,window,payments_temp,payment,pay_receip,pay_receip_temp,customers,client_temp,bank,bank_temp,indvidual_bank,bank_ind_temp)).pack(pady=10)    
+    tk.Button(root,text="Generate" ,font=("helvetica",10),width=20,command=lambda:generate(root,window,payments_temp,payment,pay_receip,pay_receip_temp,customers,client_temp,bank,bank_temp,indvidual_bank,bank_ind_temp,tax,tax_temp)).pack(pady=10)    
     
     btn_frame = tk.Frame(root) 
     btn_frame.pack()
@@ -112,7 +112,7 @@ def generate_bank_payments(root,window,payments_temp,payment,pay_receip,pay_rece
     tk.Button(btn_frame,text="Back" ,font=("helvetica",10),width=10,command=lambda:window(root)).grid(row=0,column=0,padx=5)
     tk.Button(btn_frame,text="Exit" ,font=("helvetica",10),width=10,command=root.quit).grid(row=0,column=1,padx=5)
 
-    def generate(root,window,payments_temp,payment,pay_receip,pay_receip_temp,customers,client_temp,bank,bank_temp,indvidual_bank,bank_ind_temp):
+    def generate(root,window,payments_temp,payment,pay_receip,pay_receip_temp,customers,client_temp,bank,bank_temp,indvidual_bank,bank_ind_temp,tax,tax_temp):
         
         date = date_entry.get()
         vouch_no = voucher
@@ -288,7 +288,6 @@ def generate_bank_payments(root,window,payments_temp,payment,pay_receip,pay_rece
                 if i.get("account","") == account:
                     j +=1
                     sno4 += j
-
         balance4 -= total_amount
         bank_ind_temp[len(bank_ind_temp)+1] ={
             "s_no":sno4,
@@ -306,10 +305,40 @@ def generate_bank_payments(root,window,payments_temp,payment,pay_receip,pay_rece
             "balance":balance4
         }        
 
+        no_entries_5 = tax.count_documents({})
+        if len(tax_temp)==0:
+            if no_entries_5 == 0:
+                balance5 = 0 
+            else:
+                last_entry_5 = tax.find_one(sort=[("_id", -1)])
+                balance5 = last_entry_5.get("balance",0) 
+        else: 
+            balance5 = tax_temp[len(tax_temp)]["balance"]
+        
+        if len(tax_temp) == 0:
+            sno5 = no_entries_5 + 1
+        else:
+            sno5 = no_entries_5 + len(tax_temp) + 1
+        
+        balance5 += tax_amount
+        tax_temp[len(tax_temp)+1] ={
+            "s_no":sno5,
+            "date":date,
+            "voucher_no":vouch_no,
+            "head_type":exp_type,
+            "account":account,
+            "opp_acc":acc_recev,
+            "description":description,
+            "amount":amount,
+            "tax_percent":tax_percent,
+            "tax_amount":tax_amount,
+            "total_amount":total_amount,
+            "balance":balance5
+        }
         messagebox.showinfo("Success","Bank Payment Generated Succesfully!")
         window(root)
 
-def generate_bank_receipt(root,window,receipt_temp,receipt,pay_receip,pay_receip_temp,customers,client_temp,bank,bank_temp,indvidual_bank,bank_ind_temp):
+def generate_bank_receipt(root,window,receipt_temp,receipt,pay_receip,pay_receip_temp,customers,client_temp,bank,bank_temp,indvidual_bank,bank_ind_temp,tax,tax_temp):
     
     for widget in root.winfo_children():
         widget.destroy()
@@ -409,7 +438,7 @@ def generate_bank_receipt(root,window,receipt_temp,receipt,pay_receip,pay_receip
     total_var = tk.StringVar(value=0)
     tk.Label(total_frame,textvariable=total_var,font=9).grid(row=0,column=1,pady=10)
 
-    tk.Button(root,text="Generate" ,font=("helvetica",10),width=20,command=lambda:generate(root,window,receipt_temp,receipt,pay_receip,pay_receip_temp,customers,client_temp,bank,bank_temp,indvidual_bank,bank_ind_temp)).pack(pady=10)    
+    tk.Button(root,text="Generate" ,font=("helvetica",10),width=20,command=lambda:generate(root,window,receipt_temp,receipt,pay_receip,pay_receip_temp,customers,client_temp,bank,bank_temp,indvidual_bank,bank_ind_temp,tax,tax_temp)).pack(pady=10)    
     
     btn_frame = tk.Frame(root) 
     btn_frame.pack()
@@ -417,7 +446,7 @@ def generate_bank_receipt(root,window,receipt_temp,receipt,pay_receip,pay_receip
     tk.Button(btn_frame,text="Back" ,font=("helvetica",10),width=10,command=lambda:window(root)).grid(row=0,column=0,padx=5)
     tk.Button(btn_frame,text="Exit" ,font=("helvetica",10),width=10,command=root.quit).grid(row=0,column=1,padx=5)
 
-    def generate(root,window,receipt_temp,receipt,pay_receip,pay_receip_temp,customers,client_temp,bank,bank_temp,indvidual_bank,bank_ind_temp):
+    def generate(root,window,receipt_temp,receipt,pay_receip,pay_receip_temp,customers,client_temp,bank,bank_temp,indvidual_bank,bank_ind_temp,tax,tax_temp):
         
         date = date_entry.get()
         vouch_no = voucher
@@ -636,7 +665,7 @@ def load_payments_receipt(table_entry,payments_temp):
         ))
         i+=1
 
-def save_bank_payment_receipt(payments_temp,payment,pay_receip,pay_receip_temp,type,customers,client_temp,bank,bank_temp,indvidual_bank,bank_ind_temp):
+def save_bank_payment_receipt(payments_temp,payment,pay_receip,pay_receip_temp,type,customers,client_temp,bank,bank_temp,indvidual_bank,bank_ind_temp,tax,tax_temp):
     if len(payments_temp) != 0 and len(pay_receip_temp) != 0:
         confirm = messagebox.askyesno("Confirm", f"Once the Particulars are saved you wont be able to cahnge them\nAre you sure you want to save?")
         if confirm:
@@ -647,6 +676,8 @@ def save_bank_payment_receipt(payments_temp,payment,pay_receip,pay_receip_temp,t
                 pay_receip.insert_one(pay)
             for pay in bank_temp.values():
                 bank.insert_one(pay)
+            for pay in tax_temp.values():
+                tax.insert_one(pay)
             
             for customer_update in client_temp.values():
                 name = customer_update.get('opp_acc','')
@@ -662,6 +693,8 @@ def save_bank_payment_receipt(payments_temp,payment,pay_receip,pay_receip_temp,t
             payments_temp.clear()
             bank_temp.clear()
             client_temp.clear()
+            bank_ind_temp.clear()
+            tax_temp.clear()
 
             if type == "pay":
                 messagebox.showinfo("Success","Payments saved succesfully!")
