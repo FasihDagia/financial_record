@@ -3,34 +3,14 @@ from tkinter import *
 from tkinter import ttk
 import pymongo as pm
 
+from temp_data_store import *
+from database_connect import *
 from functions import generate_contract,print_contracts,generate_invoice,save,load_transactions,table,back,return_invoice,print_invoice,table_contract,load_contracts,save_contract
 from inventory_functions import inventory_check,existing_products,add_product,remove_product
 from client_function import client_check,existing_clients,add_client,remove_client
 from bank_payment_receipt_functions import generate_bank_payments,load_payments_receipt,save_bank_payment_receipt,generate_bank_receipt
 from cash_payment_receipt_function import generate_cash_receipt,generate_cash_payments,save_cash_payments_receipt,go_back
 
-#data base set up
-client = pm.MongoClient("mongodb://localhost:27017/")
-db = client["financial_records"]
-inventory = client['inventory']
-customers = client['Customer']
-payment = client['payment_receipt']
-banks = client['banks']
-
-sale_contracts = {}
-purchase_contracts = {}
-sale_transaction = {}
-purchase_transaction = {}
-inventory_sale = {}
-existing_contracts = {}
-payments_temp = {}
-receipt_temp ={}
-pay_receip_temp = {}
-bank_temp = {}
-cash_temp = {}
-client_temp ={}
-bank_ind_temp = {}
-tax_temp = {}
 
 def main_window(root):
 
@@ -202,7 +182,7 @@ def sale_contract_window(root):
     for widget in root.winfo_children():
         widget.destroy()
 
-    inventory_Sale=None
+    
 
     root.geometry("1400x800")
     root.minsize(1400,700)
@@ -214,7 +194,6 @@ def sale_contract_window(root):
     button_frame = tk.Frame(root)
     button_frame.pack()
 
-    inventory_sale = {}
     tk.Button(button_frame,text='Generate Contract', width=15,command=lambda:generate_contract(root,sale_contracts,account,'Sale',sale_contract_window,inventory,customers)).grid(row=0, column=1,padx=5)
     tk.Button(button_frame, text= "Print Contract", width=15, command=lambda:print_contracts(root,sale_contracts,"SALE")).grid(row=0, column=2,padx=5)
     tk.Button(button_frame, text="Save", width=15, command=lambda:save_contract(sale_contracts,account,customers)).grid(row=0, column=3,padx=5)

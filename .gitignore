@@ -1,0 +1,35 @@
+# Byte-compiled / cache files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.log
+
+# Virtual environment
+venv/
+env/
+*.venv
+*.env
+
+# System-specific files
+.DS_Store
+Thumbs.db
+
+# IDE / Editor settings
+.vscode/
+.idea/
+*.sublime-workspace
+
+# Dependency files
+requirements.txt.lock
+pip-log.txt
+pip-delete-this-directory.txt
+
+# MongoDB dump files (if any)
+dump/
+*.bson
+
+# Config & Credentials (if using environment variables)
+.env
+config.json
+secrets.json
