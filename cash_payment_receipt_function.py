@@ -598,7 +598,7 @@ def save_cash_payments_receipt(payments_temp,payment,pay_receip,pay_receip_temp,
                 tax.insert_one(pay)
             
             for customer_update in client_temp.values():
-                name = customer_update.get('acc_recev','')
+                name = customer_update.get('opp_acc','')
                 customer = customers[name]
                 customer.insert_one(customer_update)
 
