@@ -594,6 +594,8 @@ def save_cash_payments_receipt(payments_temp,payment,pay_receip,pay_receip_temp,
                 pay_receip.insert_one(pay)
             for pay in cash_temp.values():
                 cash.insert_one(pay)
+            for pay in tax_temp.values():
+                tax.insert_one(pay)
             
             for customer_update in client_temp.values():
                 name = customer_update.get('acc_recev','')
@@ -604,6 +606,7 @@ def save_cash_payments_receipt(payments_temp,payment,pay_receip,pay_receip_temp,
             payments_temp.clear()
             cash_temp.clear()
             client_temp.clear()
+            tax_temp.clear()
 
             if type == "pay":
                 messagebox.showinfo("Success","Payments saved succesfully!")
