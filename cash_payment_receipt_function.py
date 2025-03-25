@@ -548,10 +548,41 @@ def generate_cash_payments(root,window,payments_temp,payment,pay_receip,pay_rece
             "balance":balance3
         }
 
+        no_entries_4 = tax.count_documents({})
+        if len(tax_temp)==0:
+            if no_entries_4 == 0:
+                balance4 = 0 
+            else:
+                last_entry_4 = tax.find_one(sort=[("_id", -1)])
+                balance4 = last_entry_4.get("balance",0) 
+        else: 
+            balance4 = tax_temp[len(tax_temp)]["balance"]
+        
+        if len(tax_temp) == 0:
+            sno4 = no_entries_4 + 1
+        else:
+            sno4 = no_entries_4 + len(tax_temp) + 1
+        
+        balance4 += tax_amount
+        tax_temp[len(tax_temp)+1] ={
+            "s_no":sno4,
+            "date":date,
+            "voucher_no":vouch_no,
+            "head_type":exp_type,
+            "account":account,
+            "opp_acc":acc_recev,
+            "description":description,
+            "amount":amount,
+            "tax_percent":tax_percent,
+            "tax_amount":tax_amount,
+            "total_amount":total_amount,
+            "balance":balance4
+        }
+
         messagebox.showinfo("Success","Cash Payment Generated Succesfully!")
         window(root)
 
-def save_cash_payments_receipt(payments_temp,payment,pay_receip,pay_receip_temp,type,customers,client_temp,cash,cash_temp):
+def save_cash_payments_receipt(payments_temp,payment,pay_receip,pay_receip_temp,type,customers,client_temp,cash,cash_temp,tax,tax_temp):
     
     if len(payments_temp) != 0 and len(pay_receip_temp) != 0:
         confirm = messagebox.askyesno("Confirm", f"Once the Particulars are saved you wont be able to cahnge them\nAre you sure you want to save?")
