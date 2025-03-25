@@ -640,6 +640,37 @@ def generate_bank_receipt(root,window,receipt_temp,receipt,pay_receip,pay_receip
             "balance":balance4
         }        
 
+        no_entries_5 = tax.count_documents({})
+        if len(tax_temp)==0:
+            if no_entries_5 == 0:
+                balance5 = 0 
+            else:
+                last_entry_5 = tax.find_one(sort=[("_id", -1)])
+                balance5 = last_entry_5.get("balance",0) 
+        else: 
+            balance5 = tax_temp[len(tax_temp)]["balance"]
+        
+        if len(tax_temp) == 0:
+            sno5 = no_entries_5 + 1
+        else:
+            sno5 = no_entries_5 + len(tax_temp) + 1
+        
+        balance5 += tax_amount
+        tax_temp[len(tax_temp)+1] ={
+            "s_no":sno5,
+            "date":date,
+            "voucher_no":vouch_no,
+            "head_type":exp_type,
+            "account":account,
+            "opp_acc":acc_pay,
+            "description":description,
+            "amount":amount,
+            "tax_percent":tax_percent,
+            "tax_amount":tax_amount,
+            "total_amount":total_amount,
+            "balance":balance5
+        }
+
         messagebox.showinfo("Success","Bank Payment Generated Succesfully!")
         window(root)
 
