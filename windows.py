@@ -11,8 +11,63 @@ from client_function import client_check,existing_clients,add_client,remove_clie
 from bank_payment_receipt_functions import generate_bank_payments,load_payments_receipt,save_bank_payment_receipt,generate_bank_receipt
 from cash_payment_receipt_function import generate_cash_receipt,generate_cash_payments,save_cash_payments_receipt,go_back
 
+def home_page(root):
+    
+    for widget in root.winfo_children():
+        widget.destroy()
 
-def main_window(root):
+    root.geometry("450x275")
+    root.minsize(350,275)
+    root.maxsize(450,500)
+
+    root.title("Financial Records")
+
+    tk.Label(root,text="Financial Records",font=("Helvetica",20)).pack(padx=50,pady=5)
+    
+    btn_frame = tk.Frame()
+    btn_frame.pack(fill=Y, padx=33, pady=10)
+
+    row = 0
+    column = 0
+    details = company['company_details'].find()
+
+    for companys in details:
+        company_name = companys.get('company_name')
+        tk.Button(btn_frame,text=company_name,font=("Helvetica", 10),width=20,command=lambda name=company_name: login_window(root, name)).grid(padx=10, pady=10, row=row, column=column)
+        column+=1
+        if column % 2 == 0:
+            row+=1
+
+    tk.Button(root,text="Exit", font=("Helvetica",10),width=20, command=root.quit).pack(padx=10,pady=10)
+
+def login_window(root,company_name):
+    
+    login = tk.Toplevel(root)
+    
+    login.geometry("450x275")
+    login.minsize(350,275)
+    login.maxsize(450,500)
+
+    login.title(f"Login/{company_name}")
+
+    tk.Label(login,text=f"Login",font=("Helvetica",20)).pack(padx=50,pady=5)
+
+    entry_frame = tk.Frame(login)
+    entry_frame.pack(pady=10)
+
+    tk.Label(entry_frame,text="Username/Employee id:",font=("Helvetica",10)).grid(row=0,column=0,padx=10,pady=10)
+    username = tk.Entry(entry_frame,width=30)
+    username.grid(row=0,column=1,padx=10,pady=10)
+
+    tk.Label(entry_frame,text="Password:",font=("Helvetica",10)).grid(row=1,column=0,padx=10,pady=10)
+    password = tk.Entry(entry_frame,width=30,show="*")
+    password.grid(row=1,column=1,padx=10,pady=10)
+
+    tk.Button(login,text="Login",font=("Helvetica",10),width=20,command=lambda:login(username,password)).pack(padx=10,pady=10)
+
+    login.mainloop()
+
+def main_menu_window(root):
 
     for widget in root.winfo_children():
         widget.destroy()
@@ -56,7 +111,7 @@ def sale_module_window(root):
     tk.Button(btn_frame, text="Sale Contract", font=("Helvetica",10),width=20, command=lambda:sale_contract_window(root)).grid(padx=10, pady=10, row=0,column=0)
     tk.Button(btn_frame,text="Sale Invoice", font=("Helvetica",10),width=20, command=lambda:sale_invoice_window(root)).grid(padx=10,pady=10,row=0,column=1)
     tk.Button(btn_frame,text="Sale Return",font=("Helvetica",10),width=20,command=lambda:sale_return_window(root)).grid(padx=10,pady=10,row=1,column=0)
-    tk.Button(btn_frame, text="Back",font=("Helvetica",10), width=20, command=lambda:main_window(root)).grid(row=1, column=1,padx=10,pady=10)
+    tk.Button(btn_frame, text="Back",font=("Helvetica",10), width=20, command=lambda:main_menu_window(root)).grid(row=1, column=1,padx=10,pady=10)
     tk.Button(root, text="Exit",font=("Helvetica",10), width=20, command=root.quit).pack(padx=10,pady=5)
 
 def purchase_module_window(root):
@@ -78,7 +133,7 @@ def purchase_module_window(root):
     tk.Button(btn_frame, text="Purchase Contract", font=("Helvetica", 10), width=20, command=lambda:purchase_contract_window(root)).grid(padx=10,pady=10,row=0,column=0)    
     tk.Button(btn_frame,text="Purchase Invoice", font=("Helvetica",10),width=20, command=lambda:purchase_invoice_window(root)).grid(padx=10,pady=10,row=0,column=1)
     tk.Button(btn_frame,text="Purchase Return",font=("Helvetica",10),width=20,command=lambda:purchase_return_window(root,inventory)).grid(padx=10,pady=10,row=1,column=0)
-    tk.Button(btn_frame, text="Back",font=("Helvetica",10), width=20, command=lambda:main_window(root)).grid(row=1, column=1,padx=10,pady=10)
+    tk.Button(btn_frame, text="Back",font=("Helvetica",10), width=20, command=lambda:main_menu_window(root)).grid(row=1, column=1,padx=10,pady=10)
     tk.Button(root, text="Exit",font=("Helvetica",10), width=20, command=root.quit).pack(padx=10,pady=5)
 
 def payment_module_window(root):
@@ -101,7 +156,7 @@ def payment_module_window(root):
 
     btn_frame_2 = tk.Frame()
     btn_frame_2.pack()
-    tk.Button(btn_frame_2, text="Back",font=("Helvetica",10), width=15, command=lambda:main_window(root)).grid(row=0,column=0,padx=5)
+    tk.Button(btn_frame_2, text="Back",font=("Helvetica",10), width=15, command=lambda:main_menu_window(root)).grid(row=0,column=0,padx=5)
     tk.Button(btn_frame_2, text="Exit",font=("Helvetica",10), width=15, command=root.quit).grid(row=0,column=1, padx=5)
 
 def receipt_module_window(root):
@@ -124,7 +179,7 @@ def receipt_module_window(root):
     tk.Button(btn_frame, text="Bank",font=("Helvetica",10), width=20, command=lambda:bank_receipt_window(root)).grid(row=0, column=1,padx=10,pady=10)
     btn_frame_2 = tk.Frame()
     btn_frame_2.pack()
-    tk.Button(btn_frame_2, text="Back",font=("Helvetica",10), width=15, command=lambda:main_window(root)).grid(row=0,column=0,padx=5)
+    tk.Button(btn_frame_2, text="Back",font=("Helvetica",10), width=15, command=lambda:main_menu_window(root)).grid(row=0,column=0,padx=5)
     tk.Button(btn_frame_2, text="Exit",font=("Helvetica",10), width=15, command=root.quit).grid(row=0,column=1, padx=5)
 
 def inventory_module_window(root):
@@ -145,7 +200,7 @@ def inventory_module_window(root):
     tk.Button(btn_frame, text="Inventory", font=("Helvetica",10),width=20, command=lambda:inventory_window(root)).grid(padx=10, pady=10, row=0,column=0)
     tk.Button(btn_frame,text="Add Product", font=("Helvetica",10),width=20, command=lambda:add_product_window(root)).grid(padx=10,pady=10,row=0,column=1)
     tk.Button(btn_frame,text="Remove Product",font=("Helvetica",10),width=20,command=lambda:remove_product_window(root)).grid(padx=10,pady=10,row=1,column=0)
-    tk.Button(btn_frame, text="Back",font=("Helvetica",10), width=20, command=lambda:main_window(root)).grid(row=1, column=1,padx=10,pady=10)
+    tk.Button(btn_frame, text="Back",font=("Helvetica",10), width=20, command=lambda:main_menu_window(root)).grid(row=1, column=1,padx=10,pady=10)
     tk.Button(root, text="Exit",font=("Helvetica",10), width=20, command=root.quit).pack(padx=10,pady=5)
 
 def client_module_window(root):
@@ -166,7 +221,7 @@ def client_module_window(root):
     tk.Button(btn_frame, text="Client", font=("Helvetica",10),width=20, command=lambda:client_window(root)).grid(padx=10, pady=10, row=0,column=0)
     tk.Button(btn_frame,text="Add Client", font=("Helvetica",10),width=20, command=lambda:add_client_window(root)).grid(padx=10,pady=10,row=0,column=1)
     tk.Button(btn_frame,text="Remove Client",font=("Helvetica",10),width=20,command=lambda:remove_client_window(root)).grid(padx=10,pady=10,row=1,column=0)
-    tk.Button(btn_frame, text="Back",font=("Helvetica",10), width=20, command=lambda:main_window(root)).grid(row=1, column=1,padx=10,pady=10)
+    tk.Button(btn_frame, text="Back",font=("Helvetica",10), width=20, command=lambda:main_menu_window(root)).grid(row=1, column=1,padx=10,pady=10)
     tk.Button(root, text="Exit",font=("Helvetica",10), width=20, command=root.quit).pack(padx=10,pady=5)
 
 def sale_contract_window(root):

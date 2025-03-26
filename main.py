@@ -1,9 +1,9 @@
 import tkinter as tk
-from windows import main_window
+from windows import home_page
  
 def main():
     root = tk.Tk()
-    main_window(root)
+    home_page(root)
     root.mainloop()
 
 if __name__ == "__main__":
