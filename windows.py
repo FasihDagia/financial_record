@@ -5,6 +5,7 @@ import pymongo as pm
 
 from temp_data_store import *
 from database_connect import *
+from login_register import user_login
 from functions import generate_contract,print_contracts,generate_invoice,save,load_transactions,table,back,return_invoice,print_invoice,table_contract,load_contracts,save_contract
 from inventory_functions import inventory_check,existing_products,add_product,remove_product
 from client_function import client_check,existing_clients,add_client,remove_client
@@ -56,14 +57,15 @@ def login_window(root,company_name):
     entry_frame.pack(pady=10)
 
     tk.Label(entry_frame,text="Username/Employee id:",font=("Helvetica",10)).grid(row=0,column=0,padx=10,pady=10)
-    username = tk.Entry(entry_frame,width=30)
+    username = tk.Entry(entry_frame,width=30,font=("Helvetica",10))
     username.grid(row=0,column=1,padx=10,pady=10)
 
     tk.Label(entry_frame,text="Password:",font=("Helvetica",10)).grid(row=1,column=0,padx=10,pady=10)
-    password = tk.Entry(entry_frame,width=30,show="*")
+    password = tk.Entry(entry_frame,width=30,show=".",font=("Helvetica",10))
     password.grid(row=1,column=1,padx=10,pady=10)
-
-    tk.Button(login,text="Login",font=("Helvetica",10),width=20,command=lambda:login(username,password)).pack(padx=10,pady=10)
+    
+    login_button = tk.Button(login,text="Login",font=("Helvetica",10),width=20,command=lambda:user_login(username,password,client,login,login_button,root,main_menu_window))
+    login_button.pack(padx=10,pady=10)
 
     login.mainloop()
 
