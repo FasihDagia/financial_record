@@ -33,3 +33,5 @@ dump/
 .env
 config.json
 secrets.json
+
+test.py
