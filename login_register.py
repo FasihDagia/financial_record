@@ -150,10 +150,6 @@ def create_company(root,client,window):
     br_name_entry = tk.Entry(bank_frame,font=("Helvetica",10))  
     br_name_entry.grid(row=1,column=3,pady=10)
 
-    tk.Label(bank_frame,text = "Bank Name:",font=("Helvetica",10)).grid(row=1,column=0,padx=5,pady=10)
-    bank_name_entry = tk.Entry(bank_frame,font=("Helvetica",10))  
-    bank_name_entry.grid(row=1,column=1,pady=10)
-
     tk.Label(bank_frame,text = "Account Title:",font=("Helvetica",10)).grid(row=3,column=0,padx=5,pady=10)
     ac_title_entry = tk.Entry(bank_frame,font=("Helvetica",10))
     ac_title_entry.grid(row=3,column=1,pady=10)
