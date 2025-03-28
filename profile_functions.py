@@ -118,8 +118,20 @@ def company_profile(root,client,window,com_name,user_name):
     style.configure("Treeview", font=("Helvetica", 8)) 
 
     table_bank = ttk.Treeview(bank_frame, columns=("S.NO", "Name", "Branch Name", "Account Title","Account No","IBAN No"), show="headings")
-    table_bank.pack(fill=tk.BOTH, pady=20)   
+    table_bank.grid(pady=20,padx=20,columnspan=4)   
 
+    table_bank.heading("S.NO", text="S.NO")
+    table_bank.column("S.NO", anchor="center", width=50)
+    table_bank.heading("Name", text="Bank Name")
+    table_bank.column("Name", anchor="center", width=100)
+    table_bank.heading("Branch Name", text="Branch Name")
+    table_bank.column("Branch Name", anchor="center", width=100)
+    table_bank.heading("Account Title", text="Account Title")
+    table_bank.column("Account Title", anchor="center", width=100)
+    table_bank.heading("Account No", text="Account No")
+    table_bank.column("Account No", anchor="center", width=100)
+    table_bank.heading("IBAN No", text="IBAN No")
+    table_bank.column("IBAN No", anchor="center", width=100)
 
     tk.Button(scrollable_frame,text = "Edit",font=("Helvetica",10),width=20).pack()
 
