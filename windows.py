@@ -6,6 +6,7 @@ import pymongo as pm
 from temp_data_store import *
 from database_connect import *
 from login_register import user_login,create_company
+from profile_functions import company_profile
 from functions import generate_contract,print_contracts,generate_invoice,save,load_transactions,table,back,return_invoice,print_invoice,table_contract,load_contracts,save_contract
 from inventory_functions import inventory_check,existing_products,add_product,remove_product
 from client_function import client_check,existing_clients,add_client,remove_client
@@ -41,6 +42,7 @@ def home_page(root):
             column+=1
             if column % 2 == 0:
                 row+=1
+        tk.Button(root,text="Create Company",font=("Helvetica", 10),width=20,command=lambda:create_company(root,client,home_page)).pack(padx=10)    
 
     tk.Button(root,text="Exit", font=("Helvetica",10),width=20, command=root.quit).pack(padx=10,pady=10)
 
@@ -72,28 +74,29 @@ def login_window(root,company_name):
 
     login.mainloop()
 
-def main_menu_window(root):
+def main_menu_window(root,company_name,user_name):
 
     for widget in root.winfo_children():
         widget.destroy()
 
-    root.geometry("450x275")
+    root.geometry("450x300")
     root.minsize(350,275)
     root.maxsize(450,500)
 
-    root.title("Financial Records")
+    root.title(f"Main Menu/{company_name}/{user_name}")   
 
     tk.Label(root,text="Main Menu",font=("Helvetica",20)).pack(padx=50,pady=5)
 
     btn_frame = tk.Frame()
     btn_frame.pack(fill=X, padx=33, pady=10)
 
-    tk.Button(btn_frame,text="Sale Module", font=("Helvetica",10),width=20, command=lambda:sale_module_window(root)).grid(padx=10,pady=10,row=0,column=0)
+    tk.Button(btn_frame,text="Sale Module", font=("Helvetica",10),width=20, command=lambda:sale_module_window(root,)).grid(padx=10,pady=10,row=0,column=0)
     tk.Button(btn_frame,text="Purchase Module", font=("Helvetica",10),width=20, command=lambda:purchase_module_window(root)).grid(padx=10,pady=10,row=0,column=1)
     tk.Button(btn_frame,text="Payment Module", font=("Helvetica",10),width=20, command=lambda:payment_module_window(root)).grid(padx=10,pady=10,row=1,column=0)
     tk.Button(btn_frame,text="Receipt Module", font=("Helvetica",10),width=20, command=lambda:receipt_module_window(root)).grid(padx=10,pady=10,row=1,column=1)
     tk.Button(btn_frame,text="Inventory Module", font=("Helvetica",10),width=20, command=lambda:inventory_module_window(root)).grid(padx=10,pady=10,row=2,column=0)
     tk.Button(btn_frame,text="Client Module", font=("Helvetica",10),width=20, command=lambda:client_module_window(root)).grid(padx=10,pady=10,row=2,column=1)
+    tk.Button(btn_frame,text="Company Profile", font=("Helvetica",10),width=20, command= lambda:company_profile(root,client,main_menu_window,company_name,user_name)).grid(padx=10,pady=10,row=3,column=0)
 
     tk.Button(root,text="Exit", font=("Helvetica",10),width=20, command=root.quit).pack(padx=10,pady=5)
 
