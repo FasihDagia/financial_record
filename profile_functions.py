@@ -5,6 +5,58 @@ from datetime import datetime
 
 warning = None
 
+def bank_account(root,scrollable_frame,bank_accounts,com_name,client,window,user_name):
+
+    for widget in root.winfo_children():
+        widget.destroy()
+
+    root.geometry("900x500")
+    root.minsize(900,300)
+    root.maxsize(1000,900)
+
+    root.title(f"Bank Accounts/{com_name}")
+
+    style = ttk.Style()
+    style.configure("Treeview.Heading", font=("Helvetica", 10, "bold"))  
+    style.configure("Treeview", font=("Helvetica", 8)) 
+
+    tk.Label(root,text = "Bank Accounts",font=("Helvetica",20,"bold")).pack(padx=10,pady=10) 
+
+    table_bank = ttk.Treeview(root, columns=("S.NO", "Name", "Branch Name", "Account Title","Account No","IBAN No"), show="headings")
+    table_bank.pack(fill=tk.BOTH,pady=20,padx=20)   
+
+    table_bank.heading("S.NO", text="S.NO")
+    table_bank.column("S.NO", anchor="center", width=50)
+    table_bank.heading("Name", text="Bank Name")
+    table_bank.column("Name", anchor="center", width=100)
+    table_bank.heading("Branch Name", text="Branch Name")
+    table_bank.column("Branch Name", anchor="center", width=100)
+    table_bank.heading("Account Title", text="Account Title")
+    table_bank.column("Account Title", anchor="center", width=100)
+    table_bank.heading("Account No", text="Account No")
+    table_bank.column("Account No", anchor="center", width=100)
+    table_bank.heading("IBAN No", text="IBAN No")
+    table_bank.column("IBAN No", anchor="center", width=100)
+
+    for row in table_bank.get_children():
+        table_bank.delete(row)
+
+    j = 1
+    for transaction in bank_accounts.find():
+        table_bank.insert("", tk.END, values=(
+            j,
+            transaction.get('bank_name', ''),
+            transaction.get('branch_name', ''),
+            transaction.get('account_title',''),
+            transaction.get('account_no', ''),
+            transaction.get('iban_no', ''),
+                ))
+        j += 1    
+    # tk.Button(root,text = "Add Bank Account",font=("Helvetica",10),width=20).pack(pady=10)
+    # tk.Button(root,text = "Edit Bank Account",font=("Helvetica",10),width=20).pack(pady=10)
+    # tk.Button(root,text = "Delete Bank Account",font=("Helvetica",10),width=20).pack(pady=10)
+    tk.Button(root,text = "Back",font=("Helvetica",10),width=20,command=lambda: company_profile(root,client,window,com_name,user_name)).pack(pady=10)
+
 def on_mouse_scroll(event):
     canvas.yview_scroll(-1 * (event.delta // 120), "units")        
 
@@ -18,9 +70,9 @@ def company_profile(root,client,window,com_name,user_name):
     root.minsize(350,275)
     root.maxsize(600,700)
 
-    root.title("Create Company")
+    root.title(f"Company Profile/{com_name}")
 
-    tk.Label(root,text = "Create Company Profile",font=("Helvetica",22,"bold")).pack(padx=10,pady=10)
+    tk.Label(root,text = "Company Profile",font=("Helvetica",22,"bold")).pack(padx=10,pady=10)
     main_frame = tk.Frame(root)
     main_frame.pack(fill=tk.BOTH, expand=1)
 
@@ -108,30 +160,14 @@ def company_profile(root,client,window,com_name,user_name):
     fut_p_default = tax.get("further_tax_percent","") 
     tk.Label(tax_frame,font=("Helvetica",10,"bold"),text=fut_p_default,width=15).grid(row=2,column=1,pady=10)    
 
-    bank_frame = tk.Frame(scrollable_frame)
-    bank_frame.pack(pady=10)
+    
+    tk.Label(scrollable_frame,text = "Bank Accounts",font=("Helvetica",20,"bold")).pack(padx=10,pady=10) 
+    tk.Button(scrollable_frame,text = "Show Bank Account",font=("Helvetica",10),width=20,command=lambda: bank_account(root,scrollable_frame,bank_accounts,com_name,client,company_profile,user_name)).pack(pady=10)
 
-    tk.Label(bank_frame,text = "Bank Accounts",font=("Helvetica",20,"bold")).grid(row=0,columnspan=4,padx=10,pady=10) 
+    tk.Label(scrollable_frame,text = "Employees",font=("Helvetica",20,"bold")).pack(padx=10,pady=10) 
 
-    style = ttk.Style()
-    style.configure("Treeview.Heading", font=("Helvetica", 10, "bold"))  
-    style.configure("Treeview", font=("Helvetica", 8)) 
-
-    table_bank = ttk.Treeview(bank_frame, columns=("S.NO", "Name", "Branch Name", "Account Title","Account No","IBAN No"), show="headings")
-    table_bank.grid(pady=20,padx=20,columnspan=4)   
-
-    table_bank.heading("S.NO", text="S.NO")
-    table_bank.column("S.NO", anchor="center", width=50)
-    table_bank.heading("Name", text="Bank Name")
-    table_bank.column("Name", anchor="center", width=100)
-    table_bank.heading("Branch Name", text="Branch Name")
-    table_bank.column("Branch Name", anchor="center", width=100)
-    table_bank.heading("Account Title", text="Account Title")
-    table_bank.column("Account Title", anchor="center", width=100)
-    table_bank.heading("Account No", text="Account No")
-    table_bank.column("Account No", anchor="center", width=100)
-    table_bank.heading("IBAN No", text="IBAN No")
-    table_bank.column("IBAN No", anchor="center", width=100)
+    # table_bank = ttk.Treeview(scrollable_frame, columns=("S.NO", "Name", "Branch Name", "Account Title","Account No","IBAN No"), show="headings")
+    # table_bank.pack(fill=tk.BOTH,pady=20,padx=20)
 
     tk.Button(scrollable_frame,text = "Edit",font=("Helvetica",10),width=20).pack()
 
