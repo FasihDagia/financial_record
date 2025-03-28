@@ -34,4 +34,5 @@ dump/
 config.json
 secrets.json
 
-test.pytest.py
+test.py
+
