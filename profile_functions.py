@@ -218,6 +218,126 @@ def show_bank_account(root,bank_accounts,com_name,client,window_com,user_name,wi
     tk.Button(btn_frame,text = "Delete Bank Account",font=("Helvetica",10),width=20,command=lambda:delete_bank_account(root,bank_accounts,com_name,client,window_com,user_name,window_main)).grid(row=0,column=1,pady=10,padx=5)
     tk.Button(btn_frame,text = "Back",font=("Helvetica",10),width=20,command=lambda: company_profile(root,client,window_main,com_name,user_name)).grid(row=0,column=2,pady=10,padx=5)
 
+def add_employee(root,employees,com_name,client,window_show,user_name,window_com,window_main):
+    
+        for widget in root.winfo_children():
+            widget.destroy()
+    
+        root.geometry("550x600")
+        root.minsize(550,600)
+        root.maxsize(1000,900)
+    
+        root.title(f"Add Employee/{com_name}")
+    
+        employee_frame = tk.Frame(root)
+        employee_frame.pack(pady=10)
+    
+        tk.Label(employee_frame,text = "Add Employee",font=("Helvetica",20,"bold")).grid(row=0,columnspan=4,padx=10,pady=10)
+
+
+        tk.Label(employee_frame,text = "Employee ID:",font=("Helvetica",10)).grid(row=1,column=0,padx=5,pady=10)
+        no_employees = employees.count_documents({}) +1
+        emp_id_entry = f"EMP{str(no_employees).zfill(4)}"
+        tk.Label(employee_frame,text=emp_id_entry,font=("Helvetica",10,"bold"),width=15).grid(row=1,column=1,padx=5,pady=10)
+    
+        tk.Label(employee_frame,text = "Name:",font=("Helvetica",10)).grid(row=1,column=2,padx=5,pady=10)
+        emp_name_entry = tk.Entry(employee_frame,font=("Helvetica",10))  
+        emp_name_entry.grid(row=1,column=3,pady=10)
+    
+        tk.Label(employee_frame,text = "Email:",font=("Helvetica",10)).grid(row=2,column=0,padx=5,pady=10)
+        emp_email_entry = tk.Entry(employee_frame,font=("Helvetica",10))  
+        emp_email_entry.grid(row=2,column=1,pady=10)
+    
+        tk.Label(employee_frame,text = "Phone No:",font=("Helvetica",10)).grid(row=2,column=2,padx=5,pady=10)
+        emp_phone_entry = tk.Entry(employee_frame,font=("Helvetica",10))  
+        emp_phone_entry.grid(row=2,column=3,pady=10)
+    
+        tk.Label(employee_frame,text = "Address:",font=("Helvetica",10)).grid(row=3,column=0,padx=10,pady=10)
+        emp_address_entry = tk.Text(employee_frame,font=("Helvetica",10),width=50,height=5)  
+        emp_address_entry.grid(row=3,column=1,columnspan=3,padx=10,pady=10)
+    
+        tk.Label(employee_frame,text = "Username:",font=("Helvetica",10)).grid(row=4,column=0,padx=5,pady=10)
+        emp_username_entry = tk.Entry(employee_frame,font=("Helvetica",10))
+        emp_username_entry.grid(row=4,column=1,pady=10)
+    
+        tk.Label(employee_frame,text = "Password:",font=("Helvetica",10)).grid(row=4,column=2,padx=5,pady=10)
+        emp_password_entry = tk.Entry(employee_frame,font=("Helvetica",10),show="*")
+        emp_password_entry.grid(row=4,column=3,pady=10)
+
+        access_frame = tk.Frame(root)
+        access_frame.pack(pady=10,padx=10)
+
+        tk.Label(access_frame,text = "Access",font=("Helvetica",14,"bold")).grid(row=0,column=1,columnspan=2,padx=5,pady=10)
+
+        sal_mod_var = tk.IntVar()
+        sal_mod_check = tk.Checkbutton(access_frame, text="Sale Module", variable=sal_mod_var,font=("Helvetica",10))
+        sal_mod_check.grid(row=1,column=0,pady=10,padx=5)
+
+        pur_mod_var = tk.IntVar()
+        pur_mod_check = tk.Checkbutton(access_frame, text="Purchase Module", variable=pur_mod_var,font=("Helvetica",10))
+        pur_mod_check.grid(row=1,column=1,pady=10,padx=5)
+
+        pay_mod_var = tk.IntVar()
+        pay_mod_check = tk.Checkbutton(access_frame, text="Payment Module", variable=pay_mod_var,font=("Helvetica",10))
+        pay_mod_check.grid(row=1,column=2,pady=10,padx=5)
+
+        rec_mod_var = tk.IntVar()
+        rec_mod_check = tk.Checkbutton(access_frame, text="Receipt Module", variable=rec_mod_var,font=("Helvetica",10))
+        rec_mod_check.grid(row=1,column=3,pady=10,padx=5)
+
+        cli_mod_var = tk.IntVar()
+        cli_mod_check = tk.Checkbutton(access_frame, text="Client Module", variable=cli_mod_var,font=("Helvetica",10))
+        cli_mod_check.grid(row=2,column=0,pady=10,padx=5)
+
+        inv_mod_var = tk.IntVar()
+        inv_mod_check = tk.Checkbutton(access_frame, text="inventory Module", variable=inv_mod_var,font=("Helvetica",10))
+        inv_mod_check.grid(row=2,column=1,pady=10,padx=5)
+
+        comp_mod_var = tk.IntVar()
+        comp_mod_check = tk.Checkbutton(access_frame, text="Company Profile", variable=comp_mod_var,font=("Helvetica",10))
+        comp_mod_check.grid(row=2,column=2,pady=10,padx=5)
+
+        add_btn = tk.Button(root,text = "Add Employee",font=("Helvetica",10),command=lambda: add_emp(root,employees,com_name,window_show,window_com,user_name))
+        add_btn.pack(pady=10)
+
+        btn_frame = tk.Frame(root)
+        btn_frame.pack()
+        tk.Button(btn_frame,text = "Back",font=("Helvetica",10),width=10,command=lambda:show_employees(root,employees,com_name,client,window_com,user_name,window_main)).grid(row=0,column=0,padx=5)
+        tk.Button(btn_frame,text = "Exit",font=("Helvetica",10),width=10,command=root.quit).grid(row=0,column=1,padx=5)
+
+        def add_emp(root,employees,com_name,window_show,window_com,user_name):
+            global warning
+            if warning:
+                warning.destroy()
+                warning = None
+
+            emp_id = emp_id_entry
+            emp_name = emp_name_entry.get()
+            emp_email = emp_email_entry.get()
+            emp_phone = emp_phone_entry.get()
+            emp_address = emp_address_entry.get("1.0", tk.END).strip()
+            emp_username = emp_username_entry.get()
+            emp_password = emp_password_entry.get()
+            sal_mod = sal_mod_var.get()
+            pur_mod = pur_mod_var.get()
+            pay_mod = pay_mod_var.get()
+            rec_mod = rec_mod_var.get()
+            cli_mod = cli_mod_var.get()
+            inv_mod = inv_mod_var.get()
+            comp_mod = comp_mod_var.get()
+
+
+            if not emp_name or not emp_email or not emp_phone or not emp_address or not emp_username or not emp_password:
+                warning = tk.Label(employee_frame, text="Please fill all required fields", fg="red")
+                add_btn.pack_forget()
+                warning.pack(pady=5)
+                return
+
+            employees.insert_one({"company_name": com_name,"emp_id":emp_id,"name":emp_name, "email":emp_email, "phone_no":emp_phone, "address":emp_address, "username":emp_username, "password":emp_password, "sale_module":sal_mod, "purchase_module":pur_mod, "payment_module":pay_mod, "receipt_module":rec_mod, "client_module":cli_mod, "inventory_module":inv_mod, "company_profile_module":comp_mod})
+            messagebox.showinfo("Success", "Employee Added Successfully!")
+            show_employees(root, employees, com_name, client, window_com, user_name, window_main)
+
+
 def show_employees(root,employees,com_name,client,window_com,user_name,window_main):
     
     for widget in root.winfo_children():
@@ -273,13 +393,26 @@ def show_employees(root,employees,com_name,client,window_com,user_name,window_ma
         j += 1    
     btn_frame = tk.Frame(root)
     btn_frame.pack(pady=10)
-    tk.Button(btn_frame,text = "Add Employee",font=("Helvetica",10),width=20).grid(row=0,column=0,pady=10,padx=5)
+    tk.Button(btn_frame,text = "Add Employee",font=("Helvetica",10),width=20,command=lambda:add_employee(root,employees,com_name,client,show_employees,user_name,window_com,window_main)).grid(row=0,column=0,pady=10,padx=5)
     tk.Button(btn_frame,text = "Edit Employee",font=("Helvetica",10),width=20).grid(row=0,column=1,pady=10,padx=5)
     tk.Button(btn_frame,text = "Remove Employee",font=("Helvetica",10),width=20).grid(row=0,column=2,pady=10,padx=5)
     tk.Button(btn_frame,text = "Back",font=("Helvetica",10),width=20,command=lambda: company_profile(root,client,window_main,com_name,user_name)).grid(row=0,column=3,pady=10,padx=5)
 
 def on_mouse_scroll(event):
-    canvas.yview_scroll(-1 * (event.delta // 120), "units")        
+    """Handles scrolling for the canvas, supporting mouse and trackpad."""
+    widget = event.widget
+
+    # Find the closest ancestor Canvas
+    while widget and not isinstance(widget, tk.Canvas):
+        widget = widget.master  
+
+    if widget and isinstance(widget, tk.Canvas):  # Ensure it's a Canvas
+        if event.num == 4:  # Linux scroll up
+            widget.yview_scroll(-1, "units")
+        elif event.num == 5:  # Linux scroll down
+            widget.yview_scroll(1, "units")
+        else:  # Windows/macOS
+            widget.yview_scroll(-1 * (event.delta // 120), "units")
 
 def company_profile(root,client,window_main,com_name,user_name):
     global canvas
@@ -309,9 +442,10 @@ def company_profile(root,client,window_main,com_name,user_name):
     scrollable_frame = tk.Frame(canvas)
     canvas.create_window((0, 0), window=scrollable_frame, anchor="nw")
 
-    canvas.bind_all("<MouseWheel>", on_mouse_scroll) 
-    canvas.bind_all("<Button-4>", on_mouse_scroll)  
-    canvas.bind_all("<Button-5>", on_mouse_scroll)  
+    canvas.bind_all("<MouseWheel>", on_mouse_scroll)  # Windows/macOS scroll
+    canvas.bind_all("<Button-4>", on_mouse_scroll)  # Linux scroll up
+    canvas.bind_all("<Button-5>", on_mouse_scroll)  # Linux scroll down
+    canvas.bind("<Enter>", lambda e: canvas.focus_set()) 
 
     company_profile = client[f'company_profile_{com_name.lower().replace(" ","_")}']
     details = company_profile['details']
@@ -388,6 +522,11 @@ def company_profile(root,client,window_main,com_name,user_name):
     btn_frame = tk.Frame(scrollable_frame)
     btn_frame.pack(pady=10)
     tk.Button(btn_frame,text = "Back",font=("Helvetica",10),width=10,command=lambda: window_main(root,com_name,user_name)).grid(row=0,column=0,padx=5)
+    def update_scroll_region():
+        scrollable_frame.update_idletasks()
+        canvas.configure(scrollregion=canvas.bbox("all"))
+
+    update_scroll_region()
 
 def edit_company_profile(root,client,window):
     global canvas

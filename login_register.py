@@ -4,7 +4,7 @@ from tkinter import ttk, messagebox, simpledialog,filedialog
 from datetime import datetime
 
 warning = None
-def user_login(username_entry, password_entry,client,login,login_button,root,window,company_name):  
+def user_login(username_entry, password_entry,client,login,login_button,root,window,company_name,bck_button):  
     global warning
     company_profile = client[f'company_profile_{company_name.lower().replace(" ","_")}']
     employees = company_profile['employees']
@@ -19,16 +19,20 @@ def user_login(username_entry, password_entry,client,login,login_button,root,win
     if not username or not password:
         warning = tk.Label(login, text="Please enter username and password!", fg="red")
         login_button.pack_forget()  
+        bck_button.pack_forget()
         warning.pack(pady=5)
-        login_button.pack()
+        login_button.pack(padx=10,pady=10)
+        bck_button.pack(padx=10,pady=5)
 
     else:
         user = employees.find_one({"username": username})
         if user == None:
             warning = tk.Label(login, text="No User Found!", fg="red")
             login_button.pack_forget()  
+            bck_button.pack_forget()
             warning.pack(pady=5)
-            login_button.pack()
+            login_button.pack(padx=10,pady=10)
+            bck_button.pack(padx=10,pady=5)
         
         else:
             if user['password'] == password:
@@ -37,9 +41,11 @@ def user_login(username_entry, password_entry,client,login,login_button,root,win
                 
             else:
                 warning = tk.Label(login, text="Incorrect Password!", fg="red")
-                login_button.pack_forget()  
+                login_button.pack_forget() 
+                bck_button.pack_forget() 
                 warning.pack(pady=5)
-                login_button.pack()
+                login_button.pack(padx=10,pady=10)
+                bck_button.pack(padx=10,pady=5)
         
 def on_mouse_scroll(event):
     canvas.yview_scroll(-1 * (event.delta // 120), "units")        
