@@ -235,23 +235,25 @@ def show_employees(root,employees,com_name,client,window_com,user_name,window_ma
 
     tk.Label(root,text = "Bank Accounts",font=("Helvetica",20,"bold")).pack(padx=10,pady=10) 
 
-    table_bank = ttk.Treeview(root, columns=("S.NO","Employee ID","Name", "Email", "Phone No","Account No","IBAN No"), show="headings")
+    table_bank = ttk.Treeview(root, columns=("S.NO","Employee ID","Name", "Email", "Phone No","Address","User Name","Password"), show="headings")
     table_bank.pack(fill=tk.BOTH,pady=20,padx=20)   
 
     table_bank.heading("S.NO", text="S.NO")
     table_bank.column("S.NO", anchor="center", width=50)
     table_bank.heading("Employee ID", text="Employee ID")
     table_bank.column("Employee ID", anchor="center", width=100)
-    table_bank.heading("Name", text="Bank Name")
+    table_bank.heading("Name", text="Name")
     table_bank.column("Name", anchor="center", width=100)
     table_bank.heading("Email", text="Email")
     table_bank.column("Email", anchor="center", width=100)
     table_bank.heading("Phone No", text="Phone No")
     table_bank.column("Phone No", anchor="center", width=100)
-    table_bank.heading("Account No", text="Account No")
-    table_bank.column("Account No", anchor="center", width=100)
-    table_bank.heading("IBAN No", text="IBAN No")
-    table_bank.column("IBAN No", anchor="center", width=100)
+    table_bank.heading("Address", text="Address")
+    table_bank.column("Address", anchor="center", width=100)
+    table_bank.heading("User Name", text="User Name")
+    table_bank.column("User Name", anchor="center", width=100)
+    table_bank.heading("Password", text="Password")
+    table_bank.column("Password", anchor="center", width=100)
 
     for row in table_bank.get_children():
         table_bank.delete(row)
@@ -260,18 +262,21 @@ def show_employees(root,employees,com_name,client,window_com,user_name,window_ma
     for transaction in employees.find():
         table_bank.insert("", tk.END, values=(
             j,
-            transaction.get('bank_name', ''),
-            transaction.get('branch_name', ''),
-            transaction.get('account_title',''),
-            transaction.get('account_no', ''),
-            transaction.get('iban_no', ''),
+            transaction.get('emp_id', ''),
+            transaction.get('name', ''),
+            transaction.get('email',''),
+            transaction.get('phone_no', ''),
+            transaction.get('address', ''),
+            transaction.get('username', ''),
+            transaction.get('password', ''),
                 ))
         j += 1    
     btn_frame = tk.Frame(root)
     btn_frame.pack(pady=10)
-    tk.Button(btn_frame,text = "Add Employee",font=("Helvetica",10),width=20,command=lambda:add_bank_account(root,employees,com_name,client,add_bank_account,user_name,window_com,window_main)).grid(row=0,column=0,pady=10,padx=5)
-    tk.Button(btn_frame,text = "Remove Employee",font=("Helvetica",10),width=20,command=lambda:delete_bank_account(root,employees,com_name,client,window_com,user_name,window_main)).grid(row=0,column=1,pady=10,padx=5)
-    tk.Button(btn_frame,text = "Back",font=("Helvetica",10),width=20,command=lambda: company_profile(root,client,window_main,com_name,user_name)).grid(row=0,column=2,pady=10,padx=5)
+    tk.Button(btn_frame,text = "Add Employee",font=("Helvetica",10),width=20).grid(row=0,column=0,pady=10,padx=5)
+    tk.Button(btn_frame,text = "Edit Employee",font=("Helvetica",10),width=20).grid(row=0,column=1,pady=10,padx=5)
+    tk.Button(btn_frame,text = "Remove Employee",font=("Helvetica",10),width=20).grid(row=0,column=2,pady=10,padx=5)
+    tk.Button(btn_frame,text = "Back",font=("Helvetica",10),width=20,command=lambda: company_profile(root,client,window_main,com_name,user_name)).grid(row=0,column=3,pady=10,padx=5)
 
 def on_mouse_scroll(event):
     canvas.yview_scroll(-1 * (event.delta // 120), "units")        
