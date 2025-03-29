@@ -10,8 +10,8 @@ def add_bank_account(root,bank_accounts,com_name,client,window_show,user_name,wi
     for widget in root.winfo_children():
         widget.destroy()
 
-    root.geometry("500x400")
-    root.minsize(500,350)
+    root.geometry("500x300")
+    root.minsize(500,300)
     root.maxsize(1000,900)
 
     root.title(f"Add Bank Account/{com_name}")
@@ -46,8 +46,8 @@ def add_bank_account(root,bank_accounts,com_name,client,window_show,user_name,wi
     
     btn_frmae = tk.Frame(root)
     btn_frmae.pack(pady=10)
-    tk.Button(btn_frmae,text = "Back",font=("Helvetica",10),width=10,command=lambda:show_bank_account(root, bank_accounts, com_name, client, window_com, user_name, window_main)).grid(row=0, column=0, pady=10, padx=5)
-    tk.Button(btn_frmae,text = "Exit",font=("Helvetica",10),width=10,command=root.quit).grid(row=0,column=1,pady=10,padx=5)
+    tk.Button(btn_frmae,text = "Back",font=("Helvetica",10),width=10,command=lambda:show_bank_account(root, bank_accounts, com_name, client, window_com, user_name, window_main)).grid(row=0, column=0, padx=5)
+    tk.Button(btn_frmae,text = "Exit",font=("Helvetica",10),width=10,command=root.quit).grid(row=0,column=1,padx=5)
 
     def add(root,bank_accounts,com_name,window,window1,user_name):
         global warning
@@ -71,6 +71,48 @@ def add_bank_account(root,bank_accounts,com_name,client,window_show,user_name,wi
             messagebox.showinfo("Success", "Bank Account Added Successfully!")
             show_bank_account(root, bank_accounts, com_name, client, window_com, user_name, window_main)
 
+def delete_bank_account(root,bank_accounts,com_name,client,window_com,user_name,window_main):
+    
+    for widget in root.winfo_children():
+        widget.destroy()
+
+    root.geometry("500x300")
+    root.minsize(500,300)
+    root.maxsize(1000,900)
+
+    root.title(f"Remove Bank Account/{com_name}")
+
+    bank_frame = tk.Frame(root)
+    bank_frame.pack(pady=10)
+
+    tk.Label(bank_frame,text = "Add Bank Account",font=("Helvetica",20,"bold")).grid(row=0,columnspan=4,padx=10,pady=10)    
+
+    tk.Label(bank_frame,text = "Bank Name:",font=("Helvetica",10)).grid(row=1,column=0,padx=5,pady=10)
+    bank_name_options =[]
+    for bank in bank_accounts.find():
+        bank_name_options.append(bank.get('bank_name',''))
+
+    if len(bank_name_options) ==0:
+        bank_name_options.append("No banks to show")
+    bank_name_var = tk.StringVar(value="Banks")
+    bank_name_entry = tk.OptionMenu(bank_frame, bank_name_var, *bank_name_options)  
+    bank_name_entry.grid(row=1,column=1,pady=10)
+
+    tk.Label(bank_frame,text = "Branch Name:",font=("Helvetica",10)).grid(row=1,column=2,padx=5,pady=10)
+    br_name_entry = tk.Entry(bank_frame,font=("Helvetica",10))  
+    br_name_entry.grid(row=1,column=3,pady=10)
+
+    tk.Label(bank_frame,text = "Account Title:",font=("Helvetica",10)).grid(row=2,column=0,padx=5,pady=10)
+    ac_title_entry = tk.Entry(bank_frame,font=("Helvetica",10))
+    ac_title_entry.grid(row=2,column=1,pady=10)
+    
+    tk.Label(bank_frame,text = "Account No:",font=("Helvetica",10)).grid(row=2,column=2,padx=5,pady=10)
+    ac_no_entry = tk.Entry(bank_frame,font=("Helvetica",10))
+    ac_no_entry.grid(row=2,column=3,pady=10)
+
+    tk.Label(bank_frame,text = "IBAN No:",font=("Helvetica",10)).grid(row=3,column=0,padx=5,pady=10)
+    iban_entry = tk.Entry(bank_frame,font=("Helvetica",10))
+    iban_entry.grid(row=3,column=1,pady=10)
 
 def show_bank_account(root,bank_accounts,com_name,client,window_com,user_name,window_main):
 
@@ -122,7 +164,7 @@ def show_bank_account(root,bank_accounts,com_name,client,window_com,user_name,wi
     btn_frame = tk.Frame(root)
     btn_frame.pack(pady=10)
     tk.Button(btn_frame,text = "Add Bank Account",font=("Helvetica",10),width=20,command=lambda:add_bank_account(root,bank_accounts,com_name,client,add_bank_account,user_name,window_com,window_main)).grid(row=0,column=0,pady=10,padx=5)
-    # tk.Button(root,text = "Delete Bank Account",font=("Helvetica",10),width=20).pack(pady=10)
+    tk.Button(btn_frame,text = "Delete Bank Account",font=("Helvetica",10),width=20,command=lambda:delete_bank_account(root,bank_accounts,com_name,client,window_com,user_name,window_main)).grid(row=0,column=1,pady=10,padx=5)
     tk.Button(btn_frame,text = "Back",font=("Helvetica",10),width=20,command=lambda: company_profile(root,client,window_main,com_name,user_name)).grid(row=0,column=2,pady=10,padx=5)
 
 def on_mouse_scroll(event):
