@@ -80,6 +80,7 @@ def login_window(root,company_name):
 
 def main_menu_window(root,company_name,user_name):
 
+
     for widget in root.winfo_children():
         widget.destroy()
 
@@ -91,8 +92,8 @@ def main_menu_window(root,company_name,user_name):
 
     tk.Label(root,text="Main Menu",font=("Helvetica",20)).pack(padx=50,pady=5)
 
-    company_profile = client[f'company_profile_{company_name.lower().replace(" ","_")}']
-    employees = company_profile['employees']
+    company_profiles = client[f'company_profile_{company_name.lower().replace(" ","_")}']
+    employees = company_profiles['employees']
     employee = employees.find_one({"username": user_name})
 
     permissions = {
