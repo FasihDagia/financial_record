@@ -150,17 +150,17 @@ def create_company(root,client,window):
     br_name_entry = tk.Entry(bank_frame,font=("Helvetica",10))  
     br_name_entry.grid(row=1,column=3,pady=10)
 
-    tk.Label(bank_frame,text = "Account Title:",font=("Helvetica",10)).grid(row=3,column=0,padx=5,pady=10)
+    tk.Label(bank_frame,text = "Account Title:",font=("Helvetica",10)).grid(row=2,column=0,padx=5,pady=10)
     ac_title_entry = tk.Entry(bank_frame,font=("Helvetica",10))
-    ac_title_entry.grid(row=3,column=1,pady=10)
+    ac_title_entry.grid(row=2,column=1,pady=10)
     
-    tk.Label(bank_frame,text = "Account No:",font=("Helvetica",10)).grid(row=2,column=0,padx=5,pady=10)
+    tk.Label(bank_frame,text = "Account No:",font=("Helvetica",10)).grid(row=2,column=2,padx=5,pady=10)
     ac_no_entry = tk.Entry(bank_frame,font=("Helvetica",10))
-    ac_no_entry.grid(row=2,column=1,pady=10)
+    ac_no_entry.grid(row=2,column=3,pady=10)
 
-    tk.Label(bank_frame,text = "IBAN No:",font=("Helvetica",10)).grid(row=2,column=2,padx=5,pady=10)
+    tk.Label(bank_frame,text = "IBAN No:",font=("Helvetica",10)).grid(row=3,column=0,padx=5,pady=10)
     iban_entry = tk.Entry(bank_frame,font=("Helvetica",10))
-    iban_entry.grid(row=2,column=3,pady=10)
+    iban_entry.grid(row=3,column=1,pady=10)
 
     employee_frame = tk.Frame(scrollable_frame)
     employee_frame.pack(pady=10)

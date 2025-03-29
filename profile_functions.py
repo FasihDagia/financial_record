@@ -5,7 +5,74 @@ from datetime import datetime
 
 warning = None
 
-def bank_account(root,scrollable_frame,bank_accounts,com_name,client,window,user_name):
+def add_bank_account(root,bank_accounts,com_name,client,window_show,user_name,window_com,window_main):
+
+    for widget in root.winfo_children():
+        widget.destroy()
+
+    root.geometry("500x400")
+    root.minsize(500,350)
+    root.maxsize(1000,900)
+
+    root.title(f"Add Bank Account/{com_name}")
+
+    bank_frame = tk.Frame(root)
+    bank_frame.pack(pady=10)
+
+    tk.Label(bank_frame,text = "Add Bank Account",font=("Helvetica",20,"bold")).grid(row=0,columnspan=4,padx=10,pady=10)    
+
+    tk.Label(bank_frame,text = "Bank Name:",font=("Helvetica",10)).grid(row=1,column=0,padx=5,pady=10)
+    bank_name_entry = tk.Entry(bank_frame,font=("Helvetica",10))  
+    bank_name_entry.grid(row=1,column=1,pady=10)
+
+    tk.Label(bank_frame,text = "Branch Name:",font=("Helvetica",10)).grid(row=1,column=2,padx=5,pady=10)
+    br_name_entry = tk.Entry(bank_frame,font=("Helvetica",10))  
+    br_name_entry.grid(row=1,column=3,pady=10)
+
+    tk.Label(bank_frame,text = "Account Title:",font=("Helvetica",10)).grid(row=2,column=0,padx=5,pady=10)
+    ac_title_entry = tk.Entry(bank_frame,font=("Helvetica",10))
+    ac_title_entry.grid(row=2,column=1,pady=10)
+    
+    tk.Label(bank_frame,text = "Account No:",font=("Helvetica",10)).grid(row=2,column=2,padx=5,pady=10)
+    ac_no_entry = tk.Entry(bank_frame,font=("Helvetica",10))
+    ac_no_entry.grid(row=2,column=3,pady=10)
+
+    tk.Label(bank_frame,text = "IBAN No:",font=("Helvetica",10)).grid(row=3,column=0,padx=5,pady=10)
+    iban_entry = tk.Entry(bank_frame,font=("Helvetica",10))
+    iban_entry.grid(row=3,column=1,pady=10)
+
+    add_btn = tk.Button(root,text = "Add Account",font=("Helvetica",10),command=lambda: add(root,bank_accounts,com_name,window_show,window_com,user_name))
+    add_btn.pack(pady=10)
+    
+    btn_frmae = tk.Frame(root)
+    btn_frmae.pack(pady=10)
+    tk.Button(btn_frmae,text = "Back",font=("Helvetica",10),width=10,command=lambda:show_bank_account(root, bank_accounts, com_name, client, window_com, user_name, window_main)).grid(row=0, column=0, pady=10, padx=5)
+    tk.Button(btn_frmae,text = "Exit",font=("Helvetica",10),width=10,command=root.quit).grid(row=0,column=1,pady=10,padx=5)
+
+    def add(root,bank_accounts,com_name,window,window1,user_name):
+        global warning
+        if warning:
+            warning.destroy()
+            warning = None
+
+        bank_name = bank_name_entry.get()
+        br_name = br_name_entry.get()
+        ac_title = ac_title_entry.get()
+        ac_no = ac_no_entry.get()
+        iban = iban_entry.get()
+
+        if not bank_name or not br_name or not ac_title or not ac_no or not iban:
+            warning = tk.Label(bank_frame, text="Please fill all required fields", fg="red")
+            add_btn.pack_forget()
+            warning.pack(pady=5)
+            add_btn.pack(pady=10)
+        else:
+            bank_accounts.insert_one({"company_name": com_name,"bank_name": bank_name, "branch_name": br_name, "account_title": ac_title, "account_no": ac_no, "iban_no": iban})
+            messagebox.showinfo("Success", "Bank Account Added Successfully!")
+            show_bank_account(root, bank_accounts, com_name, client, window_com, user_name, window_main)
+
+
+def show_bank_account(root,bank_accounts,com_name,client,window_com,user_name,window_main):
 
     for widget in root.winfo_children():
         widget.destroy()
@@ -52,15 +119,16 @@ def bank_account(root,scrollable_frame,bank_accounts,com_name,client,window,user
             transaction.get('iban_no', ''),
                 ))
         j += 1    
-    # tk.Button(root,text = "Add Bank Account",font=("Helvetica",10),width=20).pack(pady=10)
-    # tk.Button(root,text = "Edit Bank Account",font=("Helvetica",10),width=20).pack(pady=10)
+    btn_frame = tk.Frame(root)
+    btn_frame.pack(pady=10)
+    tk.Button(btn_frame,text = "Add Bank Account",font=("Helvetica",10),width=20,command=lambda:add_bank_account(root,bank_accounts,com_name,client,add_bank_account,user_name,window_com,window_main)).grid(row=0,column=0,pady=10,padx=5)
     # tk.Button(root,text = "Delete Bank Account",font=("Helvetica",10),width=20).pack(pady=10)
-    tk.Button(root,text = "Back",font=("Helvetica",10),width=20,command=lambda: company_profile(root,client,window,com_name,user_name)).pack(pady=10)
+    tk.Button(btn_frame,text = "Back",font=("Helvetica",10),width=20,command=lambda: company_profile(root,client,window_main,com_name,user_name)).grid(row=0,column=2,pady=10,padx=5)
 
 def on_mouse_scroll(event):
     canvas.yview_scroll(-1 * (event.delta // 120), "units")        
 
-def company_profile(root,client,window,com_name,user_name):
+def company_profile(root,client,window_main,com_name,user_name):
     global canvas
 
     for widget in root.winfo_children():
@@ -105,11 +173,6 @@ def company_profile(root,client,window,com_name,user_name):
 
     input_frame = tk.Frame(scrollable_frame)
     input_frame.pack(pady=10)
-
-    def remove_optional(event, entry):
-        if entry.get() == "Optional":
-            entry.delete(0, END)
-            entry.config(fg="black")
 
     tk.Label(input_frame,text = "Company Name:",font=("Helvetica",10)).grid(row=0,column=0,padx=5,pady=10)
     name_default = detail.get("company_name")
@@ -162,18 +225,15 @@ def company_profile(root,client,window,com_name,user_name):
 
     
     tk.Label(scrollable_frame,text = "Bank Accounts",font=("Helvetica",20,"bold")).pack(padx=10,pady=10) 
-    tk.Button(scrollable_frame,text = "Show Bank Account",font=("Helvetica",10),width=20,command=lambda: bank_account(root,scrollable_frame,bank_accounts,com_name,client,company_profile,user_name)).pack(pady=10)
+    tk.Button(scrollable_frame,text = "Show Bank Account",font=("Helvetica",10),width=20,command=lambda: show_bank_account(root,bank_accounts,com_name,client,company_profile,user_name,window_main)).pack(pady=10)
 
     tk.Label(scrollable_frame,text = "Employees",font=("Helvetica",20,"bold")).pack(padx=10,pady=10) 
-
-    # table_bank = ttk.Treeview(scrollable_frame, columns=("S.NO", "Name", "Branch Name", "Account Title","Account No","IBAN No"), show="headings")
-    # table_bank.pack(fill=tk.BOTH,pady=20,padx=20)
 
     tk.Button(scrollable_frame,text = "Edit",font=("Helvetica",10),width=20).pack()
 
     btn_frame = tk.Frame(scrollable_frame)
     btn_frame.pack(pady=10)
-    tk.Button(btn_frame,text = "Back",font=("Helvetica",10),width=10,command=lambda: window(root,com_name,user_name)).grid(row=0,column=0,padx=5)
+    tk.Button(btn_frame,text = "Back",font=("Helvetica",10),width=10,command=lambda: window_main(root,com_name,user_name)).grid(row=0,column=0,padx=5)
 
 def edit_company_profile(root,client,window):
     global canvas
@@ -280,10 +340,6 @@ def edit_company_profile(root,client,window):
     tk.Label(bank_frame,text = "Branch Name:",font=("Helvetica",10)).grid(row=1,column=2,padx=5,pady=10)
     br_name_entry = tk.Entry(bank_frame,font=("Helvetica",10))  
     br_name_entry.grid(row=1,column=3,pady=10)
-
-    tk.Label(bank_frame,text = "Bank Name:",font=("Helvetica",10)).grid(row=1,column=0,padx=5,pady=10)
-    bank_name_entry = tk.Entry(bank_frame,font=("Helvetica",10))  
-    bank_name_entry.grid(row=1,column=1,pady=10)
 
     tk.Label(bank_frame,text = "Account Title:",font=("Helvetica",10)).grid(row=3,column=0,padx=5,pady=10)
     ac_title_entry = tk.Entry(bank_frame,font=("Helvetica",10))
