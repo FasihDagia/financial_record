@@ -72,6 +72,8 @@ def login_window(root,company_name):
     login_button = tk.Button(login,text="Login",font=("Helvetica",10),width=20,command=lambda:user_login(username,password,client,login,login_button,root,main_menu_window,company_name))
     login_button.pack(padx=10,pady=10)
 
+    tk.Button(login,text="Back",font=("Helvetica",10),width=20,command=login.destroy).pack(padx=10,pady=5)
+
     login.mainloop()
 
 def main_menu_window(root,company_name,user_name):

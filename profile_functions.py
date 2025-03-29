@@ -45,7 +45,7 @@ def add_bank_account(root,bank_accounts,com_name,client,window_show,user_name,wi
     add_btn.pack(pady=10)
     
     btn_frmae = tk.Frame(root)
-    btn_frmae.pack(pady=10)
+    btn_frmae.pack()
     tk.Button(btn_frmae,text = "Back",font=("Helvetica",10),width=10,command=lambda:show_bank_account(root, bank_accounts, com_name, client, window_com, user_name, window_main)).grid(row=0, column=0, padx=5)
     tk.Button(btn_frmae,text = "Exit",font=("Helvetica",10),width=10,command=root.quit).grid(row=0,column=1,padx=5)
 
@@ -82,6 +82,26 @@ def delete_bank_account(root,bank_accounts,com_name,client,window_com,user_name,
 
     root.title(f"Remove Bank Account/{com_name}")
 
+    def get_bank_info(*args):
+        global warning
+        if warning:
+            warning.destroy()
+            warning = None
+
+        bank_name = bank_name_var.get()
+        if bank_name == "No banks to show":
+            warning = tk.Label(bank_frame, text="No banks to show", fg="red")
+            bank_name_entry.pack_forget()
+            warning.pack(pady=5)
+            return
+
+        bank_info = bank_accounts.find_one({"bank_name": bank_name})
+        if bank_info:
+            br_name_default.set(bank_info.get("branch_name", ""))
+            ac_title_default.set(bank_info.get("account_title", ""))
+            ac_no_default.set(bank_info.get("account_no", ""))
+            iban_default.set(bank_info.get("iban_no", ""))
+
     bank_frame = tk.Frame(root)
     bank_frame.pack(pady=10)
 
@@ -99,20 +119,51 @@ def delete_bank_account(root,bank_accounts,com_name,client,window_com,user_name,
     bank_name_entry.grid(row=1,column=1,pady=10)
 
     tk.Label(bank_frame,text = "Branch Name:",font=("Helvetica",10)).grid(row=1,column=2,padx=5,pady=10)
-    br_name_entry = tk.Entry(bank_frame,font=("Helvetica",10))  
+    br_name_default = tk.StringVar()
+    br_name_entry = tk.Entry(bank_frame,font=("Helvetica",10),textvariable=br_name_default)  
     br_name_entry.grid(row=1,column=3,pady=10)
 
     tk.Label(bank_frame,text = "Account Title:",font=("Helvetica",10)).grid(row=2,column=0,padx=5,pady=10)
-    ac_title_entry = tk.Entry(bank_frame,font=("Helvetica",10))
+    ac_title_default = tk.StringVar()
+    ac_title_entry = tk.Entry(bank_frame,font=("Helvetica",10),textvariable=ac_title_default)
     ac_title_entry.grid(row=2,column=1,pady=10)
     
     tk.Label(bank_frame,text = "Account No:",font=("Helvetica",10)).grid(row=2,column=2,padx=5,pady=10)
-    ac_no_entry = tk.Entry(bank_frame,font=("Helvetica",10))
+    ac_no_default = tk.StringVar()
+    ac_no_entry = tk.Entry(bank_frame,font=("Helvetica",10),textvariable=ac_no_default)
     ac_no_entry.grid(row=2,column=3,pady=10)
 
     tk.Label(bank_frame,text = "IBAN No:",font=("Helvetica",10)).grid(row=3,column=0,padx=5,pady=10)
-    iban_entry = tk.Entry(bank_frame,font=("Helvetica",10))
+    iban_default = tk.StringVar()
+    iban_entry = tk.Entry(bank_frame,font=("Helvetica",10),textvariable=iban_default)
     iban_entry.grid(row=3,column=1,pady=10)
+
+    bank_name_var.trace_add("write", get_bank_info)
+
+    delete_btn = tk.Button(root,text = "Delete Account",font=("Helvetica",10),command=lambda: delete(root,bank_accounts,com_name,window_com,user_name,window_main))
+    delete_btn.pack(pady=10)
+
+    def delete(root,bank_accounts,com_name,window_com,user_name,window_main):
+        global warning
+        if warning:
+            warning.destroy()
+            warning = None
+
+        bank_name = bank_name_var.get()
+        if bank_name == "No banks to show":
+            warning = tk.Label(bank_frame, text="No banks to show", fg="red")
+            delete_btn.pack_forget()
+            warning.pack(pady=5)
+            return
+
+        bank_accounts.delete_one({"bank_name": bank_name})
+        messagebox.showinfo("Success", "Bank Account Deleted Successfully!")
+        show_bank_account(root, bank_accounts, com_name, client, window_com, user_name, window_main)
+    
+    btn_frame = tk.Frame(root)
+    btn_frame.pack()
+    tk.Button(btn_frame,text = "Back",font=("Helvetica",10),width=10,command=lambda:show_bank_account(root, bank_accounts, com_name, client, window_com, user_name, window_main)).grid(row=0, column=0, padx=5)
+    tk.Button(btn_frame,text = "Exit",font=("Helvetica",10),width=10,command=root.quit).grid(row=0,column=1,padx=5)
 
 def show_bank_account(root,bank_accounts,com_name,client,window_com,user_name,window_main):
 
@@ -165,6 +216,61 @@ def show_bank_account(root,bank_accounts,com_name,client,window_com,user_name,wi
     btn_frame.pack(pady=10)
     tk.Button(btn_frame,text = "Add Bank Account",font=("Helvetica",10),width=20,command=lambda:add_bank_account(root,bank_accounts,com_name,client,add_bank_account,user_name,window_com,window_main)).grid(row=0,column=0,pady=10,padx=5)
     tk.Button(btn_frame,text = "Delete Bank Account",font=("Helvetica",10),width=20,command=lambda:delete_bank_account(root,bank_accounts,com_name,client,window_com,user_name,window_main)).grid(row=0,column=1,pady=10,padx=5)
+    tk.Button(btn_frame,text = "Back",font=("Helvetica",10),width=20,command=lambda: company_profile(root,client,window_main,com_name,user_name)).grid(row=0,column=2,pady=10,padx=5)
+
+def show_employees(root,employees,com_name,client,window_com,user_name,window_main):
+    
+    for widget in root.winfo_children():
+        widget.destroy()
+
+    root.geometry("900x500")
+    root.minsize(900,300)
+    root.maxsize(1000,900)
+
+    root.title(f"Bank Accounts/{com_name}")
+
+    style = ttk.Style()
+    style.configure("Treeview.Heading", font=("Helvetica", 10, "bold"))  
+    style.configure("Treeview", font=("Helvetica", 8)) 
+
+    tk.Label(root,text = "Bank Accounts",font=("Helvetica",20,"bold")).pack(padx=10,pady=10) 
+
+    table_bank = ttk.Treeview(root, columns=("S.NO","Employee ID","Name", "Email", "Phone No","Account No","IBAN No"), show="headings")
+    table_bank.pack(fill=tk.BOTH,pady=20,padx=20)   
+
+    table_bank.heading("S.NO", text="S.NO")
+    table_bank.column("S.NO", anchor="center", width=50)
+    table_bank.heading("Employee ID", text="Employee ID")
+    table_bank.column("Employee ID", anchor="center", width=100)
+    table_bank.heading("Name", text="Bank Name")
+    table_bank.column("Name", anchor="center", width=100)
+    table_bank.heading("Email", text="Email")
+    table_bank.column("Email", anchor="center", width=100)
+    table_bank.heading("Phone No", text="Phone No")
+    table_bank.column("Phone No", anchor="center", width=100)
+    table_bank.heading("Account No", text="Account No")
+    table_bank.column("Account No", anchor="center", width=100)
+    table_bank.heading("IBAN No", text="IBAN No")
+    table_bank.column("IBAN No", anchor="center", width=100)
+
+    for row in table_bank.get_children():
+        table_bank.delete(row)
+
+    j = 1
+    for transaction in employees.find():
+        table_bank.insert("", tk.END, values=(
+            j,
+            transaction.get('bank_name', ''),
+            transaction.get('branch_name', ''),
+            transaction.get('account_title',''),
+            transaction.get('account_no', ''),
+            transaction.get('iban_no', ''),
+                ))
+        j += 1    
+    btn_frame = tk.Frame(root)
+    btn_frame.pack(pady=10)
+    tk.Button(btn_frame,text = "Add Employee",font=("Helvetica",10),width=20,command=lambda:add_bank_account(root,employees,com_name,client,add_bank_account,user_name,window_com,window_main)).grid(row=0,column=0,pady=10,padx=5)
+    tk.Button(btn_frame,text = "Remove Employee",font=("Helvetica",10),width=20,command=lambda:delete_bank_account(root,employees,com_name,client,window_com,user_name,window_main)).grid(row=0,column=1,pady=10,padx=5)
     tk.Button(btn_frame,text = "Back",font=("Helvetica",10),width=20,command=lambda: company_profile(root,client,window_main,com_name,user_name)).grid(row=0,column=2,pady=10,padx=5)
 
 def on_mouse_scroll(event):
@@ -267,9 +373,10 @@ def company_profile(root,client,window_main,com_name,user_name):
 
     
     tk.Label(scrollable_frame,text = "Bank Accounts",font=("Helvetica",20,"bold")).pack(padx=10,pady=10) 
-    tk.Button(scrollable_frame,text = "Show Bank Account",font=("Helvetica",10),width=20,command=lambda: show_bank_account(root,bank_accounts,com_name,client,company_profile,user_name,window_main)).pack(pady=10)
+    tk.Button(scrollable_frame,text = "Show Bank Account",font=("Helvetica",10),width=20,command=lambda: show_bank_account(root,bank_accounts,com_name,client,company_profile,user_name,window_main)).pack(pady=20)
 
     tk.Label(scrollable_frame,text = "Employees",font=("Helvetica",20,"bold")).pack(padx=10,pady=10) 
+    tk.Button(scrollable_frame,text = "Show Employees",font=("Helvetica",10),width=20,command=lambda:show_employees(root,employees,com_name,client,company_profile,user_name,window_main)).pack(pady=20)
 
     tk.Button(scrollable_frame,text = "Edit",font=("Helvetica",10),width=20).pack()
 
