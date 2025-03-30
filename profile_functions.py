@@ -341,13 +341,46 @@ def edit_employee(root,employees,com_name,client,window_show,user_name,window_co
 
     emp_id_var.trace_add("write", get_employee_info)
 
-    add_btn = tk.Button(root,text = "Add Employee",font=("Helvetica",10),command=lambda: (root,employees,com_name,window_show,window_com,user_name))
+    add_btn = tk.Button(root,text = "Edit Employee",font=("Helvetica",10),command=lambda:edit(root,employees,com_name,window_show,window_com,user_name))
     add_btn.pack(pady=10)
 
     btn_frame = tk.Frame(root)
     btn_frame.pack()
     tk.Button(btn_frame,text = "Back",font=("Helvetica",10),width=10,command=lambda:show_employees(root,employees,com_name,client,window_com,user_name,window_main)).grid(row=0,column=0,padx=5)
     tk.Button(btn_frame,text = "Exit",font=("Helvetica",10),width=10,command=root.quit).grid(row=0,column=1,padx=5)
+
+    def edit(root,employees,com_name,window_show,window_com,user_name):
+        global warning
+        if warning:
+            warning.destroy()
+            warning = None
+
+        emp_id = emp_id_var.get()
+        emp_name = emp_name_entry.get()
+        emp_email = emp_email_entry.get()
+        emp_phone = emp_phone_entry.get()
+        emp_address = emp_address_entry.get("1.0", tk.END).strip()
+        emp_username = emp_username_entry.get()
+        emp_password = emp_password_entry.get()
+        sal_mod = sal_mod_var.get()
+        pur_mod = pur_mod_var.get()
+        pay_mod = pay_mod_var.get()
+        rec_mod = rec_mod_var.get()
+        cli_mod = cli_mod_var.get()
+        inv_mod = inv_mod_var.get()
+        comp_mod = comp_mod_var.get()
+
+        if not emp_name or not emp_email or not emp_phone or not emp_address or not emp_username or not emp_password:
+            warning = tk.Label(employee_frame, text="Please fill all required fields", fg="red")
+            add_btn.pack_forget()
+            warning.pack(pady=5)
+            add_btn.pack(pady=10)
+            return
+
+        employees.update_one({"emp_id":emp_id}, {"$set": {"name":emp_name, "email":emp_email, "phone_no":emp_phone, "address":emp_address, "username":emp_username, "password":emp_password, "sale_module":sal_mod, "purchase_module":pur_mod, "payment_module":pay_mod, "receipt_module":rec_mod, "client_module":cli_mod, "inventory_module":inv_mod, "company_profile_module":comp_mod}})
+        
+        messagebox.showinfo("Success", "Employee Edited Successfully!")
+        show_employees(root, employees, com_name, client, window_com, user_name, window_main)
 
 def add_employee(root,employees,com_name,client,window_show,user_name,window_com,window_main):
     
