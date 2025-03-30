@@ -6,7 +6,6 @@ import pymongo as pm
 from temp_data_store import *
 from database_connect import *
 from login_register import user_login,create_company
-# from test import company_profile
 from profile_functions import company_profile
 from functions import generate_contract,print_contracts,generate_invoice,save,load_transactions,table,back,return_invoice,print_invoice,table_contract,load_contracts,save_contract
 from inventory_functions import inventory_check,existing_products,add_product,remove_product
@@ -62,7 +61,7 @@ def login_window(root,company_name):
     entry_frame = tk.Frame(login)
     entry_frame.pack(pady=10)
 
-    tk.Label(entry_frame,text="Username/Employee id:",font=("Helvetica",10)).grid(row=0,column=0,padx=10,pady=10)
+    tk.Label(entry_frame,text="Username:",font=("Helvetica",10)).grid(row=0,column=0,padx=10,pady=10)
     username = tk.Entry(entry_frame,width=30,font=("Helvetica",10))
     username.grid(row=0,column=1,padx=10,pady=10)
 
