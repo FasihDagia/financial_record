@@ -197,8 +197,17 @@ def create_company(root,client,window):
     emp_password_entry = tk.Entry(employee_frame,font=("Helvetica",10),show="*")
     emp_password_entry.grid(row=4,column=3,pady=10)
 
-    create_button = tk.Button(scrollable_frame,text = "Create",font=("Helvetica",10),command=lambda: create_company(window,client,name_entry,phone_entry,telephone_entry,email_entry,address_entry,ntn_entry,coc_cno_entry,it_cno_entry,it_p_entry,ad_tax_entry,fut_p_entry,bank_name_entry,br_name_entry,ac_title_entry,ac_no_entry,iban_entry))
+    create_button = tk.Button(scrollable_frame,text = "Create",font=("Helvetica",10),width=20,command=lambda: create_company(window,client,name_entry,phone_entry,telephone_entry,email_entry,address_entry,ntn_entry,coc_cno_entry,it_cno_entry,it_p_entry,ad_tax_entry,fut_p_entry,bank_name_entry,br_name_entry,ac_title_entry,ac_no_entry,iban_entry))
     create_button.pack(pady=10)
+
+    btn_frame = tk.Frame(scrollable_frame)
+    btn_frame.pack(pady=5)
+
+    bck_button = tk.Button(btn_frame,text = "Back",font=("Helvetica",10),width=10,command=lambda: window(root))
+    bck_button.grid(row=0,column=0,padx=5)
+    exit_btn = tk.Button(btn_frame,text = "Exit",font=("Helvetica",10),width=10,command=root.destroy)
+    exit_btn.grid(row=0,column=1,padx=5)
+
 
     def create_company(window,client,name_entry,phone_entry,telephone_entry,email_entry,address_entry,ntn_entry,coc_cno_entry,it_cno_entry,it_p_entry,ad_tax_entry,fut_p_entry,bank_name_entry,br_name_entry,ac_title_entry,ac_no_entry,iban_entry):
  
@@ -243,9 +252,11 @@ def create_company(root,client,window):
 
         if not com_name or not com_phone or not com_email or not com_address or not ntn or not coc_cno or not it_cno or not it_p or not ad_tax or not bank_name or not br_name or not ac_title or not ac_no or not iban:
             warning = tk.Label(scrollable_frame, text="Please fill all required feilds", fg="red")
-            create_button.pack_forget()  
-            warning.pack(pady=5)
-            create_button.pack()
+            create_button.pack_forget()
+            btn_frame.pack_forget()  
+            warning.pack()
+            create_button.pack(pady=10)
+            btn_frame.pack(pady=10)
         else:
             if telephone_entry.get() == "Optional":
                 telephone_entry.delete(0, END)
@@ -259,7 +270,7 @@ def create_company(root,client,window):
 
             company_details.insert_one({"company_name": com_name, "phone_no": com_phone, "telephone_no": com_telephone, "email": com_email, "address": com_address, "ntn_no": ntn, "coc_certificate_no": coc_cno, "income_tax_certificate_no": it_cno})
             details.insert_one({"company_name": com_name, "phone_no": com_phone, "telephone_no": com_telephone, "email": com_email, "address": com_address, "ntn_no": ntn, "coc_certificate_no": coc_cno, "income_tax_certificate_no": it_cno})
-            employees.insert_one({"company_name": com_name,"emp_id":"EMP00001","name": emp_name, "email": emp_email, "phone_no": emp_phone, "address": emp_address, "username": emp_username, "password": emp_password})
+            employees.insert_one({"company_name": com_name,"emp_id":"EMP00001","name": emp_name, "email": emp_email, "phone_no": emp_phone, "address": emp_address, "username": emp_username, "password": emp_password, "sale_module":1, "purchase_module":1, "payment_module":1, "receipt_module":1, "client_module":1, "inventory_module":1, "company_profile_module":1})
             bank_accounts.insert_one({"company_name": com_name,"bank_name": bank_name, "branch_name": br_name, "account_title": ac_title, "account_no": ac_no, "iban_no": iban})
             tax.insert_one({"company_name": com_name,"income_tax_percent": it_p, "advance_tax_percent": ad_tax,"further_tax_percent": fut_p})
 

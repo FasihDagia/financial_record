@@ -6,7 +6,7 @@ import pymongo as pm
 from temp_data_store import *
 from database_connect import *
 from login_register import user_login,create_company
-from profile_functions import company_profile
+from profile_functions import show_company_profile
 from functions import generate_contract,print_contracts,generate_invoice,save,load_transactions,table,back,return_invoice,print_invoice,table_contract,load_contracts,save_contract
 from inventory_functions import inventory_check,existing_products,add_product,remove_product
 from client_function import client_check,existing_clients,add_client,remove_client
@@ -115,7 +115,7 @@ def main_menu_window(root,company_name,user_name):
         "Receipt Module": lambda: receipt_module_window(root),
         "Inventory Module": lambda: inventory_module_window(root),
         "Client Module": lambda: client_module_window(root),
-        "Company Profile": lambda: company_profile(root, client, main_menu_window, company_name, user_name),
+        "Company Profile": lambda: show_company_profile(root, client, main_menu_window, company_name, user_name),
     }
 
     row, col = 0, 0  
