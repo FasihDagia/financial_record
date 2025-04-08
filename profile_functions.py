@@ -1033,8 +1033,7 @@ def edit_company_profile(root,client,window_main,com_name,user_name):
             copy_database(client, old_profile, new_profile)
 
             messagebox.showinfo("Success", "Company Profile Updated Successfully!")
-            window(root,client,window_main,com_name,user_name)
-            
+            window(root,client,window_main,com_name,user_name)           
 
 def copy_database(client, source_db_name, target_db_name):
     
