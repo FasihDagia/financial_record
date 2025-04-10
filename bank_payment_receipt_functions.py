@@ -127,71 +127,51 @@ def generate_bank_payments(root,window,payments_temp,payment,pay_receip,pay_rece
 
         amountiw = num2words(total_amount).upper()
 
-        #for all bank and cash payments record
-        no_entries = payment.count_documents({})
-        if len(payments_temp)==0:
-            if no_entries == 0:
-                balance = 0 
+        def records(temp,permanent,amounts,operation):
+            no_entries = permanent.count_documents({})
+            if len(temp)==0:
+                if no_entries == 0:
+                    balance = 0 
+                else:
+                    last_entry = permanent.find_one(sort=[("_id", -1)])
+                    balance = last_entry.get("balance",0)
             else:
-                last_entry = payment.find_one(sort=[("_id", -1)])
-                balance = last_entry.get("balance",0)
-        else: 
-            balance = payments_temp[len(payments_temp)]["balance"]
+                balance = temp[len(temp)]["balance"]
 
-        if len(payments_temp) == 0:
-            sno = no_entries + 1
-        else:
-            sno = no_entries + len(payments_temp) + 1
-        balance += total_amount 
-        payments_temp[len(payments_temp)+1] = {
-            "s_no":sno,
-            "date":date,
-            "voucher_no":vouch_no,
-            "head_type":exp_type,
-            "account":account,
-            "opp_acc":acc_recev,
-            "description":description,
-            "amount":amount,
-            "amountiw":amountiw,
-            "tax_percent":tax_percent,
-            "tax_amount":tax_amount,
-            "total_amount":total_amount,
-            "balance":balance
-        }
+            if len(temp) == 0:
+                sno = no_entries + 1
+            else:
+                sno = no_entries + len(temp) + 1
+            
+            if operation == "add":
+                balance += amounts
+            elif operation == "sub":
+                balance -= amounts
+
+            temp[len(temp)+1] = {
+                "s_no":sno,
+                "date":date,
+                "voucher_no":vouch_no,
+                "head_type":exp_type,
+                "account":account,
+                "opp_acc":acc_recev,
+                "description":description,
+                "amount":amount,
+                "amountiw":amountiw,
+                "tax_percent":tax_percent,
+                "tax_amount":tax_amount,
+                "total_amount":total_amount,
+                "balance":balance
+            }
+
+        #for all bank and cash payments record
+        records(payments_temp,payment,total_amount,"add")
 
         #for overall bank and cash record
-        no_entries_1 = pay_receip.count_documents({})
-        if len(pay_receip_temp)==0:
-            if no_entries_1 == 0:
-                balance1 = 0 
-            else:
-                last_entry_1 = pay_receip.find_one(sort=[("_id", -1)])
-                balance1 = last_entry_1.get("balance",0)
-        else: 
-            balance1 = pay_receip_temp[len(pay_receip_temp)]["balance"]    
-
-        if len(pay_receip_temp) == 0:
-            sno1 = no_entries_1 + 1
-        else:
-            sno1 = no_entries_1 + len(pay_receip_temp) + 1
-        balance1-= total_amount
-        pay_receip_temp[len(pay_receip_temp)+1] = {
-            "s_no":sno1,
-            "date":date,
-            "voucher_no":vouch_no,
-            "head_type":exp_type,
-            "account":account,
-            "opp_acc":acc_recev,
-            "description":description,
-            "amount":amount,
-            "amountiw":amountiw,
-            "tax_percent":tax_percent,
-            "tax_amount":tax_amount,
-            "total_amount":total_amount,
-            "balance":balance1
-        }
-
+        records(pay_receip_temp,pay_receip,total_amount,"sub")
+        
         #for client record
+        
         no_entries_2 = customers[acc_recev].count_documents({})
         no_entries_2-=1
         if len(client_temp) == 0:
@@ -234,36 +214,7 @@ def generate_bank_payments(root,window,payments_temp,payment,pay_receip,pay_rece
         }
 
         #for all bank record
-        no_entries_3 = bank.count_documents({})
-        if len(bank_temp) == 0:
-            if no_entries_3 == 0:
-                balance3 = 0
-            else:
-                last_entry_3 = bank.find_one(sort=[("_id", -1)])
-                balance3 = last_entry_3.get("balance",0)
-        else:
-            balance3 = bank_temp[len(bank_temp)]["balance"]
-
-        if len(bank_temp) == 0:
-            sno3 = no_entries_3 + 1
-        else:
-            sno3 = no_entries_3 + len(bank_temp) + 1
-        balance3 -= total_amount
-        bank_temp[len(bank_temp)+1] ={
-            "s_no":sno3,
-            "date":date,
-            "voucher_no":vouch_no,
-            "head_type":exp_type,
-            "account":account,
-            "opp_acc":acc_recev,
-            "description":description,
-            "amount":amount,
-            "amountiw":amountiw,
-            "tax_percent":tax_percent,
-            "tax_amount":tax_amount,
-            "total_amount":total_amount,
-            "balance":balance3
-        }
+        records(bank_temp,bank,total_amount,"sub")
 
         #for indivisual bank record
         no_entries_4 = indvidual_bank[account].count_documents({})
@@ -305,36 +256,9 @@ def generate_bank_payments(root,window,payments_temp,payment,pay_receip,pay_rece
             "balance":balance4
         }        
 
-        no_entries_5 = tax.count_documents({})
-        if len(tax_temp)==0:
-            if no_entries_5 == 0:
-                balance5 = 0 
-            else:
-                last_entry_5 = tax.find_one(sort=[("_id", -1)])
-                balance5 = last_entry_5.get("balance",0) 
-        else: 
-            balance5 = tax_temp[len(tax_temp)]["balance"]
+        #for tax record
+        records(tax_temp,tax,tax_amount,"add")
         
-        if len(tax_temp) == 0:
-            sno5 = no_entries_5 + 1
-        else:
-            sno5 = no_entries_5 + len(tax_temp) + 1
-        
-        balance5 += tax_amount
-        tax_temp[len(tax_temp)+1] ={
-            "s_no":sno5,
-            "date":date,
-            "voucher_no":vouch_no,
-            "head_type":exp_type,
-            "account":account,
-            "opp_acc":acc_recev,
-            "description":description,
-            "amount":amount,
-            "tax_percent":tax_percent,
-            "tax_amount":tax_amount,
-            "total_amount":total_amount,
-            "balance":balance5
-        }
         messagebox.showinfo("Success","Bank Payment Generated Succesfully!")
         window(root)
 
