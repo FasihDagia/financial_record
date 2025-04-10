@@ -280,8 +280,6 @@ def sale_contract_window(root):
     for widget in root.winfo_children():
         widget.destroy()
 
-    
-
     root.geometry("1400x800")
     root.minsize(1400,700)
 
@@ -345,8 +343,8 @@ def sale_invoice_window(root):
     button_frame.pack(pady=10)
 
     tk.Button(button_frame,text='Generate Invoice', width=15,command=lambda:generate_invoice(root,sale_transaction,account,inventory_sale,'-',"Sale",sale_invoice_window,existing_contracts,inventory,customers,pay_receip_balance)).grid(row=0, column=1,padx=5)
-    tk.Button(button_frame, text="Print Invoice", width=15, command=lambda:print_invoice(sale_transaction,"SALE")).grid(row=0,column=2,padx=5)
-    tk.Button(button_frame, text="Save", width=15, command=lambda:save(sale_transaction,account,inventory_sale,existing_contracts,contracts,inventory)).grid(row=0, column=3,padx=5)
+    tk.Button(button_frame, text="Print Invoice", width=15, command=lambda:print_invoice(sale_transaction,"SALE",root)).grid(row=0,column=2,padx=5)
+    tk.Button(button_frame, text="Save", width=15, command=lambda:save(sale_transaction,account,inventory_sale,existing_contracts,contracts,inventory,pay_receip_balance,customers,'Sale')).grid(row=0, column=3,padx=5)
     tk.Button(button_frame, text="Back", width=15, command=lambda:back(root,sale_module_window,sale_transaction,inventory_sale,existing_contracts)).grid(row=0, column=4,padx=5)
     tk.Button(button_frame, text="Exit", width=15, command=root.destroy).grid(row=0, column=5,padx=5)
 
@@ -500,13 +498,14 @@ def purchase_invoice_window(root):
     root.title(f"Purchase Invoice")
 
     tk.Label(root,text=f"Purchase Invoice",font=("Helvetica", 18)).pack(pady=10)
+    
     #buttons to add,delete and update a transaction
     button_frame = tk.Frame(root)
     button_frame.pack(pady=10)
 
-    tk.Button(button_frame,text='Generate Invoice', width=15,command=lambda:generate_invoice(root,purchase_transaction,account,inventory_sale,"+","Purchase",purchase_invoice_window,existing_contracts,inventory,customers)).grid(row=0, column=1,padx=5)
+    tk.Button(button_frame,text='Generate Invoice', width=15,command=lambda:generate_invoice(root,purchase_transaction,account,inventory_sale,"+","Purchase",purchase_invoice_window,existing_contracts,inventory,customers,pay_receip_balance)).grid(row=0, column=1,padx=5)
     tk.Button(button_frame, text="Print Invoice", width=15, command=lambda:print_invoice(purchase_transaction,"PURCHASE",root)).grid(row=0,column=2,padx=5)
-    tk.Button(button_frame, text="Save", width=15, command=lambda:save(purchase_transaction,account,inventory_sale,existing_contracts,contracts,inventory)).grid(row=0, column=3,padx=5)
+    tk.Button(button_frame, text="Save", width=15, command=lambda:save(purchase_transaction,account,inventory_sale,existing_contracts,contracts,inventory,pay_receip_balance,customers,'Purchase')).grid(row=0, column=3,padx=5)
     tk.Button(button_frame, text="Back", width=15, command=lambda:back(root,purchase_module_window,purchase_transaction,inventory_sale,existing_contracts)).grid(row=0, column=4,padx=5)
     tk.Button(button_frame, text="Exit", width=15, command=root.destroy).grid(row=0, column=5,padx=5)
 

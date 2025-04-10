@@ -678,7 +678,7 @@ def print_contracts(root,contracts,contract_type):
             messagebox.showinfo("Success", f"Contract saved successfully at:\n{file_path}")
             popup_print_contract.destroy()
 
-def generate_invoice(root,invoices_to_save,account,inventory_sale,operator,invoice_type,window,contracts,inventory,customers,pay_receipt_balance):
+def generate_invoice(root,invoices_to_save,account,inventory_sale,operator,invoice_type,window,contracts,inventory,customers,pay_receip_balance):
 
     for widget in root.winfo_children():
         widget.destroy()
@@ -1057,7 +1057,7 @@ def generate_invoice(root,invoices_to_save,account,inventory_sale,operator,invoi
                 'balance': balance
             }
         
-            pay_receipt_balance[len(pay_receipt_balance) + 1] = {
+            pay_receip_balance[len(pay_receip_balance) + 1] = {
                 's_no': sno,
                 'date': date,
                 'invoice_no': invoice,
@@ -1414,7 +1414,7 @@ def load_contracts(table_contract,contracts):
         ))
         i+=1
 
-def save(transactions,account,inventorys,existing_Contracts,contracts,inventory):
+def save(transactions,account,inventorys,existing_Contracts,contracts,inventory,pay_receip_balance,customers,invoice_type):
 
     if len(transactions) != 0:
         confirm = messagebox.askyesno("Confirm", f"Once the Invoices are saved you wont be able to cahnge them\nAre you sure you want to save invoices?")
@@ -1431,7 +1431,14 @@ def save(transactions,account,inventorys,existing_Contracts,contracts,inventory)
                             contracts.update_one({'contract_no':contract_no},{'$set':{'delivered_qant':delivered_quant}})
                         break
                 account.insert_one(transaction)
-
+            
+            for customer_update in pay_receip_balance.values():
+                name = customer_update.get('account_receivable','')
+                if invoice_type == 'Sale':
+                    customer = customers[f"sale_invoice_{name}"]
+                elif invoice_type == 'Purchase':
+                    customer = customers[f"purchase_invoice_{name}"]
+                customer.insert_one(customer_update)
 
             #updating stock in inventory
             if inventorys != None:
@@ -1447,7 +1454,7 @@ def save(transactions,account,inventorys,existing_Contracts,contracts,inventory)
     else:
         messagebox.showerror("Error","No Invoices to save!")
 
-def save_contract(contracts,account,customers):
+def save_contract(contracts,account):
 
     if len(contracts) != 0:
         confirm = messagebox.askyesno("Confirm", f"Once the Contracts are saved you wont be able to cahnge them\nAre you sure you want to save?")
@@ -1455,12 +1462,6 @@ def save_contract(contracts,account,customers):
         
             for contract in contracts.values():
                 account.insert_one(contract)
-            
-
-            for customer_update in contracts.values():
-                name = customer_update.get('account_receivable','')
-                customer = customers[name]
-                customer.insert_one(customer_update)
         
             contracts.clear()
 
