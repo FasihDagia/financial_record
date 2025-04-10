@@ -621,6 +621,7 @@ def load_payments_receipt(table_entry,payments_temp):
         i+=1
 
 def save_bank_payment_receipt(payments_temp,payment,pay_receip,pay_receip_temp,type,customers,client_temp,bank,bank_temp,indvidual_bank,bank_ind_temp,tax,tax_temp):
+    
     if len(payments_temp) != 0 and len(pay_receip_temp) != 0:
         confirm = messagebox.askyesno("Confirm", f"Once the Particulars are saved you wont be able to cahnge them\nAre you sure you want to save?")
         if confirm:
