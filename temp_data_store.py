@@ -12,3 +12,4 @@ cash_temp = {}
 client_temp ={}
 bank_ind_temp = {}
 tax_temp = {}
+pay_receip_balance = {}

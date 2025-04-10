@@ -678,7 +678,7 @@ def print_contracts(root,contracts,contract_type):
             messagebox.showinfo("Success", f"Contract saved successfully at:\n{file_path}")
             popup_print_contract.destroy()
 
-def generate_invoice(root,invoices_to_save,account,inventory_sale,operator,invoice_type,window,contracts,inventory,customers):
+def generate_invoice(root,invoices_to_save,account,inventory_sale,operator,invoice_type,window,contracts,inventory,customers,pay_receipt_balance):
 
     for widget in root.winfo_children():
         widget.destroy()
@@ -874,7 +874,6 @@ def generate_invoice(root,invoices_to_save,account,inventory_sale,operator,invoi
     item_entry = OptionMenu(contract_info, item_option , *items_options)
     item_entry.grid(row=0,column=1,padx=5)
 
-
     def check_quntity(*args):
 
         quantity = int(quantity_entry.get())
@@ -1029,7 +1028,11 @@ def generate_invoice(root,invoices_to_save,account,inventory_sale,operator,invoi
             else:
                 balance = invoices_to_save[len(invoices_to_save)]['balance']
             
-            balance += total_amount 
+            if invoice_type == 'Sale':
+                balance += total_amount
+            elif invoice_type == 'Purchase':
+                balance -= total_amount
+
             invoices_to_save[len(invoices_to_save) + 1] = {
                 's_no': sno,
                 'date': date,
@@ -1053,7 +1056,17 @@ def generate_invoice(root,invoices_to_save,account,inventory_sale,operator,invoi
                 'description': description,
                 'balance': balance
             }
-            
+        
+            pay_receipt_balance[len(pay_receipt_balance) + 1] = {
+                's_no': sno,
+                'date': date,
+                'invoice_no': invoice,
+                'voucher_no': voucher,
+                'account_receivable': account_recevible,
+                'amount': amount,
+                'balance': balance
+            }
+        
             # For inventory 
             inventory_item = inventory[item]
             saved_inventory = inventory_item.count_documents({})
