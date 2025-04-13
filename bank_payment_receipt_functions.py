@@ -4,7 +4,7 @@ from tkinter import ttk, messagebox, simpledialog,filedialog
 from datetime import datetime
 from num2words import num2words
 
-def generate_bank_payments(root,window,payments_temp,payment,pay_receip,pay_receip_temp,customers,client_temp,bank,bank_temp,indvidual_bank,bank_ind_temp,tax,tax_temp):
+def generate_bank_payments(root,window,payments_temp,payment,pay_receip,pay_receip_temp,customers,client_temp,bank,bank_temp,indvidual_bank,bank_ind_temp,tax,tax_temp,invoice_balance):
     
     for widget in root.winfo_children():
         widget.destroy()
@@ -170,49 +170,50 @@ def generate_bank_payments(root,window,payments_temp,payment,pay_receip,pay_rece
         #for overall bank and cash record
         records(pay_receip_temp,pay_receip,total_amount,"sub")
         
-        #for client record
-        
-        no_entries_2 = customers[acc_recev].count_documents({})
-        no_entries_2-=1
-        if len(client_temp) == 0:
-            if no_entries_2 == 0:
-                balance2 = 0
+        #for client record 
+        def client_record(temp,permanent,amounts,acc_recev):
+            no_entries_2 = permanent[f"payment_{acc_recev}"].count_documents({})
+            if len(temp) == 0:
+                if no_entries_2 == 0:
+                    balance2 = 0
+                else:
+                    last_entry_2 = permanent[f"payment_{acc_recev}"].find_one(sort=[("_id", -1)])
+                    balance2 = last_entry_2.get("balance",0)
             else:
-                last_entry_2 = customers[acc_recev].find_one(sort=[("_id", -1)])
-                balance2 = last_entry_2.get("balance",0)
-        else:
-            balance2 = 0
-            for i in client_temp.values():
-                if i.get("acc_recev","") == acc_recev:
-                    balance2 = i.get("balance",0)
+                balance2 = 0
+                for i in temp.values():
+                    if i.get("opp_acc","") == acc_recev:
+                        balance2 = i.get("balance",0)
 
-        if len(client_temp) == 0:
-            sno2 = no_entries_2 + 1
-        else:
-            j = 0
-            sno2 = no_entries_2 + 1
-            for i in client_temp.values():
-                if i.get("acc_recev","") == acc_recev:
-                    j +=1
-                    sno2 += j
+            if len(temp) == 0:
+                sno2 = no_entries_2 + 1
+            else:
+                j = 0
+                sno2 = no_entries_2 + 1
+                for i in temp.values():
+                    if i.get("opp_acc","") == acc_recev:
+                        j +=1
+                        sno2 += j
+                balance2 -= amounts
+            temp[len(temp)+1] ={
+                "s_no":sno2,
+                "date":date,
+                "voucher_no":vouch_no,
+                "head_type":exp_type,
+                "account":account,
+                "opp_acc":acc_recev,
+                "description":description,
+                "amount":amount,
+                "amountiw":amountiw,
+                "tax_percent":tax_percent,
+                "tax_amount":tax_amount,
+                "total_amount":total_amount,
+                "balance":balance2
+            }
 
-        balance2 += total_amount
-        client_temp[len(client_temp)+1] ={
-            "s_no":sno2,
-            "date":date,
-            "voucher_no":vouch_no,
-            "head_type":exp_type,
-            "account":account,
-            "opp_acc":acc_recev,
-            "description":description,
-            "amount":amount,
-            "amountiw":amountiw,
-            "tax_percent":tax_percent,
-            "tax_amount":tax_amount,
-            "total_amount":total_amount,
-            "balance":balance2
-        }
+        client_record(client_temp,customers,total_amount,acc_recev)
 
+        client_record(invoice_balance,customers,total_amount,acc_recev)
         #for all bank record
         records(bank_temp,bank,total_amount,"sub")
 
@@ -262,7 +263,7 @@ def generate_bank_payments(root,window,payments_temp,payment,pay_receip,pay_rece
         messagebox.showinfo("Success","Bank Payment Generated Succesfully!")
         window(root)
 
-def generate_bank_receipt(root,window,receipt_temp,receipt,pay_receip,pay_receip_temp,customers,client_temp,bank,bank_temp,indvidual_bank,bank_ind_temp,tax,tax_temp):
+def generate_bank_receipt(root,window,receipt_temp,receipt,pay_receip,pay_receip_temp,customers,client_temp,bank,bank_temp,indvidual_bank,bank_ind_temp,tax,tax_temp,invoice_balance):
     
     for widget in root.winfo_children():
         widget.destroy()
@@ -620,7 +621,7 @@ def load_payments_receipt(table_entry,payments_temp):
         ))
         i+=1
 
-def save_bank_payment_receipt(payments_temp,payment,pay_receip,pay_receip_temp,type,customers,client_temp,bank,bank_temp,indvidual_bank,bank_ind_temp,tax,tax_temp):
+def save_bank_payment_receipt(payments_temp,payment,pay_receip,pay_receip_temp,type,customers,client_temp,bank,bank_temp,indvidual_bank,bank_ind_temp,tax,tax_temp,invoice_balance):
     
     if len(payments_temp) != 0 and len(pay_receip_temp) != 0:
         confirm = messagebox.askyesno("Confirm", f"Once the Particulars are saved you wont be able to cahnge them\nAre you sure you want to save?")
@@ -639,6 +640,11 @@ def save_bank_payment_receipt(payments_temp,payment,pay_receip,pay_receip_temp,t
                 name = customer_update.get('opp_acc','')
                 customer = customers[name]
                 customer.insert_one(customer_update)
+
+            for invoice_update in invoice_balance.values():
+                name = invoice_update.get('opp_acc','')
+                invoice = customers[name]
+                invoice.insert_one(invoice_update)
 
             for ind_bank_update in bank_ind_temp.values():
                 b_name = ind_bank_update.get('account','')

@@ -14,7 +14,7 @@ def go_back(root,window,payments,pay_receip_temp):
             pay_receip_temp.clear()
             window(root)
 
-def generate_cash_receipt(root,window,receipt_temp,receipt,pay_receip,pay_receip_temp,customers,client_temp,cash,cash_temp,tax,tax_temp):
+def generate_cash_receipt(root,window,receipt_temp,receipt,pay_receip,pay_receip_temp,customers,client_temp,cash,cash_temp,tax,tax_temp,invoice_balance):
     
     for widget in root.winfo_children():
         widget.destroy()
@@ -298,7 +298,7 @@ def generate_cash_receipt(root,window,receipt_temp,receipt,pay_receip,pay_receip
         messagebox.showinfo("Success","Cash Payment Generated Succesfully!")
         window(root)
 
-def generate_cash_payments(root,window,payments_temp,payment,pay_receip,pay_receip_temp,customers,client_temp,cash,cash_temp,tax,tax_temp):
+def generate_cash_payments(root,window,payments_temp,payment,pay_receip,pay_receip_temp,customers,client_temp,cash,cash_temp,tax,tax_temp,invoice_balance):
     
     for widget in root.winfo_children():
         widget.destroy()

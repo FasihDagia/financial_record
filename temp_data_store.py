@@ -13,3 +13,4 @@ client_temp ={}
 bank_ind_temp = {}
 tax_temp = {}
 pay_receip_balance = {}
+invoice_balance = {}
