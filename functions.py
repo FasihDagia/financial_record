@@ -742,8 +742,8 @@ def generate_invoice(root,invoices_to_save,account,inventory_sale,operator,invoi
 
     def calculate_total(*args):
         try:
-            rate = float(rate_entry.get()) if rate_entry.get() else 0
-            quantity = float(quantity_entry.get()) if quantity_entry.get() else 0
+            rate = float(rate_entry.get()) or 0
+            quantity = float(quantity_entry.get() or 0) 
 
             amount = rate * quantity
             amount_var.set(amount)
@@ -752,9 +752,9 @@ def generate_invoice(root,invoices_to_save,account,inventory_sale,operator,invoi
             total_var.set("Invalid input")
 
         try:
-            amount = float(amount_entry.get()) if amount_entry.get() else 0
-            gst_percent = float(gst_default_value_assign.get()) if gst_default_value_assign.get() else 0
-            further_tax_percent = float(further_tax_entry.get()) if further_tax_entry.get() else 0
+            amount = float(amount_entry.get()) or 0
+            gst_percent = float(gst_default_value_assign.get()) or 0
+            further_tax_percent = float(further_tax_entry.get()) or 0
             ft_amount = (amount * further_tax_percent) / 100
             gt_amount = (amount * gst_percent) / 100
 
@@ -766,14 +766,14 @@ def generate_invoice(root,invoices_to_save,account,inventory_sale,operator,invoi
             Further_tax_amount_var.set("Invalid input")
 
         try:
-            amount = float(amount_entry.get()) if amount_entry.get() else 0
-            gst_percent = float(gst_default_value_assign.get()) if gst_default_value_assign.get() else 0
-            further_tax_percent = float(further_tax_entry.get()) if further_tax_entry.get() else 0
+            amount = float(amount_entry.get()) or 0
+            gst_percent = float(gst_default_value_assign.get()) or 0
+            further_tax_percent = float(further_tax_entry.get()) or 0
             gst_amount = (amount * gst_percent) / 100
             further_tax_amount = (amount * further_tax_percent) / 100
 
             total = amount + gst_amount + further_tax_amount
-            total_var.set(f"{total}")  # Update total label
+            total_var.set(f"{total}")  
         except ValueError:
             total_var.set("Invalid input")
 
@@ -791,6 +791,8 @@ def generate_invoice(root,invoices_to_save,account,inventory_sale,operator,invoi
                 quantity_unit_option.set(contract_details.get("unit", ""))
                 quantity_default.set(contract_details.get("quantity", "")-contract_details.get("delivered_qant",""))
                 rate_default.set(contract_details.get("rate", ""))
+                gst_default_value_assign.set(contract_details.get("gst", ""))
+                further_tax_default_value_assign.set(contract_details.get("further_tax", ""))
         
                 break
 
@@ -876,7 +878,7 @@ def generate_invoice(root,invoices_to_save,account,inventory_sale,operator,invoi
 
     def check_quntity(*args):
 
-        quantity = int(quantity_entry.get())
+        quantity = float(quantity_entry.get())
         contract_no = contract_option.get()
         for contract_details in contracts.values():
             if contract_details.get("contract_no","") == contract_no:
@@ -910,9 +912,9 @@ def generate_invoice(root,invoices_to_save,account,inventory_sale,operator,invoi
     amount_var = tk.StringVar(value=0)
     amount_entry = tk.Entry(contract_info, width=width,textvariable=amount_var)
     amount_entry.grid(row=2, column=1,padx=5)
+    
     tk.Label(contract_info, text="GST(%):",font=("Helvetica",10)).grid(row=2, column=2,padx=5)
-    gst_default_value = 15
-    gst_default_value_assign = tk.StringVar(value=gst_default_value)
+    gst_default_value_assign = tk.StringVar(value=0)
     gst_entry = tk.Entry(contract_info, width=width, textvariable=gst_default_value_assign)
     gst_entry.grid(row=2, column=3)
 
@@ -922,7 +924,8 @@ def generate_invoice(root,invoices_to_save,account,inventory_sale,operator,invoi
     gst_amount_entry.grid(row=3, column=1,padx=5)
 
     tk.Label(contract_info, text="Further Tax(%):",font=("Helvetica",10)).grid(row=3, column=2,padx=5)
-    further_tax_entry = tk.Entry(contract_info, width=width)
+    further_tax_default_value_assign = tk.StringVar(value=0)
+    further_tax_entry = tk.Entry(contract_info, width=width,textvariable=further_tax_default_value_assign)
     further_tax_entry.grid(row=3, column=3)
 
     tk.Label(contract_info,text="Futher Tax Amount:",font=("Helvetica",9)).grid(row=4, column=0,pady=7)
@@ -986,7 +989,7 @@ def generate_invoice(root,invoices_to_save,account,inventory_sale,operator,invoi
         item = item_option.get()
         
         try:
-            quantity = int(quantity_entry.get())
+            quantity = float(quantity_entry.get())
         except ValueError:
             messagebox.showerror("Error", "Fields can't be empty")
             return
@@ -1028,10 +1031,41 @@ def generate_invoice(root,invoices_to_save,account,inventory_sale,operator,invoi
             else:
                 balance = invoices_to_save[len(invoices_to_save)]['balance']
             
+            balance += total_amount
+            
             if invoice_type == 'Sale':
-                balance += total_amount
+                clients = customers[f"sale_invoice_{account_recevible}"] 
             elif invoice_type == 'Purchase':
-                balance -= total_amount
+                clients = customers[f"purchase_invoice_{account_recevible}"]
+
+            no_entries_2 = clients.count_documents({})
+            if len(pay_receip_balance) == 0:
+                if no_entries_2 == 0:
+                    balance2 = 0
+                else:
+                    last_entry_2 = clients.find_one(sort=[("_id", -1)])
+                    balance2 = last_entry_2.get("balance",0)
+            else:
+                balance2 = 0
+                for i in pay_receip_balance.values():
+                    if i.get("account_recevible","") == account_recevible:
+                        balance2 = i.get("balance",0)
+
+            if len(pay_receip_balance) == 0:
+                sno2 = no_entries_2 + 1
+            else:
+                j = 0
+                sno2 = no_entries_2 + 1
+                for i in pay_receip_balance.values():
+                    if i.get("account_recevible","") == account_recevible:
+                        j +=1
+                        sno2 += j
+
+
+            if invoice_type == 'Sale':
+                balance2 -= total_amount
+            elif invoice_type == 'Purchase':
+                balance2 += total_amount
 
             invoices_to_save[len(invoices_to_save) + 1] = {
                 's_no': sno,
@@ -1058,13 +1092,13 @@ def generate_invoice(root,invoices_to_save,account,inventory_sale,operator,invoi
             }
         
             pay_receip_balance[len(pay_receip_balance) + 1] = {
-                's_no': sno,
+                's_no': sno2,
                 'date': date,
                 'invoice_no': invoice,
                 'voucher_no': voucher,
                 'account_receivable': account_recevible,
                 'amount': amount,
-                'balance': balance
+                'balance': balance2
             }
         
             # For inventory 
@@ -1436,9 +1470,13 @@ def save(transactions,account,inventorys,existing_Contracts,contracts,inventory,
                 name = customer_update.get('account_receivable','')
                 if invoice_type == 'Sale':
                     customer = customers[f"sale_invoice_{name}"]
+                    transaction_type = customers[f"receipt_{name}"]
                 elif invoice_type == 'Purchase':
                     customer = customers[f"purchase_invoice_{name}"]
+                    transaction_type = customers[f"payment_{name}"]
+
                 customer.insert_one(customer_update)
+                transaction_type.insert_one(customer_update)
 
             #updating stock in inventory
             if inventorys != None:
