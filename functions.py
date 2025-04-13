@@ -26,45 +26,45 @@ def back(root,window,invoices,inventorys,existing_contracts):
 
     window(root)
 
-def table(table_account_receivable,table_inventory,invoice_type):
+def table(table_opp_acc,table_inventory,invoice_type):
 
-    table_account_receivable.heading("S.NO", text="S.NO")
-    table_account_receivable.column("S.NO", anchor="center", width=20)
-    table_account_receivable.heading("Date", text="Date")
-    table_account_receivable.column("Date", anchor="center", width=30)
+    table_opp_acc.heading("S.NO", text="S.NO")
+    table_opp_acc.column("S.NO", anchor="center", width=20)
+    table_opp_acc.heading("Date", text="Date")
+    table_opp_acc.column("Date", anchor="center", width=30)
 
     if invoice_type == 'purchase':
-        table_account_receivable.heading("Voucher.NO", text="Voucher.NO")
-        table_account_receivable.column("Voucher.NO", anchor="center", width=20)
+        table_opp_acc.heading("Voucher.NO", text="Voucher.NO")
+        table_opp_acc.column("Voucher.NO", anchor="center", width=20)
 
-    table_account_receivable.heading("Invoice.NO", text="Invoice.NO")
-    table_account_receivable.column("Invoice.NO", anchor="center", width=20)
-    table_account_receivable.heading("Account Receivable", text="Account Receivable")
-    table_account_receivable.column("Account Receivable", anchor="center", width=30)
-    table_account_receivable.heading("Item", text="Item")
-    table_account_receivable.column("Item", anchor="center", width=40)
-    table_account_receivable.heading("Quantity", text="Quantity")
-    table_account_receivable.column("Quantity", anchor="center", width=30)
-    table_account_receivable.heading("Unit", text="Unit")
-    table_account_receivable.column("Unit", anchor="center", width=20)
-    table_account_receivable.heading("Description", text="Description")
-    table_account_receivable.column("Description", anchor="center", width=300)
-    table_account_receivable.heading("Rate", text="Rate")
-    table_account_receivable.column("Rate", anchor="center", width=40)
-    table_account_receivable.heading("Amount", text="Amount")
-    table_account_receivable.column("Amount", anchor="center", width=40)
-    table_account_receivable.heading("GST", text="GST")
-    table_account_receivable.column("GST", anchor="center", width=30)
-    table_account_receivable.heading("GST Amount", text="GST Amount")
-    table_account_receivable.column("GST Amount", anchor="center", width=30)
-    table_account_receivable.heading("Further Tax", text="Further Tax")
-    table_account_receivable.column("Further Tax", anchor="center", width=30)
-    table_account_receivable.heading("Further Tax Amount", text="Further Tax Amount")
-    table_account_receivable.column("Further Tax Amount", anchor="center", width=30)
-    table_account_receivable.heading("Total Amount", text="Total Amount")
-    table_account_receivable.column("Total Amount", anchor="center", width=40)
-    table_account_receivable.heading("Balance", text="Balance")
-    table_account_receivable.column("Balance", anchor="center", width=40)
+    table_opp_acc.heading("Invoice.NO", text="Invoice.NO")
+    table_opp_acc.column("Invoice.NO", anchor="center", width=20)
+    table_opp_acc.heading("Account Receivable", text="Account Receivable")
+    table_opp_acc.column("Account Receivable", anchor="center", width=30)
+    table_opp_acc.heading("Item", text="Item")
+    table_opp_acc.column("Item", anchor="center", width=40)
+    table_opp_acc.heading("Quantity", text="Quantity")
+    table_opp_acc.column("Quantity", anchor="center", width=30)
+    table_opp_acc.heading("Unit", text="Unit")
+    table_opp_acc.column("Unit", anchor="center", width=20)
+    table_opp_acc.heading("Description", text="Description")
+    table_opp_acc.column("Description", anchor="center", width=300)
+    table_opp_acc.heading("Rate", text="Rate")
+    table_opp_acc.column("Rate", anchor="center", width=40)
+    table_opp_acc.heading("Amount", text="Amount")
+    table_opp_acc.column("Amount", anchor="center", width=40)
+    table_opp_acc.heading("GST", text="GST")
+    table_opp_acc.column("GST", anchor="center", width=30)
+    table_opp_acc.heading("GST Amount", text="GST Amount")
+    table_opp_acc.column("GST Amount", anchor="center", width=30)
+    table_opp_acc.heading("Further Tax", text="Further Tax")
+    table_opp_acc.column("Further Tax", anchor="center", width=30)
+    table_opp_acc.heading("Further Tax Amount", text="Further Tax Amount")
+    table_opp_acc.column("Further Tax Amount", anchor="center", width=30)
+    table_opp_acc.heading("Total Amount", text="Total Amount")
+    table_opp_acc.column("Total Amount", anchor="center", width=40)
+    table_opp_acc.heading("Balance", text="Balance")
+    table_opp_acc.column("Balance", anchor="center", width=40)
 
     table_inventory.heading("S.NO", text="S.NO")
     table_inventory.column("S.NO", anchor="center", width=40)
@@ -170,7 +170,7 @@ def generate_contract(root,sale_contract,account,contract_type,window,inventory,
         party = customers["customer_info"]
 
         party_name = party_name_option.get()
-        party_details = party.find_one({"account_receivable":party_name})
+        party_details = party.find_one({"opp_acc":party_name})
 
         email = party_details.get("party_email",'')
         email_default.set(email)
@@ -186,7 +186,7 @@ def generate_contract(root,sale_contract,account,contract_type,window,inventory,
     tk.Label(party_info,text=f"{party_name}:",font=("Helvetica",10)).grid(row=1,column=0,pady=5)
     party_name_options = []
     for i in customers['customer_info'].find():
-            party_name_options.append(i.get('account_receivable',''))  
+            party_name_options.append(i.get('opp_acc',''))  
     party_name_options.sort()      
     party_name_option = tk.StringVar(value="Name")
     party_name_entry = OptionMenu(party_info, party_name_option , *party_name_options)
@@ -422,7 +422,7 @@ def generate_contract(root,sale_contract,account,contract_type,window,inventory,
                 's_no': sno,
                 'date': date,
                 'contract_no': contract,
-                'account_receivable': party_name,
+                'opp_acc': party_name,
                 'party_email': party_email,
                 'party_phone': party_phone,
                 'party_address': party_address,
@@ -652,7 +652,7 @@ def print_contracts(root,contracts,contract_type):
             for contract in contracts.values():
                 if contract.get("contract_no","") == contract_no:
                     date = contract.get("date","")
-                    name = contract.get("account_receivable","")
+                    name = contract.get("opp_acc","")
                     address = contract.get("party_address","")
                     item = contract.get("item","")
                     quantity = contract.get("quantity","")
@@ -783,7 +783,7 @@ def generate_invoice(root,invoices_to_save,account,inventory_sale,operator,invoi
         
         for contract_details in contracts.values():
             if contract_details.get("contract_no", "") == contract_no:
-                party_name_option.set(contract_details.get("account_receivable", ""))
+                party_name_option.set(contract_details.get("opp_acc", ""))
                 email_default.set(contract_details.get("party_email", ""))
                 phone_default.set(contract_details.get("party_phone", ""))
                 address_default.set(contract_details.get("party_address", ""))
@@ -829,7 +829,7 @@ def generate_invoice(root,invoices_to_save,account,inventory_sale,operator,invoi
     tk.Label(party_info,text=f"{party_name}:",font=("Helvetica",10)).grid(row=1,column=0,pady=5)
     party_name_options = []
     for i in customers['customer_info'].find():
-            party_name_options.append(i.get('account_receivable',''))  
+            party_name_options.append(i.get('opp_acc',''))  
     party_name_options.sort()      
     party_name_option = tk.StringVar(value="Name")
     party_name_entry = OptionMenu(party_info, party_name_option , *party_name_options)
@@ -1073,7 +1073,7 @@ def generate_invoice(root,invoices_to_save,account,inventory_sale,operator,invoi
                 'invoice_no': invoice,
                 'voucher_no': voucher,
                 'contract_no': contract_no,
-                'account_receivable': account_recevible,
+                'opp_acc': account_recevible,
                 'party_email': party_email,
                 'party_phone': party_phone,
                 'party_address': party_address,
@@ -1096,7 +1096,7 @@ def generate_invoice(root,invoices_to_save,account,inventory_sale,operator,invoi
                 'date': date,
                 'invoice_no': invoice,
                 'voucher_no': voucher,
-                'account_receivable': account_recevible,
+                'opp_acc': account_recevible,
                 'amount': amount,
                 'balance': balance2
             }
@@ -1147,7 +1147,7 @@ def generate_invoice(root,invoices_to_save,account,inventory_sale,operator,invoi
                 's_no': sno_inventory,
                 'date': date,
                 'contract_no':contract_no,
-                'account_receivable': account_recevible,
+                'opp_acc': account_recevible,
                 'voucher_no':voucher,
                 'invoice_no': invoice,
                 'item': item,
@@ -1300,7 +1300,7 @@ def print_invoice(invoices,invoice_type,root):
                     date = transaction['date'],
                     invoice_number=transaction.get('invoice_no',''),
                     voucher_number = transaction.get('voucher_no',''),
-                    account_receivable = transaction.get('account_receivable', ''),
+                    opp_acc = transaction.get('opp_acc', ''),
                     item = transaction.get('item', ''),
                     quant = str(transaction.get('quantity', '')),
                     unit = transaction.get('unit',''),
@@ -1314,7 +1314,7 @@ def print_invoice(invoices,invoice_type,root):
                     date = date[0]
                     invoice_number = invoice_number[0]
                     voucher_number = voucher_number[0]
-                    account_receivable = account_receivable[0]
+                    opp_acc = opp_acc[0]
                     item = item[0]
                     quant = quant[0]
                     unit = unit[0]
@@ -1335,7 +1335,7 @@ def print_invoice(invoices,invoice_type,root):
                 messagebox.showwarning("Warning", "No file path selected. Invoice not saved.")
                 return
                 
-            generate_invoice_pdf(date,invoice_type,voucher_number,invoice_number,account_receivable,des,item,quant,unit,rate,amount,gst,gst_amount,total_amount,file_path)
+            generate_invoice_pdf(date,invoice_type,voucher_number,invoice_number,opp_acc,des,item,quant,unit,rate,amount,gst,gst_amount,total_amount,file_path)
             messagebox.showinfo("Success", f"Invoice saved successfully at:\n{file_path}")
             popup_print_invoice.destroy()
 
@@ -1356,7 +1356,7 @@ def load_transactions(table_inventory,table_account_receivble,new_transactions,i
                 transaction.get('date', ''),
                 transaction.get('voucher_no', '0'),
                 transaction.get('invoice_no',''),
-                transaction.get('account_receivable', ''),
+                transaction.get('opp_acc', ''),
                 transaction.get('item', ''),
                 transaction.get('quantity', ''),
                 transaction.get('unit',''),
@@ -1377,7 +1377,7 @@ def load_transactions(table_inventory,table_account_receivble,new_transactions,i
                 j,
                 transaction.get('date', ''),
                 transaction.get('invoice_no',''),
-                transaction.get('account_receivable', ''),
+                transaction.get('opp_acc', ''),
                 transaction.get('item', ''),
                 transaction.get('quantity', ''),
                 transaction.get('unit',''),
@@ -1434,7 +1434,7 @@ def load_contracts(table_contract,contracts):
             i,
             contract.get('date', ''),
             contract.get('contract_no', ''),
-            contract.get('account_receivable', ''),
+            contract.get('opp_acc', ''),
             contract.get('item',''),
             contract.get('quantity',''),
             contract.get('unit',''),
@@ -1467,7 +1467,7 @@ def save(transactions,account,inventorys,existing_Contracts,contracts,inventory,
                 account.insert_one(transaction)
             
             for customer_update in pay_receip_balance.values():
-                name = customer_update.get('account_receivable','')
+                name = customer_update.get('opp_acc','')
                 if invoice_type == 'Sale':
                     customer = customers[f"sale_invoice_{name}"]
                     transaction_type = customers[f"receipt_{name}"]
