@@ -638,13 +638,19 @@ def save_bank_payment_receipt(payments_temp,payment,pay_receip,pay_receip_temp,t
             
             for customer_update in client_temp.values():
                 name = customer_update.get('opp_acc','')
-                customer = customers[name]
-                customer.insert_one(customer_update)
+                if type == "pay":
+                    transaction_type = customers[f"payment_{name}"]
+                elif type == "recep":
+                    transaction_type = customers[f"receipt_{name}"]                    
+                transaction_type.insert_one(customer_update)
 
             for invoice_update in invoice_balance.values():
                 name = invoice_update.get('opp_acc','')
-                invoice = customers[name]
-                invoice.insert_one(invoice_update)
+                if type == "pay":
+                    customer = customers[f"purchase_invoice_{name}"]
+                elif type == "recep":
+                    customer = customers[f"sale_invoice_{name}"]
+                customer.insert_one(invoice_update)
 
             for ind_bank_update in bank_ind_temp.values():
                 b_name = ind_bank_update.get('account','')
@@ -657,6 +663,7 @@ def save_bank_payment_receipt(payments_temp,payment,pay_receip,pay_receip_temp,t
             client_temp.clear()
             bank_ind_temp.clear()
             tax_temp.clear()
+            invoice_balance.clear()
 
             if type == "pay":
                 messagebox.showinfo("Success","Payments saved succesfully!")
