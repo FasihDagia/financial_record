@@ -21,10 +21,10 @@ def back(root,window,invoices,inventorys,existing_contracts):
             if inventorys != None:
                 inventorys.clear()
             
-    if existing_contracts != None:
-        existing_contracts.clear()
-
-    window(root)
+            if existing_contracts != None:
+                existing_contracts.clear()
+            
+            window(root)
 
 def table(table_opp_acc,table_inventory,invoice_type):
 
@@ -1039,17 +1039,23 @@ def generate_invoice(root,invoices_to_save,account,inventory_sale,operator,invoi
                 clients = customers[f"purchase_invoice_{account_recevible}"]
 
             no_entries_2 = clients.count_documents({})
-            if len(pay_receip_balance) == 0:
+            if len(pay_receip_balance) != 0:
+                balance2 = 0
+                for i in pay_receip_balance.values():
+                    if i.get("opp_acc","") == account_recevible:
+                        balance2 = i.get("balance",0)
+
+                if balance2 == 0:
+                    last_entry_2 = clients.find_one(sort=[("_id", -1)])
+                    balance2 = last_entry_2.get("balance",0)
+
+            elif len(pay_receip_balance) == 0:
                 if no_entries_2 == 0:
                     balance2 = 0
                 else:
                     last_entry_2 = clients.find_one(sort=[("_id", -1)])
                     balance2 = last_entry_2.get("balance",0)
-            else:
-                balance2 = 0
-                for i in pay_receip_balance.values():
-                    if i.get("account_recevible","") == account_recevible:
-                        balance2 = i.get("balance",0)
+
 
             if len(pay_receip_balance) == 0:
                 sno2 = no_entries_2 + 1
@@ -1060,7 +1066,6 @@ def generate_invoice(root,invoices_to_save,account,inventory_sale,operator,invoi
                     if i.get("account_recevible","") == account_recevible:
                         j +=1
                         sno2 += j
-
 
             if invoice_type == 'Sale':
                 balance2 -= total_amount
@@ -1157,9 +1162,9 @@ def generate_invoice(root,invoices_to_save,account,inventory_sale,operator,invoi
                 'amount': amount,
                 'remaining_stock': remaining_stock
             }
-            messagebox.showinfo("Success", "Invoice Generated!")
+            
             window(root)
-
+            
             for contract in contracts.values():
                 if contract.get("contract_no") == contract_no:
                     if contract.get("delivered_qant","") == None:
@@ -1170,6 +1175,8 @@ def generate_invoice(root,invoices_to_save,account,inventory_sale,operator,invoi
                     if contract.get("quantity", "") == contract.get("delivered_qant",""):
                         contract["progress"] = "completed"
                     break
+            
+            messagebox.showinfo("Success", "Invoice Generated!")
 
     tk.Button(root, text="Add", command=lambda:add(window,operator), width=15).pack(padx=5,pady=5)
     
@@ -1486,8 +1493,10 @@ def save(transactions,account,inventorys,existing_Contracts,contracts,inventory,
                     inventory_item.insert_one(inventory_update)
                     inventory_detail = inventory["inventory_details"]
                     inventory_detail.update_one({'item':item},{'$set':{'remaining_stock':inventory_update.get('remaining_stock','')}})
+
             inventorys.clear()
             transactions.clear()
+            pay_receip_balance.clear()
             messagebox.showinfo("Success","Invoices saved Succesfully!")
     else:
         messagebox.showerror("Error","No Invoices to save!")
