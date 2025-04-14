@@ -441,7 +441,6 @@ def generate_bank_receipt(root,window,receipt_temp,receipt,pay_receip,pay_receip
                     balance -= amounts
 
                 temp[len(temp)+1] = {
-                    "balance":balance,
                     "s_no":sno,
                     "date":date,
                     "voucher_no":vouch_no,
@@ -458,7 +457,7 @@ def generate_bank_receipt(root,window,receipt_temp,receipt,pay_receip,pay_receip
                     "balance":balance
                 }
             
-            #for all banks payments record
+            #for banks receipt record
             records(receipt_temp,receipt,total_amount,"add")
             #for overall bank and cash record
             records(pay_receip_temp,pay_receip,total_amount,"add")
@@ -514,11 +513,12 @@ def generate_bank_receipt(root,window,receipt_temp,receipt,pay_receip,pay_receip
             client_record(client_temp,customers,total_amount,acc_pay,"receipt")
 
             client_record(invoice_balance,customers,total_amount,acc_pay,"sale_invoice")
+            
             #for all bank record
             records(bank_temp,bank,total_amount,"add")
+
             #for indivisual bank record
             no_entries_4 = indvidual_bank[account].count_documents({})
-
             if len(bank_ind_temp) != 0:
                 balance4 = 0
                 for i in bank_ind_temp.values():
@@ -543,7 +543,7 @@ def generate_bank_receipt(root,window,receipt_temp,receipt,pay_receip,pay_receip
                     if i.get("account","") == account:
                         j +=1
                         sno4 += j
-                        
+
             balance4 += total_amount
             bank_ind_temp[len(bank_ind_temp)+1] ={
                 "s_no":sno4,
