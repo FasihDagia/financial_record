@@ -109,12 +109,12 @@ def main_menu_window(root,company_name,user_name):
     btn_frame.pack(pady=10)
 
     modules = {
-        "Sale Module": lambda: sale_module_window(root),
-        "Purchase Module": lambda: purchase_module_window(root),
-        "Payment Module": lambda: payment_module_window(root),
-        "Receipt Module": lambda: receipt_module_window(root),
-        "Inventory Module": lambda: inventory_module_window(root),
-        "Client Module": lambda: client_module_window(root),
+        "Sale Module": lambda: sale_module_window(root,company_name,user_name),
+        "Purchase Module": lambda: purchase_module_window(root,company_name,user_name),
+        "Payment Module": lambda: payment_module_window(root,company_name,user_name),
+        "Receipt Module": lambda: receipt_module_window(root,company_name,user_name),
+        "Inventory Module": lambda: inventory_module_window(root,company_name,user_name),
+        "Client Module": lambda: client_module_window(root,company_name),
         "Company Profile": lambda: show_company_profile(root, client, main_menu_window, company_name, user_name),
     }
 
@@ -135,7 +135,7 @@ def main_menu_window(root,company_name,user_name):
     tk.Button(btn_frame_2,text="Logout", font=("Helvetica",10),width=10, command=lambda:home_page(root)).grid(row=0,column=0,padx=5)
     tk.Button(btn_frame_2,text="Exit", font=("Helvetica",10),width=10, command=root.destroy).grid(row=0,column=1,padx=5)
 
-def sale_module_window(root):
+def sale_module_window(root,company_name,user_name):
     
     for widget in root.winfo_children():
         widget.destroy()
@@ -151,13 +151,13 @@ def sale_module_window(root):
     btn_frame = tk.Frame()
     btn_frame.pack(fill=X, padx=33, pady=10)
 
-    tk.Button(btn_frame, text="Sale Contract", font=("Helvetica",10),width=20, command=lambda:sale_contract_window(root)).grid(padx=10, pady=10, row=0,column=0)
-    tk.Button(btn_frame,text="Sale Invoice", font=("Helvetica",10),width=20, command=lambda:sale_invoice_window(root)).grid(padx=10,pady=10,row=0,column=1)
-    tk.Button(btn_frame,text="Sale Return",font=("Helvetica",10),width=20,command=lambda:sale_return_window(root)).grid(padx=10,pady=10,row=1,column=0)
-    tk.Button(btn_frame, text="Back",font=("Helvetica",10), width=20, command=lambda:main_menu_window(root)).grid(row=1, column=1,padx=10,pady=10)
+    tk.Button(btn_frame, text="Sale Contract", font=("Helvetica",10),width=20, command=lambda:sale_contract_window(root,company_name)).grid(padx=10, pady=10, row=0,column=0)
+    tk.Button(btn_frame,text="Sale Invoice", font=("Helvetica",10),width=20, command=lambda:sale_invoice_window(root,company_name)).grid(padx=10,pady=10,row=0,column=1)
+    tk.Button(btn_frame,text="Sale Return",font=("Helvetica",10),width=20,command=lambda:sale_return_window(root,company_name)).grid(padx=10,pady=10,row=1,column=0)
+    tk.Button(btn_frame, text="Back",font=("Helvetica",10), width=20, command=lambda:main_menu_window(root,company_name,user_name)).grid(row=1, column=1,padx=10,pady=10)
     tk.Button(root, text="Exit",font=("Helvetica",10), width=20, command=root.destroy).pack(padx=10,pady=5)
 
-def purchase_module_window(root):
+def purchase_module_window(root,company_name,user_name):
     
     for widget in root.winfo_children():
         widget.destroy()
@@ -173,13 +173,13 @@ def purchase_module_window(root):
     btn_frame = tk.Frame()
     btn_frame.pack(fill=X, padx=33, pady=10)
 
-    tk.Button(btn_frame, text="Purchase Contract", font=("Helvetica", 10), width=20, command=lambda:purchase_contract_window(root)).grid(padx=10,pady=10,row=0,column=0)    
-    tk.Button(btn_frame,text="Purchase Invoice", font=("Helvetica",10),width=20, command=lambda:purchase_invoice_window(root)).grid(padx=10,pady=10,row=0,column=1)
-    tk.Button(btn_frame,text="Purchase Return",font=("Helvetica",10),width=20,command=lambda:purchase_return_window(root,inventory)).grid(padx=10,pady=10,row=1,column=0)
-    tk.Button(btn_frame, text="Back",font=("Helvetica",10), width=20, command=lambda:main_menu_window(root)).grid(row=1, column=1,padx=10,pady=10)
+    tk.Button(btn_frame, text="Purchase Contract", font=("Helvetica", 10), width=20, command=lambda:purchase_contract_window(root,company_name)).grid(padx=10,pady=10,row=0,column=0)    
+    tk.Button(btn_frame,text="Purchase Invoice", font=("Helvetica",10),width=20, command=lambda:purchase_invoice_window(root,company_name)).grid(padx=10,pady=10,row=0,column=1)
+    tk.Button(btn_frame,text="Purchase Return",font=("Helvetica",10),width=20,command=lambda:purchase_return_window(root,inventory,company_name)).grid(padx=10,pady=10,row=1,column=0)
+    tk.Button(btn_frame, text="Back",font=("Helvetica",10), width=20, command=lambda:main_menu_window(root,company_name,user_name)).grid(row=1, column=1,padx=10,pady=10)
     tk.Button(root, text="Exit",font=("Helvetica",10), width=20, command=root.destroy).pack(padx=10,pady=5)
 
-def payment_module_window(root):
+def payment_module_window(root,company_name,user_name):
 
     for widget in root.winfo_children():
         widget.destroy()
@@ -194,15 +194,15 @@ def payment_module_window(root):
 
     btn_frame = tk.Frame()
     btn_frame.pack(fill=X, padx=33, pady=10)
-    tk.Button(btn_frame, text="Cash",font=("Helvetica",10), width=20, command=lambda:cash_payment_window(root)).grid(row=0, column=0,padx=10,pady=10)
-    tk.Button(btn_frame, text="Bank",font=("Helvetica",10), width=20, command=lambda:bank_payment_window(root)).grid(row=0, column=1,padx=10,pady=10)
+    tk.Button(btn_frame, text="Cash",font=("Helvetica",10), width=20, command=lambda:cash_payment_window(root,company_name)).grid(row=0, column=0,padx=10,pady=10)
+    tk.Button(btn_frame, text="Bank",font=("Helvetica",10), width=20, command=lambda:bank_payment_window(root,company_name)).grid(row=0, column=1,padx=10,pady=10)
 
     btn_frame_2 = tk.Frame()
     btn_frame_2.pack()
-    tk.Button(btn_frame_2, text="Back",font=("Helvetica",10), width=15, command=lambda:main_menu_window(root)).grid(row=0,column=0,padx=5)
+    tk.Button(btn_frame_2, text="Back",font=("Helvetica",10), width=15, command=lambda:main_menu_window(root,company_name,user_name)).grid(row=0,column=0,padx=5)
     tk.Button(btn_frame_2, text="Exit",font=("Helvetica",10), width=15, command=root.destroy).grid(row=0,column=1, padx=5)
 
-def receipt_module_window(root):
+def receipt_module_window(root,company_name,user_name):
 
     for widget in root.winfo_children():
         widget.destroy()
@@ -218,14 +218,14 @@ def receipt_module_window(root):
     btn_frame = Frame()
     btn_frame.pack(fill=X, padx=33, pady=10)
 
-    tk.Button(btn_frame, text="Cash",font=("Helvetica",10), width=20, command=lambda:cash_receipt_window(root)).grid(row=0, column=0,padx=10,pady=10)
-    tk.Button(btn_frame, text="Bank",font=("Helvetica",10), width=20, command=lambda:bank_receipt_window(root)).grid(row=0, column=1,padx=10,pady=10)
+    tk.Button(btn_frame, text="Cash",font=("Helvetica",10), width=20, command=lambda:cash_receipt_window(root,company_name)).grid(row=0, column=0,padx=10,pady=10)
+    tk.Button(btn_frame, text="Bank",font=("Helvetica",10), width=20, command=lambda:bank_receipt_window(root,company_name)).grid(row=0, column=1,padx=10,pady=10)
     btn_frame_2 = tk.Frame()
     btn_frame_2.pack()
-    tk.Button(btn_frame_2, text="Back",font=("Helvetica",10), width=15, command=lambda:main_menu_window(root)).grid(row=0,column=0,padx=5)
+    tk.Button(btn_frame_2, text="Back",font=("Helvetica",10), width=15, command=lambda:main_menu_window(root,company_name,user_name)).grid(row=0,column=0,padx=5)
     tk.Button(btn_frame_2, text="Exit",font=("Helvetica",10), width=15, command=root.destroy).grid(row=0,column=1, padx=5)
 
-def inventory_module_window(root):
+def inventory_module_window(root,company_name,user_name):
     for widget in root.winfo_children():
         widget.destroy()
 
@@ -240,13 +240,13 @@ def inventory_module_window(root):
     btn_frame = Frame()
     btn_frame.pack(fill=X, padx=33, pady=10)
 
-    tk.Button(btn_frame, text="Inventory", font=("Helvetica",10),width=20, command=lambda:inventory_window(root)).grid(padx=10, pady=10, row=0,column=0)
-    tk.Button(btn_frame,text="Add Product", font=("Helvetica",10),width=20, command=lambda:add_product_window(root)).grid(padx=10,pady=10,row=0,column=1)
-    tk.Button(btn_frame,text="Remove Product",font=("Helvetica",10),width=20,command=lambda:remove_product_window(root)).grid(padx=10,pady=10,row=1,column=0)
-    tk.Button(btn_frame, text="Back",font=("Helvetica",10), width=20, command=lambda:main_menu_window(root)).grid(row=1, column=1,padx=10,pady=10)
+    tk.Button(btn_frame, text="Inventory", font=("Helvetica",10),width=20, command=lambda:inventory_window(root,company_name)).grid(padx=10, pady=10, row=0,column=0)
+    tk.Button(btn_frame,text="Add Product", font=("Helvetica",10),width=20, command=lambda:add_product_window(root,company_name)).grid(padx=10,pady=10,row=0,column=1)
+    tk.Button(btn_frame,text="Remove Product",font=("Helvetica",10),width=20,command=lambda:remove_product_window(root,company_name)).grid(padx=10,pady=10,row=1,column=0)
+    tk.Button(btn_frame, text="Back",font=("Helvetica",10), width=20, command=lambda:main_menu_window(root,company_name,user_name)).grid(row=1, column=1,padx=10,pady=10)
     tk.Button(root, text="Exit",font=("Helvetica",10), width=20, command=root.destroy).pack(padx=10,pady=5)
 
-def client_module_window(root):
+def client_module_window(root,company_name,user_name):
     for widget in root.winfo_children():
         widget.destroy()
 
@@ -261,13 +261,13 @@ def client_module_window(root):
     btn_frame = Frame()
     btn_frame.pack(fill=X, padx=33, pady=10)
 
-    tk.Button(btn_frame, text="Client", font=("Helvetica",10),width=20, command=lambda:client_window(root)).grid(padx=10, pady=10, row=0,column=0)
-    tk.Button(btn_frame,text="Add Client", font=("Helvetica",10),width=20, command=lambda:add_client_window(root)).grid(padx=10,pady=10,row=0,column=1)
-    tk.Button(btn_frame,text="Remove Client",font=("Helvetica",10),width=20,command=lambda:remove_client_window(root)).grid(padx=10,pady=10,row=1,column=0)
-    tk.Button(btn_frame, text="Back",font=("Helvetica",10), width=20, command=lambda:main_menu_window(root)).grid(row=1, column=1,padx=10,pady=10)
+    tk.Button(btn_frame, text="Client", font=("Helvetica",10),width=20, command=lambda:client_window(root,company_name)).grid(padx=10, pady=10, row=0,column=0)
+    tk.Button(btn_frame,text="Add Client", font=("Helvetica",10),width=20, command=lambda:add_client_window(root,company_name)).grid(padx=10,pady=10,row=0,column=1)
+    tk.Button(btn_frame,text="Remove Client",font=("Helvetica",10),width=20,command=lambda:remove_client_window(root,company_name)).grid(padx=10,pady=10,row=1,column=0)
+    tk.Button(btn_frame, text="Back",font=("Helvetica",10), width=20, command=lambda:main_menu_window(root,company_name,user_name)).grid(row=1, column=1,padx=10,pady=10)
     tk.Button(root, text="Exit",font=("Helvetica",10), width=20, command=root.destroy).pack(padx=10,pady=5)
 
-def sale_contract_window(root):
+def sale_contract_window(root,company_name):
     global sale_contract,existing_contracts
     account = db['sale_contract']
 
@@ -314,7 +314,7 @@ def sale_contract_window(root):
     table_contract(table_existing_contracts)
     load_contracts(table_existing_contracts,existing_contracts)
 
-def sale_invoice_window(root):
+def sale_invoice_window(root,company_name):
 
     global sale_transaction,inventory_sale,existing_contracts
 
@@ -367,7 +367,7 @@ def sale_invoice_window(root):
     table(table_account_receivable,table_sale,'sale')
     load_transactions(table_sale,table_account_receivable,sale_transaction,inventory_sale,'sale')
 
-def sale_return_window(root):
+def sale_return_window(root,inventory,company_name):
     
     global sale_transaction,inventory_sale 
 
@@ -426,7 +426,7 @@ def sale_return_window(root):
     
     load_transactions(table_sale,table_account_receivable,sale_return,inventory_return,'sale')
 
-def purchase_contract_window(root):
+def purchase_contract_window(root,company_name):
 
     global purchase_contracts,existing_contracts
     account = db['purchase_contract']
@@ -474,7 +474,7 @@ def purchase_contract_window(root):
     table_contract(table_existing_contracts)
     load_contracts(table_existing_contracts,existing_contracts)
 
-def purchase_invoice_window(root):
+def purchase_invoice_window(root,company_name):
 
     global purchase_transaction, inventory_sale,existing_contracts 
     #accessing the particular collection
@@ -529,7 +529,7 @@ def purchase_invoice_window(root):
 
     load_transactions(table_purchase,table_account_receivable,purchase_transaction,inventory_sale,'purchase')
 
-def purchase_return_window(root,inventory):
+def purchase_return_window(root,inventory,company_name):
     
     account = db["purchase_invoice"]
     return_account = db['purchase_return']
@@ -584,7 +584,7 @@ def purchase_return_window(root,inventory):
     table(table_account_receivable,table_purchase,'purchase')
     load_transactions(table_purchase,table_account_receivable,purchase_return,inventory_return,'purchase')
 
-def inventory_window(root):
+def inventory_window(root,company_name):
 
     for widget in root.winfo_children():
         widget.destroy()
@@ -630,7 +630,7 @@ def inventory_window(root):
     
     inventory_check(table_inventory,inventory)
 
-def add_product_window(root):
+def add_product_window(root,company_name):
     
     for widget in root.winfo_children():
         widget.destroy()
@@ -667,7 +667,7 @@ def add_product_window(root):
 
     existing_products(table_inventory,inventory)
 
-def remove_product_window(root):
+def remove_product_window(root,company_name):
     
     for widget in root.winfo_children():
         widget.destroy()
@@ -704,7 +704,7 @@ def remove_product_window(root):
 
     existing_products(table_inventory,inventory)
 
-def client_window(root):
+def client_window(root,company_name):
     
     for widget in root.winfo_children():
         widget.destroy()
@@ -745,7 +745,7 @@ def client_window(root):
 
     client_check(table_client,customers)
 
-def add_client_window(root):
+def add_client_window(root,company_name):
 
     for widget in root.winfo_children():
         widget.destroy()
@@ -786,7 +786,7 @@ def add_client_window(root):
 
     existing_clients(table_client,customers)
 
-def remove_client_window(root):
+def remove_client_window(root,company_name):
     
     for widget in root.winfo_children():
         widget.destroy()
@@ -827,12 +827,14 @@ def remove_client_window(root):
 
     existing_clients(table_client,customers)
 
-def bank_payment_window(root):
+def bank_payment_window(root,company_name):
 
     account = payment['bank_payment']
     pay_receip = payment['pay_receip']
     bank = payment['bank']
     tax = payment['tax_payment']
+    heads = client[f'company_profile_{company_name.lower().replace(" ", "_")}']['heads']
+    banks = client[f'company_profile_{company_name.lower().replace(" ", "_")}']['bank_accounts']
 
     for widget in root.winfo_children():
         widget.destroy()
@@ -847,9 +849,9 @@ def bank_payment_window(root):
     btn_frame = tk.Frame()
     btn_frame.pack()
 
-    tk.Button(btn_frame,text="Generate Payment", font=("Helvetica",10),width=15, command=lambda:generate_bank_payments(root,bank_payment_window,payments_temp,account,pay_receip,pay_receip_temp,customers,client_temp,bank,bank_temp,banks,bank_ind_temp,tax,tax_temp,invoice_balance)).grid(padx=5,row=0,column=0)
+    tk.Button(btn_frame,text="Generate Payment", font=("Helvetica",10),width=15, command=lambda:generate_bank_payments(root,bank_payment_window,payments_temp,account,pay_receip,pay_receip_temp,customers,client_temp,bank,bank_temp,banks,bank_ind_temp,tax,tax_temp,invoice_balance,heads,company_name,banks)).grid(padx=5,row=0,column=0)
     tk.Button(btn_frame,text="Save", font=("Helvetica",10),width=15,command=lambda:save_bank_payment_receipt(payments_temp,account,pay_receip,pay_receip_temp,"pay",customers,client_temp,bank,bank_temp,banks,bank_ind_temp,tax,tax_temp)).grid(padx=5,row=0,column=1)
-    tk.Button(btn_frame,text="Back", font=("Helvetica",10),width=10,command=lambda:go_back(root,payment_module_window,payments_temp,pay_receip_temp)).grid(padx=5,row=0,column=2)
+    tk.Button(btn_frame,text="Back", font=("Helvetica",10),width=10,command=lambda:go_back(root,payment_module_window,payments_temp,pay_receip_temp,company_name)).grid(padx=5,row=0,column=2)
     tk.Button(btn_frame,text="Exit", font=("Helvetica",10),width=10,command=root.destroy).grid(padx=5,row=0,column=3)
 
     style = ttk.Style()
@@ -884,12 +886,13 @@ def bank_payment_window(root):
 
     load_payments_receipt(table_payment,bank_temp)
 
-def cash_payment_window(root):
+def cash_payment_window(root,company_name):
     
     account = payment['cash_payment']
     pay_receip = payment['pay_receip']
     cash = payment['cash']
     tax = payment['tax_payment']
+    heads = client[f'company_profile_{company_name.lower().replace(" ", "_")}']['heads']
 
     for widget in root.winfo_children():
         widget.destroy()
@@ -904,7 +907,7 @@ def cash_payment_window(root):
     btn_frame = tk.Frame()
     btn_frame.pack()
 
-    tk.Button(btn_frame,text="Generate Payment", font=("Helvetica",10),width=15, command=lambda:generate_cash_payments(root,cash_payment_window,payments_temp,account,pay_receip,pay_receip_temp,customers,client_temp,cash,cash_temp,tax,tax_temp,invoice_balance)).grid(padx=5,row=0,column=0)
+    tk.Button(btn_frame,text="Generate Payment", font=("Helvetica",10),width=15, command=lambda:generate_cash_payments(root,cash_payment_window,payments_temp,account,pay_receip,pay_receip_temp,customers,client_temp,cash,cash_temp,tax,tax_temp,invoice_balance,heads,company_name)).grid(padx=5,row=0,column=0)
     tk.Button(btn_frame,text="Save", font=("Helvetica",10),width=15,command=lambda:save_cash_payments_receipt(payments_temp,account,pay_receip,pay_receip_temp,"pay",customers,client_temp,cash,cash_temp,tax,tax_temp)).grid(padx=5,row=0,column=1)
     tk.Button(btn_frame,text="Back", font=("Helvetica",10),width=10,command=lambda:go_back(root,payment_module_window,payments_temp,pay_receip_temp)).grid(padx=5,row=0,column=2)
     tk.Button(btn_frame,text="Exit", font=("Helvetica",10),width=10,command=root.destroy).grid(padx=5,row=0,column=3)
@@ -941,12 +944,14 @@ def cash_payment_window(root):
 
     load_payments_receipt(table_payment,cash_temp)
 
-def bank_receipt_window(root):
+def bank_receipt_window(root,company_name):
 
     account = payment['bank_receipt']
     pay_receip = payment['pay_receip']
     bank = payment['bank']
     tax = payment['tax_receipt']
+    heads = client[f'company_profile_{company_name.lower().replace(" ", "_")}']['heads']
+    banks = client[f'company_profile_{company_name.lower().replace(" ", "_")}']['bank_accounts']
 
     for widget in root.winfo_children():
         widget.destroy()
@@ -961,7 +966,7 @@ def bank_receipt_window(root):
     btn_frame = tk.Frame()
     btn_frame.pack()
                                     
-    tk.Button(btn_frame,text="Generate Receipt", font=("Helvetica",10),width=15, command=lambda:generate_bank_receipt(root,bank_receipt_window,receipt_temp,account,pay_receip,pay_receip_temp,customers,client_temp,bank,bank_temp,banks,bank_ind_temp,tax,tax_temp,invoice_balance)).grid(padx=5,row=0,column=0)
+    tk.Button(btn_frame,text="Generate Receipt", font=("Helvetica",10),width=15, command=lambda:generate_bank_receipt(root,bank_receipt_window,receipt_temp,account,pay_receip,pay_receip_temp,customers,client_temp,bank,bank_temp,banks,bank_ind_temp,tax,tax_temp,invoice_balance,heads,company_name,banks)).grid(padx=5,row=0,column=0)
     tk.Button(btn_frame,text="Save", font=("Helvetica",10),width=15,command=lambda:save_bank_payment_receipt(receipt_temp,account,pay_receip,pay_receip_temp,"recep",customers,client_temp,bank,bank_temp,banks,bank_ind_temp,tax,tax_temp)).grid(padx=5,row=0,column=1)
     tk.Button(btn_frame,text="Back", font=("Helvetica",10),width=10,command=lambda:go_back(root,payment_module_window,receipt_temp,pay_receip_temp)).grid(padx=5,row=0,column=2)
     tk.Button(btn_frame,text="Exit", font=("Helvetica",10),width=10,command=root.destroy).grid(padx=5,row=0,column=3)
@@ -998,12 +1003,13 @@ def bank_receipt_window(root):
 
     load_payments_receipt(table_receipt,bank_temp)
 
-def cash_receipt_window(root):
+def cash_receipt_window(root,company_name):
 
     account = payment['cash_receipt']
     pay_receip = payment['pay_receip']
     cash = payment['cash']
     tax = payment['tax_payment']
+    heads = client[f'company_profile_{company_name.lower().replace(" ", "_")}']['heads']
 
     for widget in root.winfo_children():
         widget.destroy()
@@ -1018,7 +1024,7 @@ def cash_receipt_window(root):
     btn_frame = tk.Frame()
     btn_frame.pack()
 
-    tk.Button(btn_frame,text="Generate Receipt", font=("Helvetica",10),width=15, command=lambda:generate_cash_receipt(root,cash_receipt_window,receipt_temp,account,pay_receip,pay_receip_temp,customers,client_temp,cash,cash_temp,tax,tax_temp,invoice_balance)).grid(padx=5,row=0,column=0)
+    tk.Button(btn_frame,text="Generate Receipt", font=("Helvetica",10),width=15, command=lambda:generate_cash_receipt(root,cash_receipt_window,receipt_temp,account,pay_receip,pay_receip_temp,customers,client_temp,cash,cash_temp,tax,tax_temp,invoice_balance,heads,company_name)).grid(padx=5,row=0,column=0)
     tk.Button(btn_frame,text="Save", font=("Helvetica",10),width=15,command=lambda:save_cash_payments_receipt(receipt_temp,account,pay_receip,pay_receip_temp,"recep",customers,client_temp,cash,cash_temp,tax,tax_temp)).grid(padx=5,row=0,column=1)
     tk.Button(btn_frame,text="Back", font=("Helvetica",10),width=10,command=lambda:go_back(root,payment_module_window,receipt_temp,pay_receip_temp)).grid(padx=5,row=0,column=2)
     tk.Button(btn_frame,text="Exit", font=("Helvetica",10),width=10,command=root.destroy).grid(padx=5,row=0,column=3)

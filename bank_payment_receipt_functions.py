@@ -4,7 +4,7 @@ from tkinter import ttk, messagebox, simpledialog,filedialog
 from datetime import datetime
 from num2words import num2words
 
-def generate_bank_payments(root,window,payments_temp,payment,pay_receip,pay_receip_temp,customers,client_temp,bank,bank_temp,indvidual_bank,bank_ind_temp,tax,tax_temp,invoice_balance):
+def generate_bank_payments(root,window,payments_temp,payment,pay_receip,pay_receip_temp,customers,client_temp,bank,bank_temp,indvidual_bank,bank_ind_temp,tax,tax_temp,invoice_balance,heads,company_name,banks):
     
     for widget in root.winfo_children():
         widget.destroy()
@@ -38,7 +38,12 @@ def generate_bank_payments(root,window,payments_temp,payment,pay_receip,pay_rece
     tk.Label(entry_frame,text=voucher,font=("Helvetica", 11)).grid(row=0,column=3)
 
     tk.Label(entry_frame,text="Account:",font=('helvetica',10)).grid(pady=10,row=1,column=0)
-    bank_options = ["Bank1","Bank2","Bank3"]
+    bank_options = []
+    for i in banks.find({}):
+        bank_options.append(i.get('bank_name',''))
+    if len(bank_options) == 0:
+        bank_options.append("No Bankss to show") 
+    bank_options.sort()
     bank_option = tk.StringVar(value="Banks")
     bank_entry = OptionMenu(entry_frame, bank_option , *bank_options)
     bank_entry.config(width=19)
@@ -59,7 +64,12 @@ def generate_bank_payments(root,window,payments_temp,payment,pay_receip,pay_rece
     acc_recev_entry.grid(row=2,column=1,padx=5)
 
     tk.Label(entry_frame, text="Head Type:", font=("helvetica",10)).grid(pady=10,row=2,column=2)
-    exp_type_options = ["CONVEYANCE EXPENSE"]
+    exp_type_options = []
+    for i in heads.find({}):
+        exp_type_options.append(i.get('hd_name',''))
+    if len(exp_type_options) == 0:
+        exp_type_options.append("No Heads to show") 
+    exp_type_options.sort() 
     exp_type_option = tk.StringVar(value="Head Types")
     exp_type_entry = OptionMenu(entry_frame, exp_type_option , *exp_type_options)
     exp_type_entry.config(width=19)
@@ -113,7 +123,7 @@ def generate_bank_payments(root,window,payments_temp,payment,pay_receip,pay_rece
     btn_frame = tk.Frame(root) 
     btn_frame.pack()
 
-    tk.Button(btn_frame,text="Back" ,font=("helvetica",10),width=10,command=lambda:window(root)).grid(row=0,column=0,padx=5)
+    tk.Button(btn_frame,text="Back" ,font=("helvetica",10),width=10,command=lambda:window(root,company_name)).grid(row=0,column=0,padx=5)
     tk.Button(btn_frame,text="Exit" ,font=("helvetica",10),width=10,command=root.quit).grid(row=0,column=1,padx=5)
 
     def generate(root,window,payments_temp,payment,pay_receip,pay_receip_temp,customers,client_temp,bank,bank_temp,indvidual_bank,bank_ind_temp,tax,tax_temp):
@@ -284,9 +294,9 @@ def generate_bank_payments(root,window,payments_temp,payment,pay_receip,pay_rece
             records(tax_temp,tax,tax_amount,"add")
             
             messagebox.showinfo("Success","Bank Payment Generated Succesfully!")
-            window(root)
+            window(root,company_name)
 
-def generate_bank_receipt(root,window,receipt_temp,receipt,pay_receip,pay_receip_temp,customers,client_temp,bank,bank_temp,indvidual_bank,bank_ind_temp,tax,tax_temp,invoice_balance):
+def generate_bank_receipt(root,window,receipt_temp,receipt,pay_receip,pay_receip_temp,customers,client_temp,bank,bank_temp,indvidual_bank,bank_ind_temp,tax,tax_temp,invoice_balance,heads,company_name,banks):
     
     for widget in root.winfo_children():
         widget.destroy()
@@ -320,7 +330,12 @@ def generate_bank_receipt(root,window,receipt_temp,receipt,pay_receip,pay_receip
     tk.Label(entry_frame,text=voucher,font=("Helvetica", 11)).grid(row=0,column=3)
 
     tk.Label(entry_frame,text="Account:",font=('helvetica',10)).grid(pady=10,row=1,column=0)
-    bank_options = ["Bank1","Bank2","Bank3"]
+    bank_options = []
+    for i in banks.find({}):
+        bank_options.append(i.get('bank_name',''))
+    if len(bank_options) == 0:
+        bank_options.append("No Bankss to show") 
+    bank_options.sort()
     bank_option = tk.StringVar(value="Banks")
     bank_entry = OptionMenu(entry_frame, bank_option , *bank_options)
     bank_entry.config(width=19)
@@ -341,7 +356,11 @@ def generate_bank_receipt(root,window,receipt_temp,receipt,pay_receip,pay_receip
     acc_pay_entry.grid(row=2,column=1,padx=5)
 
     tk.Label(entry_frame, text="Head Type:", font=("helvetica",10)).grid(pady=10,row=2,column=2)
-    exp_type_options = ["CONVEYANCE EXPENSE"]
+    exp_type_options = []
+    for i in heads.find({}):
+        exp_type_options.append(i.get('hd_name',''))
+    if len(exp_type_options) == 0:
+        exp_type_options.append("No Heads to show")
     exp_type_option = tk.StringVar(value="Head Types")
     exp_type_entry = OptionMenu(entry_frame, exp_type_option , *exp_type_options)
     exp_type_entry.config(width=19)
@@ -395,7 +414,7 @@ def generate_bank_receipt(root,window,receipt_temp,receipt,pay_receip,pay_receip
     btn_frame = tk.Frame(root) 
     btn_frame.pack()
 
-    tk.Button(btn_frame,text="Back" ,font=("helvetica",10),width=10,command=lambda:window(root)).grid(row=0,column=0,padx=5)
+    tk.Button(btn_frame,text="Back" ,font=("helvetica",10),width=10,command=lambda:window(root,company_name)).grid(row=0,column=0,padx=5)
     tk.Button(btn_frame,text="Exit" ,font=("helvetica",10),width=10,command=root.quit).grid(row=0,column=1,padx=5)
 
     def generate(root,window,receipt_temp,receipt,pay_receip,pay_receip_temp,customers,client_temp,bank,bank_temp,indvidual_bank,bank_ind_temp,tax,tax_temp):
@@ -565,7 +584,7 @@ def generate_bank_receipt(root,window,receipt_temp,receipt,pay_receip,pay_receip
             records(tax_temp,tax,tax_amount,"add")
 
         messagebox.showinfo("Success","Bank Payment Generated Succesfully!")
-        window(root)
+        window(root,company_name)
 
 def load_payments_receipt(table_entry,payments_temp):
     for row in table_entry.get_children():

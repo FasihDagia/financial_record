@@ -4,17 +4,17 @@ from tkinter import ttk, messagebox, simpledialog,filedialog
 from datetime import datetime
 from num2words import num2words
 
-def go_back(root,window,payments,pay_receip_temp):
+def go_back(root,window,payments,pay_receip_temp,company_name):
     if len(payments) == 0 and len(pay_receip_temp) == 0:
-        window(root)
+        window(root,company_name)
     else:
         confirm = messagebox.askyesno("Confirm", f"You have not saved the payments yet!\n Are you sure you want to go back?")
         if confirm:
             payments.clear()
             pay_receip_temp.clear()
-            window(root)
+            window(root,company_name)
 
-def generate_cash_receipt(root,window,receipt_temp,receipt,pay_receip,pay_receip_temp,customers,client_temp,cash,cash_temp,tax,tax_temp,invoice_balance):
+def generate_cash_receipt(root,window,receipt_temp,receipt,pay_receip,pay_receip_temp,customers,client_temp,cash,cash_temp,tax,tax_temp,invoice_balance,heads,company_name):
     
     for widget in root.winfo_children():
         widget.destroy()
@@ -78,7 +78,11 @@ def generate_cash_receipt(root,window,receipt_temp,receipt,pay_receip,pay_receip
     acc_recev_entry.grid(row=1,column=3,padx=5)
     
     tk.Label(entry_frame, text="Head Type:", font=("helvetica",10)).grid(pady=10,row=2,column=0)
-    exp_type_options = ["CONVEYANCE EXPENSE"]
+    exp_type_options = []
+    for i in heads.find():
+        exp_type_options.append(i.get('hd_name',''))
+    if len(exp_type_options) == 0:
+        exp_type_options.append("No Heads to show")  
     exp_type_option = tk.StringVar(value="Head Types")
     exp_type_entry = OptionMenu(entry_frame, exp_type_option , *exp_type_options)
     exp_type_entry.config(width=19)
@@ -118,7 +122,7 @@ def generate_cash_receipt(root,window,receipt_temp,receipt,pay_receip,pay_receip
     btn_frame = tk.Frame(root) 
     btn_frame.pack()
 
-    tk.Button(btn_frame,text="Back" ,font=("helvetica",10),width=10,command=lambda:window(root)).grid(row=0,column=0,padx=5)
+    tk.Button(btn_frame,text="Back" ,font=("helvetica",10),width=10,command=lambda:window(root,company_name)).grid(row=0,column=0,padx=5)
     tk.Button(btn_frame,text="Exit" ,font=("helvetica",10),width=10,command=root.quit).grid(row=0,column=1,padx=5)
 
     def generate(root,window,receipt_temp,receipt,pay_receip,pay_receip_temp,customers,client_temp,cash,cash_temp,tax,tax_temp):
@@ -244,9 +248,9 @@ def generate_cash_receipt(root,window,receipt_temp,receipt,pay_receip,pay_receip
             records(tax_temp,tax,tax_amount,"add")
 
             messagebox.showinfo("Success","Cash Payment Generated Succesfully!")
-            window(root)
+            window(root,company_name)
 
-def generate_cash_payments(root,window,payments_temp,payment,pay_receip,pay_receip_temp,customers,client_temp,cash,cash_temp,tax,tax_temp,invoice_balance):
+def generate_cash_payments(root,window,payments_temp,payment,pay_receip,pay_receip_temp,customers,client_temp,cash,cash_temp,tax,tax_temp,invoice_balance,heads,company_name):
     
     for widget in root.winfo_children():
         widget.destroy()
@@ -310,7 +314,11 @@ def generate_cash_payments(root,window,payments_temp,payment,pay_receip,pay_rece
     acc_recev_entry.grid(row=1,column=3,padx=5)
     
     tk.Label(entry_frame, text="Head Type:", font=("helvetica",10)).grid(pady=10,row=2,column=0)
-    exp_type_options = ["CONVEYANCE EXPENSE"]
+    exp_type_options = []
+    for i in heads.find():
+        exp_type_options.append(i.get('hd_name',''))
+    if len(exp_type_options) == 0:
+        exp_type_options.append("No Heads to show")  
     exp_type_option = tk.StringVar(value="Head Types")
     exp_type_entry = OptionMenu(entry_frame, exp_type_option , *exp_type_options)
     exp_type_entry.config(width=19)
@@ -350,7 +358,7 @@ def generate_cash_payments(root,window,payments_temp,payment,pay_receip,pay_rece
     btn_frame = tk.Frame(root) 
     btn_frame.pack()
 
-    tk.Button(btn_frame,text="Back" ,font=("helvetica",10),width=10,command=lambda:window(root)).grid(row=0,column=0,padx=5)
+    tk.Button(btn_frame,text="Back" ,font=("helvetica",10),width=10,command=lambda:window(root,company_name)).grid(row=0,column=0,padx=5)
     tk.Button(btn_frame,text="Exit" ,font=("helvetica",10),width=10,command=root.quit).grid(row=0,column=1,padx=5)
 
     def generate(root,window,payments_temp,payment,pay_receip,pay_receip_temp,customers,client_temp,cash,cash_temp,tax,tax_temp):
@@ -474,7 +482,7 @@ def generate_cash_payments(root,window,payments_temp,payment,pay_receip,pay_rece
             records(tax_temp,tax,tax_amount,"add")
 
             messagebox.showinfo("Success","Cash Payment Generated Succesfully!")
-            window(root)
+            window(root,company_name)
 
 def save_cash_payments_receipt(payments_temp,payment,pay_receip,pay_receip_temp,type,customers,client_temp,cash,cash_temp,tax,tax_temp):
     

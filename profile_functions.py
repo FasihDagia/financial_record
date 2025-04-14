@@ -5,7 +5,7 @@ from datetime import datetime
 
 warning = None
 
-def add_bank_account(root,bank_accounts,com_name,client,window_show,user_name,window_com,window_main):
+def add_bank_account(root,bank_accounts,com_name,client,window_show,user_name,window_main):
 
     for widget in root.winfo_children():
         widget.destroy()
@@ -41,23 +41,23 @@ def add_bank_account(root,bank_accounts,com_name,client,window_show,user_name,wi
     iban_entry = tk.Entry(bank_frame,font=("Helvetica",10))
     iban_entry.grid(row=3,column=1,pady=10)
 
-    add_btn = tk.Button(root,text = "Add Account",font=("Helvetica",10),command=lambda: add(root,bank_accounts,com_name,window_show,window_com,user_name))
+    add_btn = tk.Button(root,text = "Add Account",font=("Helvetica",10),command=lambda: add(root,bank_accounts,com_name,user_name))
     add_btn.pack(pady=10)
     
     btn_frmae = tk.Frame(root)
     btn_frmae.pack()
-    tk.Button(btn_frmae,text = "Back",font=("Helvetica",10),width=10,command=lambda:show_bank_account_edit(root, bank_accounts, com_name, client, window_com, user_name, window_main)).grid(row=0, column=0, padx=5)
+    tk.Button(btn_frmae,text = "Back",font=("Helvetica",10),width=10,command=lambda:show_bank_account_edit(root, bank_accounts, com_name, client, user_name, window_main)).grid(row=0, column=0, padx=5)
     tk.Button(btn_frmae,text = "Exit",font=("Helvetica",10),width=10,command=root.quit).grid(row=0,column=1,padx=5)
 
-    def add(root,bank_accounts,com_name,window,window1,user_name):
+    def add(root,bank_accounts,com_name,user_name):
         global warning
         if warning:
             warning.destroy()
             warning = None
 
-        bank_name = bank_name_entry.get()
-        br_name = br_name_entry.get()
-        ac_title = ac_title_entry.get()
+        bank_name = bank_name_entry.get().upper()
+        br_name = br_name_entry.get().upper()
+        ac_title = ac_title_entry.get().upper()
         ac_no = ac_no_entry.get()
         iban = iban_entry.get()
 
@@ -69,9 +69,9 @@ def add_bank_account(root,bank_accounts,com_name,client,window_show,user_name,wi
         else:
             bank_accounts.insert_one({"company_name": com_name,"bank_name": bank_name, "branch_name": br_name, "account_title": ac_title, "account_no": ac_no, "iban_no": iban})
             messagebox.showinfo("Success", "Bank Account Added Successfully!")
-            show_bank_account_edit(root, bank_accounts, com_name, client, window_com, user_name, window_main)
+            show_bank_account_edit(root, bank_accounts, com_name, client, user_name, window_main)
 
-def delete_bank_account(root,bank_accounts,com_name,client,window_com,user_name,window_main):
+def delete_bank_account(root,bank_accounts,com_name,client,user_name,window_main):
     
     for widget in root.winfo_children():
         widget.destroy()
@@ -140,10 +140,10 @@ def delete_bank_account(root,bank_accounts,com_name,client,window_com,user_name,
 
     bank_name_var.trace_add("write", get_bank_info)
 
-    delete_btn = tk.Button(root,text = "Delete Account",font=("Helvetica",10),command=lambda: delete(root,bank_accounts,com_name,window_com,user_name,window_main))
+    delete_btn = tk.Button(root,text = "Delete Account",font=("Helvetica",10),command=lambda: delete(root,bank_accounts,com_name,user_name,window_main))
     delete_btn.pack(pady=10)
 
-    def delete(root,bank_accounts,com_name,window_com,user_name,window_main):
+    def delete(root,bank_accounts,com_name,user_name,window_main):
         global warning
         if warning:
             warning.destroy()
@@ -158,14 +158,14 @@ def delete_bank_account(root,bank_accounts,com_name,client,window_com,user_name,
 
         bank_accounts.delete_one({"bank_name": bank_name})
         messagebox.showinfo("Success", "Bank Account Deleted Successfully!")
-        show_bank_account_edit(root, bank_accounts, com_name, client, window_com, user_name, window_main)
+        show_bank_account_edit(root, bank_accounts, com_name, client, user_name, window_main)
     
     btn_frame = tk.Frame(root)
     btn_frame.pack()
-    tk.Button(btn_frame,text = "Back",font=("Helvetica",10),width=10,command=lambda:show_bank_account_edit(root, bank_accounts, com_name, client, window_com, user_name, window_main)).grid(row=0, column=0, padx=5)
+    tk.Button(btn_frame,text = "Back",font=("Helvetica",10),width=10,command=lambda:show_bank_account_edit(root, bank_accounts, com_name, client , user_name, window_main)).grid(row=0, column=0, padx=5)
     tk.Button(btn_frame,text = "Exit",font=("Helvetica",10),width=10,command=root.quit).grid(row=0,column=1,padx=5)
 
-def show_bank_account_edit(root,bank_accounts,com_name,client,window_com,user_name,window_main):
+def show_bank_account_edit(root,bank_accounts,com_name,client,user_name,window_main):
 
     for widget in root.winfo_children():
         widget.destroy()
@@ -214,11 +214,11 @@ def show_bank_account_edit(root,bank_accounts,com_name,client,window_com,user_na
         j += 1    
     btn_frame = tk.Frame(root)
     btn_frame.pack(pady=10)
-    tk.Button(btn_frame,text = "Add Bank Account",font=("Helvetica",10),width=20,command=lambda:add_bank_account(root,bank_accounts,com_name,client,add_bank_account,user_name,window_com,window_main)).grid(row=0,column=0,pady=10,padx=5)
-    tk.Button(btn_frame,text = "Delete Bank Account",font=("Helvetica",10),width=20,command=lambda:delete_bank_account(root,bank_accounts,com_name,client,window_com,user_name,window_main)).grid(row=0,column=1,pady=10,padx=5)
+    tk.Button(btn_frame,text = "Add Bank Account",font=("Helvetica",10),width=20,command=lambda:add_bank_account(root,bank_accounts,com_name,client,add_bank_account,user_name,window_main)).grid(row=0,column=0,pady=10,padx=5)
+    tk.Button(btn_frame,text = "Delete Bank Account",font=("Helvetica",10),width=20,command=lambda:delete_bank_account(root,bank_accounts,com_name,client,user_name,window_main)).grid(row=0,column=1,pady=10,padx=5)
     tk.Button(btn_frame,text = "Back",font=("Helvetica",10),width=20,command=lambda: edit_company_profile(root,client,window_main,com_name,user_name)).grid(row=0,column=2,pady=10,padx=5)
 
-def show_bank_account(root,bank_accounts,com_name,client,window_com,user_name,window_main):
+def show_bank_account(root,bank_accounts,com_name,client,user_name,window_main):
 
     for widget in root.winfo_children():
         widget.destroy()
@@ -268,7 +268,7 @@ def show_bank_account(root,bank_accounts,com_name,client,window_com,user_name,wi
 
     tk.Button(root,text = "Back",font=("Helvetica",10),width=20,command=lambda: show_company_profile(root,client,window_main,com_name,user_name)).pack(pady=10,padx=5)
 
-def delete_employee(root,employees,com_name,client,window_com,user_name,window_main,window_show):
+def delete_employee(root,employees,com_name,client,user_name,window_main,window_show):
     
     for widget in root.winfo_children():
         widget.destroy()
@@ -391,15 +391,15 @@ def delete_employee(root,employees,com_name,client,window_com,user_name,window_m
 
     emp_id_var.trace_add("write", get_employee_info)
 
-    add_btn = tk.Button(root,text = "Rempve Employee",font=("Helvetica",10),command=lambda:delete(root,employees,com_name,window_show,window_com,user_name))
+    add_btn = tk.Button(root,text = "Rempve Employee",font=("Helvetica",10),command=lambda:delete(root,employees,com_name,window_show,user_name))
     add_btn.pack(pady=10)
 
     btn_frame = tk.Frame(root)
     btn_frame.pack()
-    tk.Button(btn_frame,text = "Back",font=("Helvetica",10),width=10,command=lambda:show_employees_edit(root,employees,com_name,client,window_com,user_name,window_main)).grid(row=0,column=0,padx=5)
+    tk.Button(btn_frame,text = "Back",font=("Helvetica",10),width=10,command=lambda:show_employees_edit(root,employees,com_name,client,user_name,window_main)).grid(row=0,column=0,padx=5)
     tk.Button(btn_frame,text = "Exit",font=("Helvetica",10),width=10,command=root.destroy).grid(row=0,column=1,padx=5)
 
-    def delete(root,employees,com_name,window_show,window_com,user_name):
+    def delete(root,employees,com_name,window_show,user_name):
         global warning
         if warning:
             warning.destroy()
@@ -415,9 +415,9 @@ def delete_employee(root,employees,com_name,client,window_com,user_name,window_m
 
         employees.delete_one({"emp_id": emp_id})
         messagebox.showinfo("Success", "Employee Deleted Successfully!")
-        window_show(root, employees, com_name, client, window_com, user_name, window_main)
+        window_show(root, employees, com_name, client, user_name, window_main)
 
-def edit_employee(root,employees,com_name,client,window_show,user_name,window_com,window_main):
+def edit_employee(root,employees,com_name,client,window_show,user_name,window_main):
 
     for widget in root.winfo_children():
         widget.destroy()
@@ -540,15 +540,15 @@ def edit_employee(root,employees,com_name,client,window_show,user_name,window_co
 
     emp_id_var.trace_add("write", get_employee_info)
 
-    add_btn = tk.Button(root,text = "Edit Employee",font=("Helvetica",10),command=lambda:edit(root,employees,com_name,window_show,window_com,user_name))
+    add_btn = tk.Button(root,text = "Edit Employee",font=("Helvetica",10),command=lambda:edit(root,employees,com_name,window_show,user_name))
     add_btn.pack(pady=10)
 
     btn_frame = tk.Frame(root)
     btn_frame.pack()
-    tk.Button(btn_frame,text = "Back",font=("Helvetica",10),width=10,command=lambda:show_employees_edit(root,employees,com_name,client,window_com,user_name,window_main)).grid(row=0,column=0,padx=5)
+    tk.Button(btn_frame,text = "Back",font=("Helvetica",10),width=10,command=lambda:show_employees_edit(root,employees,com_name,client,user_name,window_main)).grid(row=0,column=0,padx=5)
     tk.Button(btn_frame,text = "Exit",font=("Helvetica",10),width=10,command=root.quit).grid(row=0,column=1,padx=5)
 
-    def edit(root,employees,com_name,window_show,window_com,user_name):
+    def edit(root,employees,com_name,window_show,user_name):
         global warning
         if warning:
             warning.destroy()
@@ -579,9 +579,9 @@ def edit_employee(root,employees,com_name,client,window_show,user_name,window_co
         employees.update_one({"emp_id":emp_id}, {"$set": {"name":emp_name, "email":emp_email, "phone_no":emp_phone, "address":emp_address, "username":emp_username, "password":emp_password, "sale_module":sal_mod, "purchase_module":pur_mod, "payment_module":pay_mod, "receipt_module":rec_mod, "client_module":cli_mod, "inventory_module":inv_mod, "company_profile_module":comp_mod}})
         
         messagebox.showinfo("Success", "Employee Edited Successfully!")
-        show_employees_edit(root, employees, com_name, client, window_com, user_name, window_main)
+        show_employees_edit(root, employees, com_name, client,  user_name, window_main)
 
-def add_employee(root,employees,com_name,client,window_show,user_name,window_com,window_main):
+def add_employee(root,employees,com_name,client,window_show,user_name,window_main):
     
     for widget in root.winfo_children():
         widget.destroy()
@@ -660,15 +660,15 @@ def add_employee(root,employees,com_name,client,window_show,user_name,window_com
     comp_mod_check = tk.Checkbutton(access_frame, text="Company Profile", variable=comp_mod_var,font=("Helvetica",10))
     comp_mod_check.grid(row=2,column=2,pady=10,padx=5)
 
-    add_btn = tk.Button(root,text = "Add Employee",font=("Helvetica",10),command=lambda: add_emp(root,employees,com_name,window_show,window_com,user_name))
+    add_btn = tk.Button(root,text = "Add Employee",font=("Helvetica",10),command=lambda: add_emp(root,employees,com_name,window_show,user_name))
     add_btn.pack(pady=10)
 
     btn_frame = tk.Frame(root)
     btn_frame.pack()
-    tk.Button(btn_frame,text = "Back",font=("Helvetica",10),width=10,command=lambda:show_employees_edit(root,employees,com_name,client,window_com,user_name,window_main)).grid(row=0,column=0,padx=5)
+    tk.Button(btn_frame,text = "Back",font=("Helvetica",10),width=10,command=lambda:show_employees_edit(root,employees,com_name,client,user_name,window_main)).grid(row=0,column=0,padx=5)
     tk.Button(btn_frame,text = "Exit",font=("Helvetica",10),width=10,command=root.quit).grid(row=0,column=1,padx=5)
 
-    def add_emp(root,employees,com_name,window_show,window_com,user_name):
+    def add_emp(root,employees,com_name,window_show,user_name):
         global warning
         if warning:
             warning.destroy()
@@ -698,9 +698,9 @@ def add_employee(root,employees,com_name,client,window_show,user_name,window_com
 
         employees.insert_one({"company_name": com_name,"emp_id":emp_id,"name":emp_name, "email":emp_email, "phone_no":emp_phone, "address":emp_address, "username":emp_username, "password":emp_password, "sale_module":sal_mod, "purchase_module":pur_mod, "payment_module":pay_mod, "receipt_module":rec_mod, "client_module":cli_mod, "inventory_module":inv_mod, "company_profile_module":comp_mod})
         messagebox.showinfo("Success", "Employee Added Successfully!")
-        show_employees_edit(root, employees, com_name, client, window_com, user_name, window_main)
+        show_employees_edit(root, employees, com_name, client, user_name, window_main)
 
-def show_employees_edit(root,employees,com_name,client,window_com,user_name,window_main):
+def show_employees_edit(root,employees,com_name,client,user_name,window_main):
     
     for widget in root.winfo_children():
         widget.destroy()
@@ -709,13 +709,13 @@ def show_employees_edit(root,employees,com_name,client,window_com,user_name,wind
     root.minsize(900,300)
     root.maxsize(1000,900)
 
-    root.title(f"Bank Accounts/{com_name}")
+    root.title(f"Edit Employees/{com_name}")
 
     style = ttk.Style()
     style.configure("Treeview.Heading", font=("Helvetica", 10, "bold"))  
     style.configure("Treeview", font=("Helvetica", 8)) 
 
-    tk.Label(root,text = "Bank Accounts",font=("Helvetica",20,"bold")).pack(padx=10,pady=10) 
+    tk.Label(root,text = "Employees",font=("Helvetica",20,"bold")).pack(padx=10,pady=10) 
 
     table_bank = ttk.Treeview(root, columns=("S.NO","Employee ID","Name", "Email", "Phone No","Address","User Name","Password"), show="headings")
     table_bank.pack(fill=tk.BOTH,pady=20,padx=20)   
@@ -756,9 +756,9 @@ def show_employees_edit(root,employees,com_name,client,window_com,user_name,wind
 
     btn_frame = tk.Frame(root)
     btn_frame.pack(pady=10)
-    tk.Button(btn_frame,text = "Add Employee",font=("Helvetica",10),width=20,command=lambda:add_employee(root,employees,com_name,client,show_employees_edit,user_name,window_com,window_main)).grid(row=0,column=0,pady=10,padx=5)
-    tk.Button(btn_frame,text = "Edit Employee",font=("Helvetica",10),width=20,command=lambda:edit_employee(root,employees,com_name,client,show_employees_edit,user_name,window_com,window_main)).grid(row=0,column=1,pady=10,padx=5)
-    tk.Button(btn_frame,text = "Remove Employee",font=("Helvetica",10),width=20,command=lambda:delete_employee(root,employees,com_name,client,window_com,user_name,window_main,show_employees_edit)).grid(row=0,column=2,pady=10,padx=5)
+    tk.Button(btn_frame,text = "Add Employee",font=("Helvetica",10),width=20,command=lambda:add_employee(root,employees,com_name,client,show_employees_edit,user_name,window_main)).grid(row=0,column=0,pady=10,padx=5)
+    tk.Button(btn_frame,text = "Edit Employee",font=("Helvetica",10),width=20,command=lambda:edit_employee(root,employees,com_name,client,show_employees_edit,user_name,window_main)).grid(row=0,column=1,pady=10,padx=5)
+    tk.Button(btn_frame,text = "Remove Employee",font=("Helvetica",10),width=20,command=lambda:delete_employee(root,employees,com_name,client,user_name,window_main,show_employees_edit)).grid(row=0,column=2,pady=10,padx=5)
     tk.Button(btn_frame,text = "Back",font=("Helvetica",10),width=20,command=lambda: edit_company_profile(root,client,window_main,com_name,user_name)).grid(row=0,column=3,pady=10,padx=5)
 
 def show_employees(root,employees,com_name,client,user_name,window_main):
@@ -770,13 +770,13 @@ def show_employees(root,employees,com_name,client,user_name,window_main):
     root.minsize(900,300)
     root.maxsize(1000,900)
 
-    root.title(f"Bank Accounts/{com_name}")
+    root.title(f"Employees/{com_name}")
 
     style = ttk.Style()
     style.configure("Treeview.Heading", font=("Helvetica", 10, "bold"))  
     style.configure("Treeview", font=("Helvetica", 8)) 
 
-    tk.Label(root,text = "Bank Accounts",font=("Helvetica",20,"bold")).pack(padx=10,pady=10) 
+    tk.Label(root,text = "Employees",font=("Helvetica",20,"bold")).pack(padx=10,pady=10) 
 
     table_bank = ttk.Treeview(root, columns=("S.NO","Employee ID","Name", "Email", "Phone No","Address","User Name","Password"), show="headings")
     table_bank.pack(fill=tk.BOTH,pady=20,padx=20)   
@@ -812,6 +812,148 @@ def show_employees(root,employees,com_name,client,user_name,window_main):
             transaction.get('address', ''),
             transaction.get('username', ''),
             transaction.get('password', ''),
+                ))
+        j += 1    
+
+    tk.Button(root,text = "Back",font=("Helvetica",10),width=20,command=lambda: show_company_profile(root,client,window_main,com_name,user_name)).pack(pady=10,padx=5)
+
+def add_head(root,heads,com_name,client,show_employees_edit,user_name,window_main):
+    for widget in root.winfo_children():
+        widget.destroy()
+    
+    root.geometry("500x400")
+    root.minsize(250,300)
+    root.maxsize(1000,900)
+    
+    root.title(f"Add Head/{com_name}")
+    
+    employee_frame = tk.Frame(root)
+    employee_frame.pack(pady=10)
+
+    tk.Label(employee_frame,text = "Add Head",font=("Helvetica",20,"bold")).grid(row=0,columnspan=2,padx=10,pady=10)
+
+    tk.Label(employee_frame,text = "Head ID:",font=("Helvetica",10)).grid(row=1,column=0,padx=5,pady=10)
+    no_heads = heads.count_documents({}) +1
+    head_id_entry = f"HD{str(no_heads).zfill(4)}"
+    tk.Label(employee_frame,text=head_id_entry,font=("Helvetica",10,"bold"),width=15).grid(row=1,column=1,padx=5,pady=10)
+
+    tk.Label(employee_frame,text = "Name:",font=("Helvetica",10)).grid(row=2,column=0,padx=5,pady=10)
+    head_name_entry = tk.Entry(employee_frame,font=("Helvetica",10))  
+    head_name_entry.grid(row=2,column=1,pady=10)
+
+    tk.Label(employee_frame,text = "Description:",font=("Helvetica",10)).grid(row=3,column=0,padx=10,pady=5)   
+    head_description_entry = tk.Text(employee_frame,font=("Helvetica",10),width=50,height=5)
+    head_description_entry.grid(row=4,column=0,columnspan=2,padx=10)
+
+    add_btn = tk.Button(root,text = "Add Head",font=("Helvetica",10),command=lambda: add_h(root,heads,com_name,user_name))
+    add_btn.pack(pady=10)
+
+    btn_frame = tk.Frame(root)
+    btn_frame.pack()
+    tk.Button(btn_frame,text = "Back",font=("Helvetica",10),width=10,command=lambda:show_employees_edit(root,heads,com_name,client,user_name,window_main)).grid(row=0,column=0,padx=5)
+    tk.Button(btn_frame,text = "Exit",font=("Helvetica",10),width=10,command=root.quit).grid(row=0,column=1,padx=5)
+
+    def add_h(root,heads,com_name,user_name):
+        global warning
+        if warning:
+            warning.destroy()
+            warning = None
+
+        head_id = head_id_entry
+        head_name = head_name_entry.get()
+        head_description = head_description_entry.get("1.0", tk.END).strip()
+
+        if not head_name or not head_description:
+            warning = tk.Label(employee_frame, text="Please fill all required fields", fg="red")
+            add_btn.pack_forget()
+            warning.pack(pady=5)
+            return
+
+        heads.insert_one({"company_name": com_name,"hd_id":head_id,"hd_name":head_name, "hd_description":head_description})
+        messagebox.showinfo("Success", "Head Added Successfully!")
+        edit_heads(root, heads, com_name, client, user_name, window_main)
+
+
+def edit_heads(root,heads,com_name,client,user_name,window_main):
+    for widget in root.winfo_children():
+        widget.destroy()
+
+    root.geometry("600x400")
+    root.minsize(900,300)
+    root.maxsize(1000,900)
+
+    root.title(f"Edit Head Types/{com_name}")
+
+    style = ttk.Style()
+    style.configure("Treeview.Heading", font=("Helvetica", 12, "bold"))  
+    style.configure("Treeview", font=("Helvetica", 10)) 
+
+    tk.Label(root,text = "Head Types",font=("Helvetica",20,"bold")).pack(padx=10,pady=10) 
+
+    table_head = ttk.Treeview(root, columns=("S.NO","Head ID","Head Name"), show="headings")
+    table_head.pack(fill=tk.BOTH,pady=20,padx=20)
+
+    table_head.heading("S.NO", text="S.NO")
+    table_head.column("S.NO", anchor="center", width=50)
+    table_head.heading("Head ID", text="Head ID")
+    table_head.column("Head ID", anchor="center", width=100)
+    table_head.heading("Head Name", text="Head Name")
+    table_head.column("Head Name", anchor="center", width=100)
+
+    for row in table_head.get_children():
+        table_head.delete(row)
+
+    j = 1
+    for transaction in heads.find():
+        table_head.insert("", tk.END, values=(
+            j,
+            transaction.get('hd_id', ''),
+            transaction.get('hd_name', '')
+                ))
+        j += 1
+    
+    btn_frame = tk.Frame(root)
+    btn_frame.pack(pady=10)
+    tk.Button(btn_frame,text = "Add Head",font=("Helvetica",10),width=20,command=lambda:add_head(root,heads,com_name,client,show_employees_edit,user_name,window_main)).grid(row=0,column=0,pady=10,padx=5)
+    tk.Button(btn_frame,text = "Edit Employee",font=("Helvetica",10),width=20,command=lambda:edit_employee(root,heads,com_name,client,show_employees_edit,user_name,window_main)).grid(row=0,column=1,pady=10,padx=5)
+    tk.Button(btn_frame,text = "Remove Employee",font=("Helvetica",10),width=20,command=lambda:delete_employee(root,heads,com_name,client,user_name,window_main,show_employees_edit)).grid(row=0,column=2,pady=10,padx=5)
+    tk.Button(btn_frame,text = "Back",font=("Helvetica",10),width=20,command=lambda: edit_company_profile(root,client,window_main,com_name,user_name)).grid(row=0,column=3,pady=10,padx=5)
+
+def show_heads(root,heads,com_name,client,user_name,window_main):
+    for widget in root.winfo_children():
+        widget.destroy()
+
+    root.geometry("500x400")
+    root.minsize(900,300)
+    root.maxsize(1000,900)
+
+    root.title(f"Head Types/{com_name}")
+
+    style = ttk.Style()
+    style.configure("Treeview.Heading", font=("Helvetica", 12, "bold"))  
+    style.configure("Treeview", font=("Helvetica", 10)) 
+
+    tk.Label(root,text = "Head Types",font=("Helvetica",20,"bold")).pack(padx=10,pady=10) 
+
+    table_head = ttk.Treeview(root, columns=("S.NO","Head ID","Head Name"), show="headings")
+    table_head.pack(fill=tk.BOTH,pady=20,padx=20)
+
+    table_head.heading("S.NO", text="S.NO")
+    table_head.column("S.NO", anchor="center", width=50)
+    table_head.heading("Head ID", text="Head ID")
+    table_head.column("Head ID", anchor="center", width=100)
+    table_head.heading("Head Name", text="Head Name")
+    table_head.column("Head Name", anchor="center", width=100)
+
+    for row in table_head.get_children():
+        table_head.delete(row)
+
+    j = 1
+    for transaction in heads.find():
+        table_head.insert("", tk.END, values=(
+            j,
+            transaction.get('hd_id', ''),
+            transaction.get('hd_name', '')
                 ))
         j += 1    
 
@@ -871,6 +1013,7 @@ def show_company_profile(root,client,window_main,com_name,user_name):
     employees = company_profile['employees']
     bank_accounts = company_profile['bank_accounts']
     taxs = company_profile['tax']
+    heads = company_profile['heads']
 
     detail = details.find_one({"company_name":com_name})
     tax = taxs.find_one({"company_name":com_name})
@@ -930,13 +1073,13 @@ def show_company_profile(root,client,window_main,com_name,user_name):
 
     
     tk.Label(scrollable_frame,text = "Bank Accounts",font=("Helvetica",20,"bold")).pack(padx=10,pady=10) 
-    tk.Button(scrollable_frame,text = "Show Bank Account",font=("Helvetica",10),width=20,command=lambda: show_bank_account(root,bank_accounts,com_name,client,show_company_profile,user_name,window_main)).pack(pady=20)
+    tk.Button(scrollable_frame,text = "Show Bank Account",font=("Helvetica",10),width=20,command=lambda: show_bank_account(root,bank_accounts,com_name,client,user_name,window_main)).pack(pady=20)
 
     tk.Label(scrollable_frame,text = "Employees",font=("Helvetica",20,"bold")).pack(padx=10,pady=10) 
-    tk.Button(scrollable_frame,text = "Show Employees",font=("Helvetica",10),width=20,command=lambda:show_employees(root,employees,com_name,client,show_company_profile,user_name,window_main)).pack(pady=20)
+    tk.Button(scrollable_frame,text = "Show Employees",font=("Helvetica",10),width=20,command=lambda:show_employees(root,employees,com_name,client,user_name,window_main)).pack(pady=20)
 
     tk.Label(scrollable_frame,text = "HEADS",font=("Helvetica",20,"bold")).pack(padx=10,pady=10)
-    tk.Button(scrollable_frame,text = "Show Heads",font=("Helvetica",10),width=20,command=lambda:show_employees(root,employees,com_name,client,show_company_profile,user_name,window_main)).pack(pady=20)
+    tk.Button(scrollable_frame,text = "Show Heads",font=("Helvetica",10),width=20,command=lambda:show_heads(root,heads,com_name,client,user_name,window_main)).pack(pady=20)
 
     tk.Button(scrollable_frame,text = "Edit",font=("Helvetica",10),width=20,command=lambda:edit_company_profile(root,client,window_main,com_name,user_name)).pack()
 
@@ -984,12 +1127,6 @@ def edit_company_profile(root,client,window_main,com_name,user_name):
     canvas.bind_all("<Button-5>", on_mouse_scroll)  
     canvas.bind("<Enter>", lambda e: canvas.focus_set())   
 
-    # company_profile = client[f'company_profile_{com_name.lower().replace(" ","_")}']
-    # details = company_profile['details']
-    # employees = company_profile['employees']
-    # bank_accounts = company_profile['bank_accounts']
-    # taxs = company_profile['tax']
-
     company_profile = client[f'company_profile_{com_name.lower().replace(" ","_")}']
     companys = client['companys']
     company_details = companys['company_details']
@@ -997,6 +1134,7 @@ def edit_company_profile(root,client,window_main,com_name,user_name):
     employees = company_profile['employees']
     bank_accounts = company_profile['bank_accounts']
     taxs = company_profile['tax']
+    heads = company_profile['heads']
 
     detail = details.find_one({"company_name":com_name})
     tax = taxs.find_one({"company_name":com_name})
@@ -1066,11 +1204,13 @@ def edit_company_profile(root,client,window_main,com_name,user_name):
     fut_p_entry.grid(row=2,column=1,pady=10)    
 
     tk.Label(scrollable_frame,text = "Bank Accounts",font=("Helvetica",20,"bold")).pack(padx=10,pady=10) 
-    tk.Button(scrollable_frame,text = "Show Bank Account",font=("Helvetica",10),width=20,command=lambda: show_bank_account_edit(root,bank_accounts,com_name,client,company_profile,user_name,window_main)).pack(pady=20)
+    tk.Button(scrollable_frame,text = "Show Bank Account",font=("Helvetica",10),width=20,command=lambda: show_bank_account_edit(root,bank_accounts,com_name,client,user_name,window_main)).pack(pady=20)
 
     tk.Label(scrollable_frame,text = "Employees",font=("Helvetica",20,"bold")).pack(padx=10,pady=10) 
-    tk.Button(scrollable_frame,text = "Show Employees",font=("Helvetica",10),width=20,command=lambda:show_employees_edit(root,employees,com_name,client,company_profile,user_name,window_main)).pack(pady=20)
+    tk.Button(scrollable_frame,text = "Show Employees",font=("Helvetica",10),width=20,command=lambda:show_employees_edit(root,employees,com_name,client,user_name,window_main)).pack(pady=20)
 
+    tk.Label(scrollable_frame,text = "HEADS",font=("Helvetica",20,"bold")).pack(padx=10,pady=10)
+    tk.Button(scrollable_frame,text = "Show Heads",font=("Helvetica",10),width=20,command=lambda:edit_heads(root,heads,com_name,client,user_name,window_main)).pack(pady=20)
 
     create_button = tk.Button(scrollable_frame,text = "Save",font=("Helvetica",10),width=20,command=lambda: save(show_company_profile,window_main,client,name_entry,phone_entry,telephone_entry,email_entry,address_entry,ntn_entry,coc_cno_entry,it_cno_entry,it_p_entry,ad_tax_entry,fut_p_entry))
     create_button.pack(pady=10)
