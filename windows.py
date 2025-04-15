@@ -151,9 +151,9 @@ def sale_module_window(root,company_name,user_name):
     btn_frame = tk.Frame()
     btn_frame.pack(fill=X, padx=33, pady=10)
 
-    tk.Button(btn_frame, text="Sale Contract", font=("Helvetica",10),width=20, command=lambda:sale_contract_window(root,company_name)).grid(padx=10, pady=10, row=0,column=0)
-    tk.Button(btn_frame,text="Sale Invoice", font=("Helvetica",10),width=20, command=lambda:sale_invoice_window(root,company_name)).grid(padx=10,pady=10,row=0,column=1)
-    tk.Button(btn_frame,text="Sale Return",font=("Helvetica",10),width=20,command=lambda:sale_return_window(root,company_name)).grid(padx=10,pady=10,row=1,column=0)
+    tk.Button(btn_frame, text="Sale Contract", font=("Helvetica",10),width=20, command=lambda:sale_contract_window(root,company_name,user_name)).grid(padx=10, pady=10, row=0,column=0)
+    tk.Button(btn_frame,text="Sale Invoice", font=("Helvetica",10),width=20, command=lambda:sale_invoice_window(root,company_name,user_name)).grid(padx=10,pady=10,row=0,column=1)
+    tk.Button(btn_frame,text="Sale Return",font=("Helvetica",10),width=20,command=lambda:sale_return_window(root,inventory,company_name,user_name)).grid(padx=10,pady=10,row=1,column=0)
     tk.Button(btn_frame, text="Back",font=("Helvetica",10), width=20, command=lambda:main_menu_window(root,company_name,user_name)).grid(row=1, column=1,padx=10,pady=10)
     tk.Button(root, text="Exit",font=("Helvetica",10), width=20, command=root.destroy).pack(padx=10,pady=5)
 
@@ -173,9 +173,9 @@ def purchase_module_window(root,company_name,user_name):
     btn_frame = tk.Frame()
     btn_frame.pack(fill=X, padx=33, pady=10)
 
-    tk.Button(btn_frame, text="Purchase Contract", font=("Helvetica", 10), width=20, command=lambda:purchase_contract_window(root,company_name)).grid(padx=10,pady=10,row=0,column=0)    
-    tk.Button(btn_frame,text="Purchase Invoice", font=("Helvetica",10),width=20, command=lambda:purchase_invoice_window(root,company_name)).grid(padx=10,pady=10,row=0,column=1)
-    tk.Button(btn_frame,text="Purchase Return",font=("Helvetica",10),width=20,command=lambda:purchase_return_window(root,inventory,company_name)).grid(padx=10,pady=10,row=1,column=0)
+    tk.Button(btn_frame, text="Purchase Contract", font=("Helvetica", 10), width=20, command=lambda:purchase_contract_window(root,company_name,user_name)).grid(padx=10,pady=10,row=0,column=0)    
+    tk.Button(btn_frame,text="Purchase Invoice", font=("Helvetica",10),width=20, command=lambda:purchase_invoice_window(root,company_name,user_name)).grid(padx=10,pady=10,row=0,column=1)
+    tk.Button(btn_frame,text="Purchase Return",font=("Helvetica",10),width=20,command=lambda:purchase_return_window(root,inventory,company_name,user_name)).grid(padx=10,pady=10,row=1,column=0)
     tk.Button(btn_frame, text="Back",font=("Helvetica",10), width=20, command=lambda:main_menu_window(root,company_name,user_name)).grid(row=1, column=1,padx=10,pady=10)
     tk.Button(root, text="Exit",font=("Helvetica",10), width=20, command=root.destroy).pack(padx=10,pady=5)
 
@@ -267,7 +267,7 @@ def client_module_window(root,company_name,user_name):
     tk.Button(btn_frame, text="Back",font=("Helvetica",10), width=20, command=lambda:main_menu_window(root,company_name,user_name)).grid(row=1, column=1,padx=10,pady=10)
     tk.Button(root, text="Exit",font=("Helvetica",10), width=20, command=root.destroy).pack(padx=10,pady=5)
 
-def sale_contract_window(root,company_name):
+def sale_contract_window(root,company_name,user_name):
     global sale_contract,existing_contracts
     account = db['sale_contract']
 
@@ -293,7 +293,7 @@ def sale_contract_window(root,company_name):
     tk.Button(button_frame,text='Generate Contract', width=15,command=lambda:generate_contract(root,sale_contracts,account,'Sale',sale_contract_window,inventory,customers)).grid(row=0, column=1,padx=5)
     tk.Button(button_frame, text= "Print Contract", width=15, command=lambda:print_contracts(root,sale_contracts,"SALE")).grid(row=0, column=2,padx=5)
     tk.Button(button_frame, text="Save", width=15, command=lambda:save_contract(sale_contracts,account,customers)).grid(row=0, column=3,padx=5)
-    tk.Button(button_frame, text="Back", width=15, command=lambda:back(root,sale_module_window,sale_contracts,inventory_sale,existing_contracts)).grid(row=0, column=4,padx=5)
+    tk.Button(button_frame, text="Back", width=15, command=lambda:back(root,sale_module_window,sale_contracts,inventory_sale,existing_contracts,company_name,user_name)).grid(row=0, column=4,padx=5)
     tk.Button(button_frame, text="Exit", width=15, command=root.destroy).grid(row=0, column=5,padx=5)
 
     style = ttk.Style()
@@ -314,7 +314,7 @@ def sale_contract_window(root,company_name):
     table_contract(table_existing_contracts)
     load_contracts(table_existing_contracts,existing_contracts)
 
-def sale_invoice_window(root,company_name):
+def sale_invoice_window(root,company_name,user_name):
 
     global sale_transaction,inventory_sale,existing_contracts
 
@@ -342,10 +342,10 @@ def sale_invoice_window(root,company_name):
     button_frame = tk.Frame(root)
     button_frame.pack(pady=10)
 
-    tk.Button(button_frame,text='Generate Invoice', width=15,command=lambda:generate_invoice(root,sale_transaction,account,inventory_sale,'-',"Sale",sale_invoice_window,existing_contracts,inventory,customers,pay_receip_balance)).grid(row=0, column=1,padx=5)
+    tk.Button(button_frame,text='Generate Invoice', width=15,command=lambda:generate_invoice(root,sale_transaction,account,inventory_sale,'-',"Sale",sale_invoice_window,existing_contracts,inventory,customers,pay_receip_balance,company_name,user_name)).grid(row=0, column=1,padx=5)
     tk.Button(button_frame, text="Print Invoice", width=15, command=lambda:print_invoice(sale_transaction,"SALE",root)).grid(row=0,column=2,padx=5)
     tk.Button(button_frame, text="Save", width=15, command=lambda:save(sale_transaction,account,inventory_sale,existing_contracts,contracts,inventory,pay_receip_balance,customers,'Sale')).grid(row=0, column=3,padx=5)
-    tk.Button(button_frame, text="Back", width=15, command=lambda:back(root,sale_module_window,sale_transaction,inventory_sale,existing_contracts)).grid(row=0, column=4,padx=5)
+    tk.Button(button_frame, text="Back", width=15, command=lambda:back(root,sale_module_window,sale_transaction,inventory_sale,existing_contracts,company_name,user_name)).grid(row=0, column=4,padx=5)
     tk.Button(button_frame, text="Exit", width=15, command=root.destroy).grid(row=0, column=5,padx=5)
 
     #to display Cash transaction
@@ -367,7 +367,7 @@ def sale_invoice_window(root,company_name):
     table(table_account_receivable,table_sale,'sale')
     load_transactions(table_sale,table_account_receivable,sale_transaction,inventory_sale,'sale')
 
-def sale_return_window(root,inventory,company_name):
+def sale_return_window(root,inventory,company_name,user_name):
     
     global sale_transaction,inventory_sale 
 
@@ -406,8 +406,8 @@ def sale_return_window(root,inventory,company_name):
     button_frame = tk.Frame(root)
     button_frame.pack(pady=10)
 
-    tk.Button(button_frame,text='Return Invoice', width=15,command=lambda:return_invoice(root,inventory,sale_return,'sale',return_account,account,sale_return_window)).grid(row=0, column=2,padx=5)
-    tk.Button(button_frame, text="Back", width=15, command=lambda:sale_module_window(root)).grid(row=0, column=3,padx=5)
+    tk.Button(button_frame,text='Return Invoice', width=15,command=lambda:return_invoice(root,inventory,sale_return,'sale',return_account,account,sale_return_window,company_name,user_name)).grid(row=0, column=2,padx=5)
+    tk.Button(button_frame, text="Back", width=15, command=lambda:sale_module_window(root,company_name,user_name)).grid(row=0, column=3,padx=5)
     tk.Button(button_frame, text="Exit", width=15, command=root.destroy).grid(row=0, column=4,padx=5)
 
     style = ttk.Style()
@@ -426,7 +426,7 @@ def sale_return_window(root,inventory,company_name):
     
     load_transactions(table_sale,table_account_receivable,sale_return,inventory_return,'sale')
 
-def purchase_contract_window(root,company_name):
+def purchase_contract_window(root,company_name,user_name):
 
     global purchase_contracts,existing_contracts
     account = db['purchase_contract']
@@ -450,10 +450,10 @@ def purchase_contract_window(root,company_name):
     button_frame = tk.Frame(root)
     button_frame.pack()
 
-    tk.Button(button_frame,text='Generate Contract', width=15,command=lambda:generate_contract(root,purchase_contracts,account,'Purchacse',purchase_contract_window,inventory,customers)).grid(row=0, column=1,padx=5)
+    tk.Button(button_frame,text='Generate Contract', width=15,command=lambda:generate_contract(root,purchase_contracts,account,'Purchacse',purchase_contract_window,inventory,customers,company_name,user_name)).grid(row=0, column=1,padx=5)
     tk.Button(button_frame, text= "Print Contract", width=15, command=lambda:print_contracts(root,purchase_contracts,"PURCHASE")).grid(row=0, column=2,padx=5)
     tk.Button(button_frame, text="Save", width=15, command=lambda:save_contract(purchase_contracts,account)).grid(row=0, column=3,padx=5)
-    tk.Button(button_frame, text="Back", width=15, command=lambda:back(root,purchase_module_window,purchase_contracts,inventory_sale,existing_contracts)).grid(row=0, column=4,padx=5)
+    tk.Button(button_frame, text="Back", width=15, command=lambda:back(root,purchase_module_window,purchase_contracts,inventory_sale,existing_contracts,company_name,user_name)).grid(row=0, column=4,padx=5)
     tk.Button(button_frame, text="Exit", width=15, command=root.destroy).grid(row=0, column=5,padx=5)
 
     style = ttk.Style()
@@ -474,7 +474,7 @@ def purchase_contract_window(root,company_name):
     table_contract(table_existing_contracts)
     load_contracts(table_existing_contracts,existing_contracts)
 
-def purchase_invoice_window(root,company_name):
+def purchase_invoice_window(root,company_name,user_name):
 
     global purchase_transaction, inventory_sale,existing_contracts 
     #accessing the particular collection
@@ -503,10 +503,10 @@ def purchase_invoice_window(root,company_name):
     button_frame = tk.Frame(root)
     button_frame.pack(pady=10)
 
-    tk.Button(button_frame,text='Generate Invoice', width=15,command=lambda:generate_invoice(root,purchase_transaction,account,inventory_sale,"+","Purchase",purchase_invoice_window,existing_contracts,inventory,customers,pay_receip_balance)).grid(row=0, column=1,padx=5)
+    tk.Button(button_frame,text='Generate Invoice', width=15,command=lambda:generate_invoice(root,purchase_transaction,account,inventory_sale,"+","Purchase",purchase_invoice_window,existing_contracts,inventory,customers,pay_receip_balance,company_name,user_name)).grid(row=0, column=1,padx=5)
     tk.Button(button_frame, text="Print Invoice", width=15, command=lambda:print_invoice(purchase_transaction,"PURCHASE",root)).grid(row=0,column=2,padx=5)
     tk.Button(button_frame, text="Save", width=15, command=lambda:save(purchase_transaction,account,inventory_sale,existing_contracts,contracts,inventory,pay_receip_balance,customers,'Purchase')).grid(row=0, column=3,padx=5)
-    tk.Button(button_frame, text="Back", width=15, command=lambda:back(root,purchase_module_window,purchase_transaction,inventory_sale,existing_contracts)).grid(row=0, column=4,padx=5)
+    tk.Button(button_frame, text="Back", width=15, command=lambda:back(root,purchase_module_window,purchase_transaction,inventory_sale,existing_contracts,company_name,user_name)).grid(row=0, column=4,padx=5)
     tk.Button(button_frame, text="Exit", width=15, command=root.destroy).grid(row=0, column=5,padx=5)
 
     #to display Cash transaction
@@ -529,7 +529,7 @@ def purchase_invoice_window(root,company_name):
 
     load_transactions(table_purchase,table_account_receivable,purchase_transaction,inventory_sale,'purchase')
 
-def purchase_return_window(root,inventory,company_name):
+def purchase_return_window(root,inventory,company_name,user_name):
     
     account = db["purchase_invoice"]
     return_account = db['purchase_return']
@@ -569,8 +569,8 @@ def purchase_return_window(root,inventory,company_name):
     style.configure("Treeview.Heading", font=("Helvetica", 10, "bold"))  
     style.configure("Treeview", font=("Helvetica", 8)) 
 
-    tk.Button(button_frame,text='Return Invoice', width=15,command=lambda:return_invoice(root,inventory,purchase_return,'purchase',return_account,account,purchase_return_window)).grid(row=0, column=2,padx=5)
-    tk.Button(button_frame, text="Back", width=15, command=lambda:purchase_module_window(root)).grid(row=0, column=3,padx=5)
+    tk.Button(button_frame,text='Return Invoice', width=15,command=lambda:return_invoice(root,inventory,purchase_return,'purchase',return_account,account,purchase_return_window,company_name,user_name)).grid(row=0, column=2,padx=5)
+    tk.Button(button_frame, text="Back", width=15, command=lambda:purchase_module_window(root,company_name,user_name)).grid(row=0, column=3,padx=5)
     tk.Button(button_frame, text="Exit", width=15, command=root.destroy).grid(row=0, column=4,padx=5)
 
     tk.Label(root,text=f"Account Receivable:",font=("Helvetica", 16)).pack(pady=5,)

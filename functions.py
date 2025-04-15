@@ -8,10 +8,10 @@ from reportlab.lib import colors
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.enums import TA_LEFT
 
-def back(root,window,invoices,inventorys,existing_contracts):
+def back(root,window,invoices,inventorys,existing_contracts,company_name,user_name):
 
     if len(inventorys) == 0 and len(invoices) == 0 :
-        window(root)
+        window(root,company_name,user_name)
     else:
         confirm = messagebox.askyesno("Confirm", f"You have not saved the Invoices yet!\n Are you sure you want to go back?")
         if confirm:
@@ -24,7 +24,7 @@ def back(root,window,invoices,inventorys,existing_contracts):
             if existing_contracts != None:
                 existing_contracts.clear()
             
-            window(root)
+            window(root,company_name,user_name)
 
 def table(table_opp_acc,table_inventory,invoice_type):
 
@@ -120,7 +120,7 @@ def table_contract(table_contract):
     table_contract.heading("Total Amount", text="Total Amount")
     table_contract.column("Total Amount", anchor="center", width=50)
 
-def generate_contract(root,sale_contract,account,contract_type,window,inventory,customers):
+def generate_contract(root,sale_contract,account,contract_type,window,inventory,customers,company_name,user_name):
     
     for widget in root.winfo_children():
         widget.destroy()
@@ -445,13 +445,13 @@ def generate_contract(root,sale_contract,account,contract_type,window,inventory,
             }})
              
             messagebox.showinfo("Success", "Contract Generated!")
-            window(root)
+            window(root,company_name,user_name)
 
     tk.Button(root, text="Add", command=lambda:add(window), width=15).pack(padx=5,pady=5)
     
     button_frame = tk.Frame(root)
     button_frame.pack(pady=10)
-    tk.Button(button_frame, text="Back", width=10, command=lambda:window(root)).grid(row=1, column=0,padx=5)
+    tk.Button(button_frame, text="Back", width=10, command=lambda:window(root,company_name,user_name)).grid(row=1, column=0,padx=5)
     tk.Button(button_frame, text="Exit", width=10, command=root.quit).grid(row=1, column=1,padx=5)
 
 def create_contract_pdf(contract_no,date,name,party_address,item, quantity, rate,gst_amount,ft_amount,total_amount,tolerence,payment_terms,shipment,contract_type,filename):
@@ -678,7 +678,7 @@ def print_contracts(root,contracts,contract_type):
             messagebox.showinfo("Success", f"Contract saved successfully at:\n{file_path}")
             popup_print_contract.destroy()
 
-def generate_invoice(root,invoices_to_save,account,inventory_sale,operator,invoice_type,window,contracts,inventory,customers,pay_receip_balance):
+def generate_invoice(root,invoices_to_save,account,inventory_sale,operator,invoice_type,window,contracts,inventory,customers,pay_receip_balance,company_name,user_name):
 
     for widget in root.winfo_children():
         widget.destroy()
@@ -1163,7 +1163,7 @@ def generate_invoice(root,invoices_to_save,account,inventory_sale,operator,invoi
                 'remaining_stock': remaining_stock
             }
             
-            window(root)
+            window(root,company_name,user_name)
             
             for contract in contracts.values():
                 if contract.get("contract_no") == contract_no:
@@ -1182,7 +1182,7 @@ def generate_invoice(root,invoices_to_save,account,inventory_sale,operator,invoi
     
     button_frame = tk.Frame(root)
     button_frame.pack(pady=10)
-    tk.Button(button_frame, text="Back", width=10, command=lambda:window(root)).grid(row=1, column=0,padx=5)
+    tk.Button(button_frame, text="Back", width=10, command=lambda:window(root,company_name,user_name)).grid(row=1, column=0,padx=5)
     tk.Button(button_frame, text="Exit", width=10, command=root.quit).grid(row=1, column=1,padx=5)
 
 def generate_invoice_pdf(date, contract_type, voucher_no, invoice_no, account_receviable,description,item,quantity,unit,rate,amount,gst,gst_amount,total_amount,filename = "invoice2.pdf"):
@@ -1516,7 +1516,7 @@ def save_contract(contracts,account):
     else:
         messagebox.showerror("Error","No Contracts to save!")
 
-def return_invoice(root,inventory,invoice_return,contract_type,return_account,account,window):
+def return_invoice(root,inventory,invoice_return,contract_type,return_account,account,window,company_name,user_name):
 
     current_date = datetime.now()
     year = current_date.year
@@ -1586,4 +1586,4 @@ def return_invoice(root,inventory,invoice_return,contract_type,return_account,ac
 
     inventory_item.delete_one({"s_no":sno_inventory})
     messagebox.showinfo("Success", f"{contract_type.capitalize()} Invoice returned Successfully")
-    window(root,inventory)
+    window(root,inventory,company_name,user_name)
