@@ -7,14 +7,14 @@ def client_check(table_client,customers):
     clients_names = customers["customer_info"].find()
     client_name = []
     for i in customers['customer_info'].find():
-            client_name.append(i.get('account_receivable','')) 
+            client_name.append(i.get('party_name','')) 
 
     clients = {}
     
     for client in client_name:
         no_contracts = customers[client].count_documents({})
         if no_contracts == 1:
-            client_info = customers['customer_info'].find_one({'account_receivable':client})
+            client_info = customers['customer_info'].find_one({'party_name':client})
             clients[len(clients)+1] = client_info
         else:
             last_contract = customers[client].find_one({"s_no":no_contracts-1})
@@ -23,7 +23,7 @@ def client_check(table_client,customers):
     for contract in clients.values():
         table_client.insert("", tk.END, values=(
             i,
-            contract.get('account_receivable', ''),
+            contract.get('party_name', ''),
             contract.get('party_address', ''),
             contract.get('party_phone', ''),
             contract.get('party_email', ''),
@@ -48,14 +48,14 @@ def existing_clients(table_client, customers):
     for contract in clients.values():
         table_client.insert("", tk.END, values=(
             i,
-            contract.get('account_receivable', ''),
+            contract.get('party_name', ''),
             contract.get('party_address', ''),
             contract.get('party_phone', ''),
             contract.get('party_email', ''),
         ))
         i += 1
 
-def add_client(root,window,customers):
+def add_client(root,window,customers,company_name,user_name):
     
     for widget in root.winfo_children():
         widget.destroy()
@@ -90,8 +90,8 @@ def add_client(root,window,customers):
 
     btn = tk.Frame()
     btn.pack()
-    tk.Button(btn,text="Back",width=10,font=("Helvetica",9),command=lambda:window(root)).grid(row=0,column=0)
-    tk.Button(btn,text="Exit",width=10,font=("Helvetica",9),command=root.quit).grid(row=0,column=1,padx=5)
+    tk.Button(btn,text="Back",width=10,font=("Helvetica",9),command=lambda:window(root,company_name,user_name)).grid(row=0,column=0)
+    tk.Button(btn,text="Exit",width=10,font=("Helvetica",9),command=root.destroy).grid(row=0,column=1,padx=5)
 
     def add(window,customers):
         
@@ -107,21 +107,21 @@ def add_client(root,window,customers):
         else:
             exist = clients_info.find_one({'account_receivable':name})
             if exist == None:
-                details = {'account_receivable':name,'party_email':email,'party_phone':phone,'party_address':address}
+                details = {'party_name':name,'party_email':email,'party_phone':phone,'party_address':address}
                 clients_info.insert_one(details)
 
                 if name in customers.list_collection_names():
                     customers[name].delete_one({'business_releation':'ended'})
                 
-                customers[name].insert_one({'account_receivable':name,'party_email':email,'party_phone':phone,'party_address':address})
+                customers[name].insert_one({'party_name':name,'party_email':email,'party_phone':phone,'party_address':address})
 
                 messagebox.showinfo("Added","Client Added!")
-                window(root)
+                window(root,company_name,user_name)
 
             else:
                 messagebox.showinfo("Exist","Client already exists!")
 
-def remove_client(root,window,customers):
+def remove_client(root,window,customers,company_name,user_name):
     
     for widget in root.winfo_children():
         widget.destroy()
@@ -192,8 +192,8 @@ def remove_client(root,window,customers):
 
     btn = tk.Frame()
     btn.pack()
-    tk.Button(btn,text="Back",width=10,font=("Helvetica",9),command=lambda:window(root)).grid(row=0,column=0)
-    tk.Button(btn,text="Exit",width=10,font=("Helvetica",9),command=root.quit).grid(row=0,column=1,padx=5)
+    tk.Button(btn,text="Back",width=10,font=("Helvetica",9),command=lambda:window(root,company_name,user_name)).grid(row=0,column=0)
+    tk.Button(btn,text="Exit",width=10,font=("Helvetica",9),command=root.destroy).grid(row=0,column=1,padx=5)
 
     def remove(window,customers):
         
@@ -208,9 +208,9 @@ def remove_client(root,window,customers):
             messagebox.showerror("Feilds","Feilds Can't be Empty!")
             return
         else:
-            customers[name].insert_one({'account_receivable':name,'party_email':email,'party_phone':phone,'party_address':address,'business_releation':'ended','reason':reason})
-            clients_info.delete_one({'account_receivable':name})
+            customers[name].insert_one({'party_name':name,'party_email':email,'party_phone':phone,'party_address':address,'business_releation':'ended','reason':reason})
+            clients_info.delete_one({'party_name':name})
 
             messagebox.showinfo("Removed","CLient Removed!")
-            window(root)
+            window(root,company_name,user_name)
 

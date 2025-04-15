@@ -114,7 +114,7 @@ def main_menu_window(root,company_name,user_name):
         "Payment Module": lambda: payment_module_window(root,company_name,user_name),
         "Receipt Module": lambda: receipt_module_window(root,company_name,user_name),
         "Inventory Module": lambda: inventory_module_window(root,company_name,user_name),
-        "Client Module": lambda: client_module_window(root,company_name),
+        "Client Module": lambda: client_module_window(root,company_name,user_name),
         "Company Profile": lambda: show_company_profile(root, client, main_menu_window, company_name, user_name),
     }
 
@@ -261,9 +261,9 @@ def client_module_window(root,company_name,user_name):
     btn_frame = Frame()
     btn_frame.pack(fill=X, padx=33, pady=10)
 
-    tk.Button(btn_frame, text="Client", font=("Helvetica",10),width=20, command=lambda:client_window(root,company_name)).grid(padx=10, pady=10, row=0,column=0)
-    tk.Button(btn_frame,text="Add Client", font=("Helvetica",10),width=20, command=lambda:add_client_window(root,company_name)).grid(padx=10,pady=10,row=0,column=1)
-    tk.Button(btn_frame,text="Remove Client",font=("Helvetica",10),width=20,command=lambda:remove_client_window(root,company_name)).grid(padx=10,pady=10,row=1,column=0)
+    tk.Button(btn_frame, text="Client", font=("Helvetica",10),width=20, command=lambda:client_window(root,company_name,user_name)).grid(padx=10, pady=10, row=0,column=0)
+    tk.Button(btn_frame,text="Add Client", font=("Helvetica",10),width=20, command=lambda:add_client_window(root,company_name,user_name)).grid(padx=10,pady=10,row=0,column=1)
+    tk.Button(btn_frame,text="Remove Client",font=("Helvetica",10),width=20,command=lambda:remove_client_window(root,company_name,user_name)).grid(padx=10,pady=10,row=1,column=0)
     tk.Button(btn_frame, text="Back",font=("Helvetica",10), width=20, command=lambda:main_menu_window(root,company_name,user_name)).grid(row=1, column=1,padx=10,pady=10)
     tk.Button(root, text="Exit",font=("Helvetica",10), width=20, command=root.destroy).pack(padx=10,pady=5)
 
@@ -722,7 +722,7 @@ def client_window(root,company_name,user_name):
 
     btn_frame = tk.Frame(root)
     btn_frame.pack(pady=10)
-    tk.Button(btn_frame, text="Back", width=20, command=lambda:client_module_window(root)).grid(row=0, column=3,padx=5)
+    tk.Button(btn_frame, text="Back", width=20, command=lambda:client_module_window(root,company_name,user_name)).grid(row=0, column=3,padx=5)
     tk.Button(btn_frame, text="Exit", width=20, command=root.destroy).grid(row=0, column=4,padx=5)
 
     table_client = ttk.Treeview(root, columns=("S.NO","Name","Address","Phone NO","Email","Last Contract","Last Contract Progress"), show="headings")
@@ -764,8 +764,8 @@ def add_client_window(root,company_name,user_name):
     btn_frame = tk.Frame(root)
     btn_frame.pack(pady=10)
 
-    tk.Button(btn_frame, text="Add Client", width=20, command=lambda:add_client(root,add_client_window,customers)).grid(row=0, column=2,padx=5)
-    tk.Button(btn_frame, text="Back", width=20, command=lambda:client_module_window(root)).grid(row=0, column=3,padx=5)
+    tk.Button(btn_frame, text="Add Client", width=20, command=lambda:add_client(root,add_client_window,customers,company_name,user_name)).grid(row=0, column=2,padx=5)
+    tk.Button(btn_frame, text="Back", width=20, command=lambda:client_module_window(root,company_name,user_name)).grid(row=0, column=3,padx=5)
     tk.Button(btn_frame, text="Exit", width=20, command=root.destroy).grid(row=0, column=4,padx=5)
 
     tk.Label(root,text="Existing Clients",font=("Helvetica-Bold",20)).pack(pady=15)
@@ -805,8 +805,8 @@ def remove_client_window(root,company_name,user_name):
     btn_frame = tk.Frame(root)
     btn_frame.pack(pady=10)
 
-    tk.Button(btn_frame, text="Remove Client", width=20, command=lambda:remove_client(root,remove_client_window,customers)).grid(row=0, column=2,padx=5)
-    tk.Button(btn_frame, text="Back", width=20, command=lambda:client_module_window(root)).grid(row=0, column=3,padx=5)
+    tk.Button(btn_frame, text="Remove Client", width=20, command=lambda:remove_client(root,remove_client_window,customers,company_name,user_name)).grid(row=0, column=2,padx=5)
+    tk.Button(btn_frame, text="Back", width=20, command=lambda:client_module_window(root,company_name,user_name)).grid(row=0, column=3,padx=5)
     tk.Button(btn_frame, text="Exit", width=20, command=root.destroy).grid(row=0, column=4,padx=5)
 
     tk.Label(root,text="Existing Clients",font=("Helvetica-Bold",20)).pack(pady=15)
