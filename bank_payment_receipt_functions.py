@@ -4,7 +4,7 @@ from tkinter import ttk, messagebox, simpledialog,filedialog
 from datetime import datetime
 from num2words import num2words
 
-def generate_bank_payments(root,window,payments_temp,payment,pay_receip,pay_receip_temp,customers,client_temp,bank,bank_temp,indvidual_bank,bank_ind_temp,tax,tax_temp,invoice_balance,heads,company_name,banks):
+def generate_bank_payments(root,window,payments_temp,payment,pay_receip,pay_receip_temp,customers,client_temp,bank,bank_temp,indvidual_bank,bank_ind_temp,tax,tax_temp,invoice_balance,heads,banks,company_name,user_name):
     
     for widget in root.winfo_children():
         widget.destroy()
@@ -123,8 +123,8 @@ def generate_bank_payments(root,window,payments_temp,payment,pay_receip,pay_rece
     btn_frame = tk.Frame(root) 
     btn_frame.pack()
 
-    tk.Button(btn_frame,text="Back" ,font=("helvetica",10),width=10,command=lambda:window(root,company_name)).grid(row=0,column=0,padx=5)
-    tk.Button(btn_frame,text="Exit" ,font=("helvetica",10),width=10,command=root.quit).grid(row=0,column=1,padx=5)
+    tk.Button(btn_frame,text="Back" ,font=("helvetica",10),width=10,command=lambda:window(root,company_name,user_name)).grid(row=0,column=0,padx=5)
+    tk.Button(btn_frame,text="Exit" ,font=("helvetica",10),width=10,command=root.destroy).grid(row=0,column=1,padx=5)
 
     def generate(root,window,payments_temp,payment,pay_receip,pay_receip_temp,customers,client_temp,bank,bank_temp,indvidual_bank,bank_ind_temp,tax,tax_temp):
         
@@ -294,9 +294,9 @@ def generate_bank_payments(root,window,payments_temp,payment,pay_receip,pay_rece
             records(tax_temp,tax,tax_amount,"add")
             
             messagebox.showinfo("Success","Bank Payment Generated Succesfully!")
-            window(root,company_name)
+            window(root,company_name,user_name)
 
-def generate_bank_receipt(root,window,receipt_temp,receipt,pay_receip,pay_receip_temp,customers,client_temp,bank,bank_temp,indvidual_bank,bank_ind_temp,tax,tax_temp,invoice_balance,heads,company_name,banks):
+def generate_bank_receipt(root,window,receipt_temp,receipt,pay_receip,pay_receip_temp,customers,client_temp,bank,bank_temp,indvidual_bank,bank_ind_temp,tax,tax_temp,invoice_balance,heads,banks,company_name,user_name):
     
     for widget in root.winfo_children():
         widget.destroy()
@@ -414,8 +414,8 @@ def generate_bank_receipt(root,window,receipt_temp,receipt,pay_receip,pay_receip
     btn_frame = tk.Frame(root) 
     btn_frame.pack()
 
-    tk.Button(btn_frame,text="Back" ,font=("helvetica",10),width=10,command=lambda:window(root,company_name)).grid(row=0,column=0,padx=5)
-    tk.Button(btn_frame,text="Exit" ,font=("helvetica",10),width=10,command=root.quit).grid(row=0,column=1,padx=5)
+    tk.Button(btn_frame,text="Back" ,font=("helvetica",10),width=10,command=lambda:window(root,company_name,user_name)).grid(row=0,column=0,padx=5)
+    tk.Button(btn_frame,text="Exit" ,font=("helvetica",10),width=10,command=root.destroy).grid(row=0,column=1,padx=5)
 
     def generate(root,window,receipt_temp,receipt,pay_receip,pay_receip_temp,customers,client_temp,bank,bank_temp,indvidual_bank,bank_ind_temp,tax,tax_temp):
         
@@ -584,7 +584,7 @@ def generate_bank_receipt(root,window,receipt_temp,receipt,pay_receip,pay_receip
             records(tax_temp,tax,tax_amount,"add")
 
         messagebox.showinfo("Success","Bank Payment Generated Succesfully!")
-        window(root,company_name)
+        window(root,company_name,user_name)
 
 def load_payments_receipt(table_entry,payments_temp):
     for row in table_entry.get_children():
