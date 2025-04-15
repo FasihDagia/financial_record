@@ -240,9 +240,9 @@ def inventory_module_window(root,company_name,user_name):
     btn_frame = Frame()
     btn_frame.pack(fill=X, padx=33, pady=10)
 
-    tk.Button(btn_frame, text="Inventory", font=("Helvetica",10),width=20, command=lambda:inventory_window(root,company_name)).grid(padx=10, pady=10, row=0,column=0)
-    tk.Button(btn_frame,text="Add Product", font=("Helvetica",10),width=20, command=lambda:add_product_window(root,company_name)).grid(padx=10,pady=10,row=0,column=1)
-    tk.Button(btn_frame,text="Remove Product",font=("Helvetica",10),width=20,command=lambda:remove_product_window(root,company_name)).grid(padx=10,pady=10,row=1,column=0)
+    tk.Button(btn_frame, text="Inventory", font=("Helvetica",10),width=20, command=lambda:inventory_window(root,company_name,user_name)).grid(padx=10, pady=10, row=0,column=0)
+    tk.Button(btn_frame,text="Add Product", font=("Helvetica",10),width=20, command=lambda:add_product_window(root,company_name,user_name)).grid(padx=10,pady=10,row=0,column=1)
+    tk.Button(btn_frame,text="Remove Product",font=("Helvetica",10),width=20,command=lambda:remove_product_window(root,company_name,user_name)).grid(padx=10,pady=10,row=1,column=0)
     tk.Button(btn_frame, text="Back",font=("Helvetica",10), width=20, command=lambda:main_menu_window(root,company_name,user_name)).grid(row=1, column=1,padx=10,pady=10)
     tk.Button(root, text="Exit",font=("Helvetica",10), width=20, command=root.destroy).pack(padx=10,pady=5)
 
@@ -584,7 +584,7 @@ def purchase_return_window(root,inventory,company_name,user_name):
     table(table_account_receivable,table_purchase,'purchase')
     load_transactions(table_purchase,table_account_receivable,purchase_return,inventory_return,'purchase')
 
-def inventory_window(root,company_name):
+def inventory_window(root,company_name,user_name):
 
     for widget in root.winfo_children():
         widget.destroy()
@@ -603,7 +603,7 @@ def inventory_window(root,company_name):
     btn_frame = tk.Frame(root)
     btn_frame.pack(pady=10)
 
-    tk.Button(btn_frame, text="Back", width=15, command=lambda:inventory_module_window(root)).grid(row=0, column=3,padx=5)
+    tk.Button(btn_frame, text="Back", width=15, command=lambda:inventory_module_window(root,company_name,user_name)).grid(row=0, column=3,padx=5)
     tk.Button(btn_frame, text="Exit", width=15, command=root.destroy).grid(row=0, column=4,padx=5)
 
     table_inventory = ttk.Treeview(root, columns=("S.NO","Last Contract No","Invoice No","Name of Party","Item","Quantity","Unit","Rate","Remaining Stock"), show="headings")
@@ -630,7 +630,7 @@ def inventory_window(root,company_name):
     
     inventory_check(table_inventory,inventory)
 
-def add_product_window(root,company_name):
+def add_product_window(root,company_name,user_name):
     
     for widget in root.winfo_children():
         widget.destroy()
@@ -649,8 +649,8 @@ def add_product_window(root,company_name):
     btn_frame = tk.Frame(root)
     btn_frame.pack(pady=10)
 
-    tk.Button(btn_frame,text="Add product",width=20, font=("Helvetica",10), command=lambda:add_product(root,inventory,add_product_window)).grid(row=0,column=2,pady=10)
-    tk.Button(btn_frame, text="Back", width=20, command=lambda:inventory_module_window(root)).grid(row=0, column=3,padx=5)
+    tk.Button(btn_frame,text="Add product",width=20, font=("Helvetica",10), command=lambda:add_product(root,inventory,add_product_window,company_name,user_name)).grid(row=0,column=2,pady=10)
+    tk.Button(btn_frame, text="Back", width=20, command=lambda:inventory_module_window(root,company_name,user_name)).grid(row=0, column=3,padx=5)
     tk.Button(btn_frame, text="Exit", width=20, command=root.destroy).grid(row=0, column=4,padx=5)
 
     tk.Label(text="Existing Products",font=("Helvetica-bold",20)).pack(pady=15)
@@ -667,7 +667,7 @@ def add_product_window(root,company_name):
 
     existing_products(table_inventory,inventory)
 
-def remove_product_window(root,company_name):
+def remove_product_window(root,company_name,user_name):
     
     for widget in root.winfo_children():
         widget.destroy()
@@ -686,8 +686,8 @@ def remove_product_window(root,company_name):
     btn_frame = tk.Frame(root)
     btn_frame.pack(pady=10)
 
-    tk.Button(btn_frame,text="Remove product",width=20, font=("Helvetica",10),command=lambda:remove_product(root,inventory,remove_product_window)).grid(row=0,column=2,pady=10)
-    tk.Button(btn_frame, text="Back", width=20, command=lambda:inventory_module_window(root)).grid(row=0, column=3,padx=5)
+    tk.Button(btn_frame,text="Remove product",width=20, font=("Helvetica",10),command=lambda:remove_product(root,inventory,remove_product_window,company_name,user_name)).grid(row=0,column=2,pady=10)
+    tk.Button(btn_frame, text="Back", width=20, command=lambda:inventory_module_window(root,company_name,user_name)).grid(row=0, column=3,padx=5)
     tk.Button(btn_frame, text="Exit", width=20, command=root.destroy).grid(row=0, column=4,padx=5)
 
     tk.Label(text="Existing Products",font=("Helvetica-bold",20)).pack(pady=15)
@@ -704,7 +704,7 @@ def remove_product_window(root,company_name):
 
     existing_products(table_inventory,inventory)
 
-def client_window(root,company_name):
+def client_window(root,company_name,user_name):
     
     for widget in root.winfo_children():
         widget.destroy()
@@ -745,7 +745,7 @@ def client_window(root,company_name):
 
     client_check(table_client,customers)
 
-def add_client_window(root,company_name):
+def add_client_window(root,company_name,user_name):
 
     for widget in root.winfo_children():
         widget.destroy()
@@ -786,7 +786,7 @@ def add_client_window(root,company_name):
 
     existing_clients(table_client,customers)
 
-def remove_client_window(root,company_name):
+def remove_client_window(root,company_name,user_name):
     
     for widget in root.winfo_children():
         widget.destroy()

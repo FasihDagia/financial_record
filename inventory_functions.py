@@ -52,7 +52,7 @@ def existing_products(table_inventory,inventory):
         ))
         i += 1
 
-def add_product(root,inventory,window):
+def add_product(root,inventory,window,company_name,user_name):
     for widget in root.winfo_children():
         widget.destroy()
 
@@ -79,8 +79,8 @@ def add_product(root,inventory,window):
 
     btn = tk.Frame()
     btn.pack()
-    tk.Button(btn,text="Back",width=10,font=("Helvetica",9),command=lambda:window(root)).grid(row=0,column=0)
-    tk.Button(btn,text="Exit",width=10,font=("Helvetica",9),command=root.quit).grid(row=0,column=1,padx=5)
+    tk.Button(btn,text="Back",width=10,font=("Helvetica",9),command=lambda:window(root,company_name,user_name)).grid(row=0,column=0)
+    tk.Button(btn,text="Exit",width=10,font=("Helvetica",9),command=root.destroy).grid(row=0,column=1,padx=5)
 
     def add(window):
         
@@ -102,11 +102,11 @@ def add_product(root,inventory,window):
                     inventory[item].delete_one({'availablity':'removed'})
                 
                 messagebox.showinfo("Success","Product Added!")
-                window(root)
+                window(root,company_name,user_name)
             else:
                 messagebox.showinfo("Exist","Product Exists!")
             
-def remove_product(root,inventory,window):
+def remove_product(root,inventory,window,company_name,user_name):
     for widget in root.winfo_children():
         widget.destroy()
 
@@ -146,7 +146,7 @@ def remove_product(root,inventory,window):
 
     btn = tk.Frame()
     btn.pack()
-    tk.Button(btn,text="Back",width=10,font=("Helvetica",9),command=lambda:window(root)).grid(row=0,column=0)
+    tk.Button(btn,text="Back",width=10,font=("Helvetica",9),command=lambda:window(root,company_name,user_name)).grid(row=0,column=0)
     tk.Button(btn,text="Exit",width=10,font=("Helvetica",9),command=root.quit).grid(row=0,column=1,padx=5)
 
     def remove(window):
@@ -157,7 +157,7 @@ def remove_product(root,inventory,window):
         details = inventory[item]
 
         if not date or not item or not reason:
-            messagebox.showerror("Error","Feilds Caan't be empty!")
+            messagebox.showerror("Error","Feilds Can't be empty!")
             return
         else:
             removal = {'date':date,'availablity':'removed','reason':reason}
@@ -166,4 +166,4 @@ def remove_product(root,inventory,window):
             detail = inventory["inventory_details"]
             detail.delete_one({'item':item})
             messagebox.showinfo("Success","Product Removed!")
-            window(root)
+            window(root,company_name,user_name)
