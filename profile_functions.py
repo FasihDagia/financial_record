@@ -817,12 +817,101 @@ def show_employees(root,employees,com_name,client,user_name,window_main):
 
     tk.Button(root,text = "Back",font=("Helvetica",10),width=20,command=lambda: show_company_profile(root,client,window_main,com_name,user_name)).pack(pady=10,padx=5)
 
-def add_head(root,heads,com_name,client,show_employees_edit,user_name,window_main):
+def edit_head(root,heads,com_name,client,user_name,window_main):
+    for widget in root.winfo_children():
+        widget.destroy()
+
+    root.geometry("550x330")
+    root.minsize(550,350)
+    root.maxsize(1000,900)
+
+    root.title(f"Edit Head/{com_name}")
+
+    head_frame = tk.Frame(root)
+    head_frame.pack(pady=10)
+
+    tk.Label(head_frame,text = "Edit Head",font=("Helvetica",20,"bold")).grid(row=0,columnspan=4,padx=10,pady=10)
+
+    def get_head_info(*args):
+        global warning
+        if warning:
+            warning.destroy()
+            warning = None
+
+        head_id = head_id_var.get()
+        if head_id == "No employees to show":
+            warning = tk.Label(head_frame, text="No heads to show", fg="red")
+            head_id_entry.pack_forget()
+            warning.pack(pady=5)
+            return
+
+        employee_info = heads.find_one({"hd_id": head_id})
+        if employee_info:
+            head_name_default.set(employee_info.get("hd_name", ""))    
+            head_description_entry.delete("1.0", tk.END)  
+            head_description_entry.insert("1.0",employee_info.get("hd_description", ""))
+        
+
+    tk.Label(head_frame,text = "Head ID:",font=("Helvetica",10)).grid(row=1,column=0,padx=5,pady=10)
+    head_id_options =[]
+    for emp in heads.find():
+        head_id_options.append(emp.get('hd_id',''))    
+    if len(head_id_options) ==0:
+        head_id_options.append("No employees to show")
+
+    head_id_var = tk.StringVar(value="Heads")
+    head_id_entry = tk.OptionMenu(head_frame, head_id_var, *head_id_options)
+    head_id_entry.grid(row=1,column=1,pady=10)
+
+    tk.Label(head_frame,text = "Head Name:",font=("Helvetica",10)).grid(row=1,column=2,padx=5,pady=10)
+    head_name_default = tk.StringVar()
+    head_name_entry = tk.Entry(head_frame,font=("Helvetica",10),textvariable=head_name_default)  
+    head_name_entry.grid(row=1,column=3,pady=10)
+
+    tk.Label(head_frame,text = "Description:",font=("Helvetica",10)).grid(row=3,column=0,padx=10,pady=10)
+    head_description_default = tk.StringVar()
+    head_description_entry = tk.Text(head_frame,font=("Helvetica",10),width=50,height=5)  
+    head_description_entry.insert("1.0", head_description_default.get())
+    head_description_entry.grid(row=3,column=1,columnspan=3,padx=10,pady=10)
+
+    head_id_var.trace_add("write", get_head_info)
+
+    add_btn = tk.Button(root,text = "Edit Employee",font=("Helvetica",10),command=lambda:edit(root,heads,com_name,user_name))
+    add_btn.pack(pady=10)
+
+    btn_frame = tk.Frame(root)
+    btn_frame.pack()
+    tk.Button(btn_frame,text = "Back",font=("Helvetica",10),width=10,command=lambda:show_edit_heads(root, heads, com_name, client, user_name, window_main)).grid(row=0,column=0,padx=5)
+    tk.Button(btn_frame,text = "Exit",font=("Helvetica",10),width=10,command=root.quit).grid(row=0,column=1,padx=5)
+
+    def edit(root,heads,com_name,user_name):
+        global warning
+        if warning:
+            warning.destroy()
+            warning = None
+
+        head_id = head_id_var.get()
+        head_name = head_name_entry.get()
+        head_description = head_description_entry.get("1.0", tk.END).strip()
+
+        if not head_name or not head_description :
+            warning = tk.Label(head_frame, text="Please fill all required fields", fg="red")
+            add_btn.pack_forget()
+            warning.pack(pady=5)
+            add_btn.pack(pady=10)
+            return
+
+        heads.update_one({"hd_id":head_id}, {"$set": {"hd_name":head_name, "hd_description":head_description}})
+        
+        messagebox.showinfo("Success", "Head Edited Successfully!")
+        show_edit_heads(root, heads, com_name, client, user_name, window_main)
+
+def add_head(root,heads,com_name,client,user_name,window_main):
     for widget in root.winfo_children():
         widget.destroy()
     
-    root.geometry("500x400")
-    root.minsize(250,300)
+    root.geometry("550x330")
+    root.minsize(550,330)
     root.maxsize(1000,900)
     
     root.title(f"Add Head/{com_name}")
@@ -830,27 +919,27 @@ def add_head(root,heads,com_name,client,show_employees_edit,user_name,window_mai
     employee_frame = tk.Frame(root)
     employee_frame.pack(pady=10)
 
-    tk.Label(employee_frame,text = "Add Head",font=("Helvetica",20,"bold")).grid(row=0,columnspan=2,padx=10,pady=10)
+    tk.Label(employee_frame,text = "Add Head",font=("Helvetica",20,"bold")).grid(row=0,columnspan=4,padx=10,pady=10)
 
     tk.Label(employee_frame,text = "Head ID:",font=("Helvetica",10)).grid(row=1,column=0,padx=5,pady=10)
     no_heads = heads.count_documents({}) +1
     head_id_entry = f"HD{str(no_heads).zfill(4)}"
     tk.Label(employee_frame,text=head_id_entry,font=("Helvetica",10,"bold"),width=15).grid(row=1,column=1,padx=5,pady=10)
 
-    tk.Label(employee_frame,text = "Name:",font=("Helvetica",10)).grid(row=2,column=0,padx=5,pady=10)
+    tk.Label(employee_frame,text = "Name:",font=("Helvetica",10)).grid(row=1,column=2,padx=5,pady=10)
     head_name_entry = tk.Entry(employee_frame,font=("Helvetica",10))  
-    head_name_entry.grid(row=2,column=1,pady=10)
+    head_name_entry.grid(row=1,column=3,pady=10)
 
-    tk.Label(employee_frame,text = "Description:",font=("Helvetica",10)).grid(row=3,column=0,padx=10,pady=5)   
+    tk.Label(employee_frame,text = "Description:",font=("Helvetica",10)).grid(row=2,column=0,padx=10,pady=5)   
     head_description_entry = tk.Text(employee_frame,font=("Helvetica",10),width=50,height=5)
-    head_description_entry.grid(row=4,column=0,columnspan=2,padx=10)
+    head_description_entry.grid(row=2,column=1,columnspan=4,padx=10)
 
     add_btn = tk.Button(root,text = "Add Head",font=("Helvetica",10),command=lambda: add_h(root,heads,com_name,user_name))
     add_btn.pack(pady=10)
 
     btn_frame = tk.Frame(root)
     btn_frame.pack()
-    tk.Button(btn_frame,text = "Back",font=("Helvetica",10),width=10,command=lambda:show_employees_edit(root,heads,com_name,client,user_name,window_main)).grid(row=0,column=0,padx=5)
+    tk.Button(btn_frame,text = "Back",font=("Helvetica",10),width=10,command=lambda:show_edit_heads(root, heads, com_name, client, user_name, window_main)).grid(row=0,column=0,padx=5)
     tk.Button(btn_frame,text = "Exit",font=("Helvetica",10),width=10,command=root.quit).grid(row=0,column=1,padx=5)
 
     def add_h(root,heads,com_name,user_name):
@@ -871,9 +960,9 @@ def add_head(root,heads,com_name,client,show_employees_edit,user_name,window_mai
 
         heads.insert_one({"company_name": com_name,"hd_id":head_id,"hd_name":head_name, "hd_description":head_description})
         messagebox.showinfo("Success", "Head Added Successfully!")
-        edit_heads(root, heads, com_name, client, user_name, window_main)
+        show_edit_heads(root, heads, com_name, client, user_name, window_main)
 
-def edit_heads(root,heads,com_name,client,user_name,window_main):
+def show_edit_heads(root,heads,com_name,client,user_name,window_main):
     for widget in root.winfo_children():
         widget.destroy()
 
@@ -913,9 +1002,9 @@ def edit_heads(root,heads,com_name,client,user_name,window_main):
     
     btn_frame = tk.Frame(root)
     btn_frame.pack(pady=10)
-    tk.Button(btn_frame,text = "Add Head",font=("Helvetica",10),width=20,command=lambda:add_head(root,heads,com_name,client,show_employees_edit,user_name,window_main)).grid(row=0,column=0,pady=10,padx=5)
-    tk.Button(btn_frame,text = "Edit Employee",font=("Helvetica",10),width=20,command=lambda:edit_employee(root,heads,com_name,client,show_employees_edit,user_name,window_main)).grid(row=0,column=1,pady=10,padx=5)
-    tk.Button(btn_frame,text = "Remove Employee",font=("Helvetica",10),width=20,command=lambda:delete_employee(root,heads,com_name,client,user_name,window_main,show_employees_edit)).grid(row=0,column=2,pady=10,padx=5)
+    tk.Button(btn_frame,text = "Add Head",font=("Helvetica",10),width=20,command=lambda:add_head(root,heads,com_name,client,user_name,window_main)).grid(row=0,column=0,pady=10,padx=5)
+    tk.Button(btn_frame,text = "Edit Head",font=("Helvetica",10),width=20,command=lambda:edit_head(root,heads,com_name,client,user_name,window_main)).grid(row=0,column=1,pady=10,padx=5)
+    tk.Button(btn_frame,text = "Remove Head",font=("Helvetica",10),width=20,command=lambda:delete_employee(root,heads,com_name,client,user_name,window_main)).grid(row=0,column=2,pady=10,padx=5)
     tk.Button(btn_frame,text = "Back",font=("Helvetica",10),width=20,command=lambda: edit_company_profile(root,client,window_main,com_name,user_name)).grid(row=0,column=3,pady=10,padx=5)
 
 def show_heads(root,heads,com_name,client,user_name,window_main):
@@ -1209,7 +1298,7 @@ def edit_company_profile(root,client,window_main,com_name,user_name):
     tk.Button(scrollable_frame,text = "Show Employees",font=("Helvetica",10),width=20,command=lambda:show_employees_edit(root,employees,com_name,client,user_name,window_main)).pack(pady=20)
 
     tk.Label(scrollable_frame,text = "HEADS",font=("Helvetica",20,"bold")).pack(padx=10,pady=10)
-    tk.Button(scrollable_frame,text = "Show Heads",font=("Helvetica",10),width=20,command=lambda:edit_heads(root,heads,com_name,client,user_name,window_main)).pack(pady=20)
+    tk.Button(scrollable_frame,text = "Show Heads",font=("Helvetica",10),width=20,command=lambda:show_edit_heads(root,heads,com_name,client,user_name,window_main)).pack(pady=20)
 
     create_button = tk.Button(scrollable_frame,text = "Save",font=("Helvetica",10),width=20,command=lambda: save(show_company_profile,window_main,client,name_entry,phone_entry,telephone_entry,email_entry,address_entry,ntn_entry,coc_cno_entry,it_cno_entry,gst_p_entry,ad_tax_entry,fut_p_entry))
     create_button.pack(pady=10)
