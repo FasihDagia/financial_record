@@ -873,7 +873,6 @@ def add_head(root,heads,com_name,client,show_employees_edit,user_name,window_mai
         messagebox.showinfo("Success", "Head Added Successfully!")
         edit_heads(root, heads, com_name, client, user_name, window_main)
 
-
 def edit_heads(root,heads,com_name,client,user_name,window_main):
     for widget in root.winfo_children():
         widget.destroy()
@@ -1059,9 +1058,9 @@ def show_company_profile(root,client,window_main,com_name,user_name):
 
     tk.Label(tax_frame,text = "Tax Percentages",font=("Helvetica",20,"bold")).grid(row=0,columnspan=4,padx=10,pady=10)
 
-    tk.Label(tax_frame,text = "Income Tax Percent:",font=("Helvetica",10)).grid(row=1,column=0,padx=5,pady=10)
-    it_p_default = tax.get("income_tax_percent","")
-    tk.Label(tax_frame,text=it_p_default,font=("Helvetica",10,"bold"),width=15).grid(row=1,column=1,pady=10)  
+    tk.Label(tax_frame,text = "GST Percent:",font=("Helvetica",10)).grid(row=1,column=0,padx=5,pady=10)
+    gst_p_default = tax.get("gst_percent","")
+    tk.Label(tax_frame,text=gst_p_default,font=("Helvetica",10,"bold"),width=15).grid(row=1,column=1,pady=10)  
 
     tk.Label(tax_frame,text = "Advance Tax Percent:",font=("Helvetica",10)).grid(row=1,column=2,padx=5,pady=10)
     ad_tax_default = tax.get("advance_tax_percent","")
@@ -1188,10 +1187,10 @@ def edit_company_profile(root,client,window_main,com_name,user_name):
 
     tk.Label(tax_frame,text = "Tax Percentages",font=("Helvetica",20,"bold")).grid(row=0,columnspan=4,padx=10,pady=10)
 
-    tk.Label(tax_frame,text = "Income Tax Percent:",font=("Helvetica",10)).grid(row=1,column=0,padx=5,pady=10)
-    it_p_default = tk.StringVar(value=tax.get("income_tax_percent",""))
-    it_p_entry = tk.Entry(tax_frame,font=("Helvetica",10),textvariable=it_p_default)  
-    it_p_entry.grid(row=1,column=1,pady=10)
+    tk.Label(tax_frame,text = "GST Percent:",font=("Helvetica",10)).grid(row=1,column=0,padx=5,pady=10)
+    gst_default = tk.StringVar(value=tax.get("gst_percent",""))
+    gst_p_entry = tk.Entry(tax_frame,font=("Helvetica",10),textvariable=gst_default)  
+    gst_p_entry.grid(row=1,column=1,pady=10)
 
     tk.Label(tax_frame,text = "Advance Tax Percent:",font=("Helvetica",10)).grid(row=1,column=2,padx=5,pady=10)
     ad_tax_default = tk.StringVar(value=tax.get("advance_tax_percent",""))
@@ -1212,7 +1211,7 @@ def edit_company_profile(root,client,window_main,com_name,user_name):
     tk.Label(scrollable_frame,text = "HEADS",font=("Helvetica",20,"bold")).pack(padx=10,pady=10)
     tk.Button(scrollable_frame,text = "Show Heads",font=("Helvetica",10),width=20,command=lambda:edit_heads(root,heads,com_name,client,user_name,window_main)).pack(pady=20)
 
-    create_button = tk.Button(scrollable_frame,text = "Save",font=("Helvetica",10),width=20,command=lambda: save(show_company_profile,window_main,client,name_entry,phone_entry,telephone_entry,email_entry,address_entry,ntn_entry,coc_cno_entry,it_cno_entry,it_p_entry,ad_tax_entry,fut_p_entry))
+    create_button = tk.Button(scrollable_frame,text = "Save",font=("Helvetica",10),width=20,command=lambda: save(show_company_profile,window_main,client,name_entry,phone_entry,telephone_entry,email_entry,address_entry,ntn_entry,coc_cno_entry,it_cno_entry,gst_p_entry,ad_tax_entry,fut_p_entry))
     create_button.pack(pady=10)
 
     btn_frame = tk.Frame(scrollable_frame)
@@ -1226,7 +1225,7 @@ def edit_company_profile(root,client,window_main,com_name,user_name):
 
     update_scroll_region()
 
-    def save(window,window_main,client,name_entry,phone_entry,telephone_entry,email_entry,address_entry,ntn_entry,coc_cno_entry,it_cno_entry,it_p_entry,ad_tax_entry,fut_p_entry):
+    def save(window,window_main,client,name_entry,phone_entry,telephone_entry,email_entry,address_entry,ntn_entry,coc_cno_entry,it_cno_entry,gst_p_entry,ad_tax_entry,fut_p_entry):
  
         global warning
        
@@ -1243,7 +1242,7 @@ def edit_company_profile(root,client,window_main,com_name,user_name):
         ntn = ntn_entry.get()
         coc_cno = coc_cno_entry.get()
         it_cno = it_cno_entry.get()
-        it_p = it_p_entry.get()
+        gst_p = gst_p_entry.get()
         ad_tax = ad_tax_entry.get()
         fut_p = fut_p_entry.get()
 
@@ -1255,7 +1254,7 @@ def edit_company_profile(root,client,window_main,com_name,user_name):
         bank_accounts = company_profile['bank_accounts']
         tax = company_profile['tax']
 
-        if not com_name or not com_phone or not com_email or not com_address or not ntn or not coc_cno or not it_cno or not it_p or not ad_tax :
+        if not com_name or not com_phone or not com_email or not com_address or not ntn or not coc_cno or not it_cno or not gst_p or not ad_tax :
             warning = tk.Label(scrollable_frame, text="Please fill all required feilds", fg="red")
             create_button.pack_forget()  
             warning.pack(pady=5)
@@ -1276,7 +1275,7 @@ def edit_company_profile(root,client,window_main,com_name,user_name):
             details.update_one({"company_name":com_name}, {"$set": {"company_name":comp_name,"phone_no":com_phone,"telephone_no":com_telephone,"email":com_email,"address":com_address,"ntn_no":ntn,"coc_certificate_no":coc_cno,"income_tax_certificate_no":it_cno}})
             employees.update_many({"company_name":com_name}, {"$set": {"company_name":comp_name}})
             bank_accounts.update_many({"company_name":com_name}, {"$set": {"company_name":comp_name}})
-            taxs.update_one({"company_name":com_name}, {"$set": {"company_name":comp_name,"income_tax_percent":it_p,"advance_tax_percent":ad_tax,"further_tax_percent":fut_p}})
+            taxs.update_one({"company_name":com_name}, {"$set": {"company_name":comp_name,"gst_percent":gst_p,"advance_tax_percent":ad_tax,"further_tax_percent":fut_p}})
 
             old_profile = f'company_profile_{com_name.lower().replace(" ","_")}'
             new_profile = f'company_profile_{comp_name.lower().replace(" ","_")}'

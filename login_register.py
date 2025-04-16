@@ -129,9 +129,9 @@ def create_company(root,client,window):
 
     tk.Label(tax_frame,text = "Tax Percentages",font=("Helvetica",20,"bold")).grid(row=0,columnspan=4,padx=10,pady=10)
 
-    tk.Label(tax_frame,text = "Income Tax Percent:",font=("Helvetica",10)).grid(row=1,column=0,padx=5,pady=10)
-    it_p_entry = tk.Entry(tax_frame,font=("Helvetica",10))  
-    it_p_entry.grid(row=1,column=1,pady=10)
+    tk.Label(tax_frame,text = "GST Tax Percent:",font=("Helvetica",10)).grid(row=1,column=0,padx=5,pady=10)
+    gst_p_entry = tk.Entry(tax_frame,font=("Helvetica",10))  
+    gst_p_entry.grid(row=1,column=1,pady=10)
 
     tk.Label(tax_frame,text = "Advance Tax Percent:",font=("Helvetica",10)).grid(row=1,column=2,padx=5,pady=10)
     ad_tax_entry = tk.Entry(tax_frame,font=("Helvetica",10))  
@@ -197,7 +197,7 @@ def create_company(root,client,window):
     emp_password_entry = tk.Entry(employee_frame,font=("Helvetica",10),show="*")
     emp_password_entry.grid(row=4,column=3,pady=10)
 
-    create_button = tk.Button(scrollable_frame,text = "Create",font=("Helvetica",10),width=20,command=lambda: create_company(window,client,name_entry,phone_entry,telephone_entry,email_entry,address_entry,ntn_entry,coc_cno_entry,it_cno_entry,it_p_entry,ad_tax_entry,fut_p_entry,bank_name_entry,br_name_entry,ac_title_entry,ac_no_entry,iban_entry))
+    create_button = tk.Button(scrollable_frame,text = "Create",font=("Helvetica",10),width=20,command=lambda: create_company(window,client,name_entry,phone_entry,telephone_entry,email_entry,address_entry,ntn_entry,coc_cno_entry,it_cno_entry,gst_p_entry,ad_tax_entry,fut_p_entry,bank_name_entry,br_name_entry,ac_title_entry,ac_no_entry,iban_entry))
     create_button.pack(pady=10)
 
     btn_frame = tk.Frame(scrollable_frame)
@@ -209,7 +209,7 @@ def create_company(root,client,window):
     exit_btn.grid(row=0,column=1,padx=5)
 
 
-    def create_company(window,client,name_entry,phone_entry,telephone_entry,email_entry,address_entry,ntn_entry,coc_cno_entry,it_cno_entry,it_p_entry,ad_tax_entry,fut_p_entry,bank_name_entry,br_name_entry,ac_title_entry,ac_no_entry,iban_entry):
+    def create_company(window,client,name_entry,phone_entry,telephone_entry,email_entry,address_entry,ntn_entry,coc_cno_entry,it_cno_entry,gst_p_entry,ad_tax_entry,fut_p_entry,bank_name_entry,br_name_entry,ac_title_entry,ac_no_entry,iban_entry):
  
         global warning
        
@@ -226,7 +226,7 @@ def create_company(root,client,window):
         ntn = ntn_entry.get()
         coc_cno = coc_cno_entry.get()
         it_cno = it_cno_entry.get()
-        it_p = it_p_entry.get()
+        gst_p = gst_p_entry.get()
         ad_tax = ad_tax_entry.get()
         fut_p = fut_p_entry.get()
         bank_name = bank_name_entry.get()
@@ -250,7 +250,7 @@ def create_company(root,client,window):
         bank_accounts = company_profile['bank_accounts']
         tax = company_profile['tax']
 
-        if not com_name or not com_phone or not com_email or not com_address or not ntn or not coc_cno or not it_cno or not it_p or not ad_tax or not bank_name or not br_name or not ac_title or not ac_no or not iban:
+        if not com_name or not com_phone or not com_email or not com_address or not ntn or not coc_cno or not it_cno or not gst_p or not ad_tax or not bank_name or not br_name or not ac_title or not ac_no or not iban:
             warning = tk.Label(scrollable_frame, text="Please fill all required feilds", fg="red")
             create_button.pack_forget()
             btn_frame.pack_forget()  
@@ -272,7 +272,7 @@ def create_company(root,client,window):
             details.insert_one({"company_name": com_name, "phone_no": com_phone, "telephone_no": com_telephone, "email": com_email, "address": com_address, "ntn_no": ntn, "coc_certificate_no": coc_cno, "income_tax_certificate_no": it_cno})
             employees.insert_one({"company_name": com_name,"emp_id":"EMP00001","name": emp_name, "email": emp_email, "phone_no": emp_phone, "address": emp_address, "username": emp_username, "password": emp_password, "sale_module":1, "purchase_module":1, "payment_module":1, "receipt_module":1, "client_module":1, "inventory_module":1, "company_profile_module":1})
             bank_accounts.insert_one({"company_name": com_name,"bank_name": bank_name, "branch_name": br_name, "account_title": ac_title, "account_no": ac_no, "iban_no": iban})
-            tax.insert_one({"company_name": com_name,"income_tax_percent": it_p, "advance_tax_percent": ad_tax,"further_tax_percent": fut_p})
+            tax.insert_one({"company_name": com_name,"gst_percent": gst_p, "advance_tax_percent": ad_tax,"further_tax_percent": fut_p})
 
             messagebox.showinfo("Success", "Company Profile Created Successfully!")
             window(root)
