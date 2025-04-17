@@ -113,7 +113,7 @@ def add_client(root,window,customers,company_name,user_name):
                 if name in customers.list_collection_names():
                     customers[name].delete_one({'business_releation':'ended'})
                 
-                customers[name].insert_one({'party_name':name,'party_email':email,'party_phone':phone,'party_address':address})
+                customers[name].insert_one({'opp_acc':name,'party_email':email,'party_phone':phone,'party_address':address})
 
                 messagebox.showinfo("Added","Client Added!")
                 window(root,company_name,user_name)
@@ -140,7 +140,7 @@ def remove_client(root,window,customers,company_name,user_name):
         party = customers["customer_info"]
 
         party_name = party_name_option.get()
-        party_details = party.find_one({"account_receivable":party_name})
+        party_details = party.find_one({"opp_acc":party_name})
 
         email = party_details.get("party_email",'')
         email_default.set(email)
@@ -208,8 +208,8 @@ def remove_client(root,window,customers,company_name,user_name):
             messagebox.showerror("Feilds","Feilds Can't be Empty!")
             return
         else:
-            customers[name].insert_one({'party_name':name,'party_email':email,'party_phone':phone,'party_address':address,'business_releation':'ended','reason':reason})
-            clients_info.delete_one({'party_name':name})
+            customers[name].insert_one({'opp_acc':name,'party_email':email,'party_phone':phone,'party_address':address,'business_releation':'ended','reason':reason})
+            clients_info.delete_one({'opp_acc':name})
 
             messagebox.showinfo("Removed","CLient Removed!")
             window(root,company_name,user_name)

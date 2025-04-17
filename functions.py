@@ -678,7 +678,7 @@ def print_contracts(root,contracts,contract_type):
             messagebox.showinfo("Success", f"Contract saved successfully at:\n{file_path}")
             popup_print_contract.destroy()
 
-def generate_invoice(root,invoices_to_save,account,inventory_sale,operator,invoice_type,window,contracts,inventory,customers,pay_receip_balance,company_name,user_name):
+def generate_invoice(root,invoices_to_save,account,inventory_sale,invoice_type,window,contracts,inventory,customers,pay_receip_balance,company_name,user_name):
 
     for widget in root.winfo_children():
         widget.destroy()
@@ -715,7 +715,8 @@ def generate_invoice(root,invoices_to_save,account,inventory_sale,operator,invoi
         year = current_date.year
 
         invoice = f"SL{str(invoice_no).zfill(5)}/{year}"
-        tk.Label(headings,text=invoice,font=("Helvetica", 12)).grid(row=1,column=3)
+        invoice_entry = tk.Label(headings,text=invoice,font=("Helvetica", 12))
+        invoice_entry.grid(row=1,column=3)
         contract_col = 1
         contract_entery_col = 2
 
@@ -732,7 +733,8 @@ def generate_invoice(root,invoices_to_save,account,inventory_sale,operator,invoi
         year = current_date.year
         voucher = f"PU{str(voucher_no).zfill(5)}/{year}"
 
-        tk.Label(headings,text=voucher,font=("Helvetica", 12)).grid(row=1,column=3)
+        voucher_entry = tk.Label(headings,text=voucher,font=("Helvetica", 12))
+        voucher_entry.grid(row=1,column=3)
 
         tk.Label(headings,text="Invoice No:",font=("Helvetica",10)).grid(row=2,column=0,pady=10)
         invoice_entry = tk.Entry(headings,width=width)
@@ -742,40 +744,51 @@ def generate_invoice(root,invoices_to_save,account,inventory_sale,operator,invoi
 
     def calculate_total(*args):
         try:
-            rate = float(rate_entry.get()) or 0
-            quantity = float(quantity_entry.get() or 0) 
+            rate_str = rate_entry.get()
+            if rate_str.strip() == "":
+                rate = 0.0
+            else:
+                rate = float(rate_str) 
+            
+            quantity_str = quantity_entry.get()
+            if quantity_str.replace(" ","") == "":
+                quantity = 0.0
+            else:
+                quantity = float(quantity_str)
 
             amount = rate * quantity
             amount_var.set(amount)
 
-        except ValueError:
-            total_var.set("Invalid input")
+            amount_entry.delete(0, 'end')
+            amount_entry.insert(0, str(amount))
 
-        try:
-            amount = float(amount_entry.get()) or 0
-            gst_percent = float(gst_default_value_assign.get()) or 0
-            further_tax_percent = float(further_tax_entry.get()) or 0
-            ft_amount = (amount * further_tax_percent) / 100
-            gt_amount = (amount * gst_percent) / 100
+            gst_str = gst_default_value_assign.get()
+            if gst_str.strip() == "":
+                gst_percent = 0.0
+            else:   
+                gst_percent = float(gst_str)
+            
+            further_tax_str = further_tax_entry.get()
+            if further_tax_str.strip() == "":
+                further_tax_percent = 0.0
+            else: 
+                further_tax_percent = float(further_tax_str) 
 
-            gst_amount_var.set(gt_amount)
-            Further_tax_amount_var.set(ft_amount)
-
-        except ValueError:
-            gst_amount_var.set("Invalid input")
-            Further_tax_amount_var.set("Invalid input")
-
-        try:
-            amount = float(amount_entry.get()) or 0
-            gst_percent = float(gst_default_value_assign.get()) or 0
-            further_tax_percent = float(further_tax_entry.get()) or 0
             gst_amount = (amount * gst_percent) / 100
             further_tax_amount = (amount * further_tax_percent) / 100
 
+            gst_amount_var.set(gst_amount)
+            Further_tax_amount_var.set(further_tax_amount)
+
             total = amount + gst_amount + further_tax_amount
-            total_var.set(f"{total}")  
+            total_var.set(f"{total}")
+
         except ValueError:
+            amount_var.set("Invalid input")
+            gst_amount_var.set("Invalid input")
+            Further_tax_amount_var.set("Invalid input")
             total_var.set("Invalid input")
+
 
     def get_contract_info(*args):
                 
@@ -878,7 +891,11 @@ def generate_invoice(root,invoices_to_save,account,inventory_sale,operator,invoi
 
     def check_quntity(*args):
 
-        quantity = float(quantity_entry.get())
+        quantity_str = quantity_entry.get()
+        if quantity_str.replace(" ","") == "":
+            quantity = 0.0
+        else:
+            quantity = float(quantity_str)
         contract_no = contract_option.get()
         for contract_details in contracts.values():
             if contract_details.get("contract_no","") == contract_no:
@@ -888,6 +905,15 @@ def generate_invoice(root,invoices_to_save,account,inventory_sale,operator,invoi
         
         calculate_total()
 
+    def check_rate(*args):
+        rate = float(rate_entry.get())
+        contract_no = contract_option.get()
+        for contract_details in contracts.values():
+            if contract_details.get("contract_no","") == contract_no:
+                if rate != contract_details.get("rate",""): 
+                    messagebox.showerror("Error", "Rate can't be changed")
+                    rate_default.set(contract_details.get("rate", ""))
+                        
     tk.Label(contract_info, text="Quantity:",font=("Helvetica",10)).grid(row=0,column=2,padx=5)
     quantity_default = StringVar(value=0)
     quantity_entry = tk.Entry(contract_info,width=10,textvariable=quantity_default)  
@@ -906,7 +932,7 @@ def generate_invoice(root,invoices_to_save,account,inventory_sale,operator,invoi
     rate_entry = tk.Entry(contract_info, width=width,textvariable=rate_default)
     rate_entry.grid(row=1, column=3,padx=5)
     
-    rate_entry.bind("<KeyRelease>",calculate_total)
+    rate_entry.bind("<KeyRelease>",check_rate)
 
     tk.Label(contract_info, text="Amount:",font=("Helvetica",10)).grid(row=2, column=0)
     amount_var = tk.StringVar(value=0)
@@ -964,14 +990,14 @@ def generate_invoice(root,invoices_to_save,account,inventory_sale,operator,invoi
     total_var = tk.StringVar(value=0)
     tk.Label(total_frame,textvariable=total_var,font=9).grid(row=0,column=1,pady=10)
 
-    def add(window, operator):
-        nonlocal invoice
-        nonlocal voucher
-        if operator == '-':
+    def add(window):
+        if invoice_type == 'Sale':
             voucher = None
+            invoice_no = invoice_entry.cget("text")
 
         else :
-            invoice = invoice_entry.get()
+            voucher = voucher_entry.cget("text")
+            invoice_no = invoice_entry.get()
 
         saved_transactions = account.count_documents({})
 
@@ -981,7 +1007,7 @@ def generate_invoice(root,invoices_to_save,account,inventory_sale,operator,invoi
             sno = saved_transactions + len(invoices_to_save) + 1
 
         date = date_entry.get()
-        contract_no = contract_option.get()
+        contract_no = contract_option.get()  
         account_recevible = party_name_option.get()
         party_email = party_email_entry.get()
         party_phone = party_phone_entry.get()
@@ -1144,11 +1170,19 @@ def generate_invoice(root,invoices_to_save,account,inventory_sale,operator,invoi
                         remaining_stock = last_save_inventory.get('remaining_stock', 0)
 
             # Updating inventory
-            if operator == '+':    
-                remaining_stock += quantity
-            elif operator == '-': 
+            if invoice_type == 'Sale':    
                 remaining_stock -= quantity
-            inventory_sale[len(inventory_sale) + 1] = {
+
+                sld_stock = {}
+                for i in inventory_item.find():
+                    if i.get('sld_stock','') != None:
+                        print(type(i.get('sld_stock','')), type(i.get('quantity','')))
+                        if  i.get('sld_stock','') <= int(i.get('quantity','')):
+                            sld_stock[len(sld_stock) + 1] = i
+                
+                print(sld_stock)
+
+                inventory_sale[len(inventory_sale) + 1] = {
                 's_no': sno_inventory,
                 'date': date,
                 'contract_no':contract_no,
@@ -1162,6 +1196,24 @@ def generate_invoice(root,invoices_to_save,account,inventory_sale,operator,invoi
                 'amount': amount,
                 'remaining_stock': remaining_stock
             }
+
+            elif invoice_type == 'Purchase': 
+                remaining_stock += quantity
+                inventory_sale[len(inventory_sale) + 1] = {
+                    's_no': sno_inventory,
+                    'date': date,
+                    'contract_no':contract_no,
+                    'opp_acc': account_recevible,
+                    'voucher_no':voucher,
+                    'invoice_no': invoice,
+                    'item': item,
+                    'quantity': quantity,
+                    'unit': unit,
+                    'rate': rate,
+                    'amount': amount,
+                    'sld_stock': 0,
+                    'remaining_stock': remaining_stock
+                }
             
             window(root,company_name,user_name)
             
@@ -1178,12 +1230,12 @@ def generate_invoice(root,invoices_to_save,account,inventory_sale,operator,invoi
             
             messagebox.showinfo("Success", "Invoice Generated!")
 
-    tk.Button(root, text="Add", command=lambda:add(window,operator), width=15).pack(padx=5,pady=5)
+    tk.Button(root, text="Add", command=lambda:add(window), width=15).pack(padx=5,pady=5)
     
     button_frame = tk.Frame(root)
     button_frame.pack(pady=10)
     tk.Button(button_frame, text="Back", width=10, command=lambda:window(root,company_name,user_name)).grid(row=1, column=0,padx=5)
-    tk.Button(button_frame, text="Exit", width=10, command=root.quit).grid(row=1, column=1,padx=5)
+    tk.Button(button_frame, text="Exit", width=10, command=root.destroy).grid(row=1, column=1,padx=5)
 
 def generate_invoice_pdf(date, contract_type, voucher_no, invoice_no, account_receviable,description,item,quantity,unit,rate,amount,gst,gst_amount,total_amount,filename = "invoice2.pdf"):
     # Create PDF Document
