@@ -678,7 +678,7 @@ def print_contracts(root,contracts,contract_type):
             messagebox.showinfo("Success", f"Contract saved successfully at:\n{file_path}")
             popup_print_contract.destroy()
 
-def generate_invoice(root,invoices_to_save,account,inventory_sale,invoice_type,window,contracts,inventory,customers,pay_receip_balance,company_name,user_name):
+def generate_invoice(root,invoices_to_save,account,inventory_sale,invoice_type,window,contracts,inventory,customers,pay_receip_balance,company_name,user_name,sld_stock,cost_of_goods):
 
     for widget in root.winfo_children():
         widget.destroy()
@@ -992,11 +992,11 @@ def generate_invoice(root,invoices_to_save,account,inventory_sale,invoice_type,w
 
     def add(window):
         if invoice_type == 'Sale':
-            voucher = None
+            voucher_no = None
             invoice_no = invoice_entry.cget("text")
 
         else :
-            voucher = voucher_entry.cget("text")
+            voucher_no = voucher_entry.cget("text")
             invoice_no = invoice_entry.get()
 
         saved_transactions = account.count_documents({})
@@ -1101,8 +1101,8 @@ def generate_invoice(root,invoices_to_save,account,inventory_sale,invoice_type,w
             invoices_to_save[len(invoices_to_save) + 1] = {
                 's_no': sno,
                 'date': date,
-                'invoice_no': invoice,
-                'voucher_no': voucher,
+                'invoice_no': invoice_no,
+                'voucher_no': voucher_no,
                 'contract_no': contract_no,
                 'opp_acc': account_recevible,
                 'party_email': party_email,
@@ -1125,8 +1125,8 @@ def generate_invoice(root,invoices_to_save,account,inventory_sale,invoice_type,w
             pay_receip_balance[len(pay_receip_balance) + 1] = {
                 's_no': sno2,
                 'date': date,
-                'invoice_no': invoice,
-                'voucher_no': voucher,
+                'invoice_no': invoice_no,
+                'voucher_no': voucher_no,
                 'opp_acc': account_recevible,
                 'amount': amount,
                 'balance': balance2
@@ -1154,7 +1154,7 @@ def generate_invoice(root,invoices_to_save,account,inventory_sale,invoice_type,w
                     remaining_stock = 0
                 else:
                     # Fetch the last saved inventory
-                    last_save_inventory = inventory_item.find_one({'s_no': sno_inventory-1})
+                    last_save_inventory = inventory_item.find_one(sort=[("_id", -1)])
                     remaining_stock = last_save_inventory.get('remaining_stock', 0)
             else:        
                 remaining_stock = 0
@@ -1173,22 +1173,20 @@ def generate_invoice(root,invoices_to_save,account,inventory_sale,invoice_type,w
             if invoice_type == 'Sale':    
                 remaining_stock -= quantity
 
-                sld_stock = {}
                 for i in inventory_item.find():
                     if i.get('sld_stock','') != None:
-                        print(type(i.get('sld_stock','')), type(i.get('quantity','')))
-                        if  i.get('sld_stock','') <= int(i.get('quantity','')):
+                        if i.get('sld_stock','') < i.get('quantity',''):
                             sld_stock[len(sld_stock) + 1] = i
-                
-                print(sld_stock)
+                            break
+                sld_stock[1]["sld_stock"] = sld_stock[1].get("sld_stock",0) + quantity
 
                 inventory_sale[len(inventory_sale) + 1] = {
                 's_no': sno_inventory,
                 'date': date,
                 'contract_no':contract_no,
                 'opp_acc': account_recevible,
-                'voucher_no':voucher,
-                'invoice_no': invoice,
+                'voucher_no':voucher_no,
+                'invoice_no': invoice_no,
                 'item': item,
                 'quantity': quantity,
                 'unit': unit,
@@ -1204,8 +1202,8 @@ def generate_invoice(root,invoices_to_save,account,inventory_sale,invoice_type,w
                     'date': date,
                     'contract_no':contract_no,
                     'opp_acc': account_recevible,
-                    'voucher_no':voucher,
-                    'invoice_no': invoice,
+                    'voucher_no':voucher_no,
+                    'invoice_no': invoice_no,
                     'item': item,
                     'quantity': quantity,
                     'unit': unit,
