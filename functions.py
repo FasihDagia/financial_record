@@ -227,18 +227,40 @@ def generate_contract(root,sale_contract,account,contract_type,window,inventory,
         for x in range(1,inven+1):
             items = inventory["inventory_details"].find_one({"s_no":x})
             item_name = items.get('item','')
-            items_options.append(item_name) 
-    
+            items_options.append(item_name)
+
     if len(items_options) == 0:
         items_options.append("No items in Inventory")
     items_options.sort()
     item_option = tk.StringVar(value="Product Name")
     item_entry = OptionMenu(contract_info, item_option , *items_options)
     item_entry.grid(row=0,column=1,padx=5)
+    
+    def check_quantity(*args):
+        item = item_option.get()
+        # Get latest stock info
+        last_entry = inventory[item].find_one(sort=[("_id", -1)])
+        remaining_stock = last_entry.get("remaining_stock", 0) if last_entry else 0
+
+        try:
+            quantity = float(quantity_default.get().strip() or "0")
+        except ValueError:
+            quantity = 0.0
+
+        if quantity > remaining_stock:
+            messagebox.showerror("Error", "Quantity can't be more than the available stock")
+            quantity_default.set(str(remaining_stock))
+
+    # Wrappers to use with trace and bind  
 
     tk.Label(contract_info, text="Quantity:").grid(row=0,column=2,padx=5)
-    quantity_entry = tk.Entry(contract_info,width=10)  
-    quantity_entry.grid(row=0,column=3)
+    quantity_default = StringVar(value=0)
+    quant_entry = tk.Entry(contract_info,width=10,textvariable=quantity_default)  
+    quant_entry.grid(row=0,column=3)
+
+    if contract_type == 'Sale':
+        quant_entry.bind("<KeyRelease>", check_quantity)
+        item_option.trace_add("write", check_quantity)
 
     tk.Label(contract_info, text="Unit:").grid(row=1,column=0,pady=10)
     quantity_unit_options = ['Meters','KG','Liters','PCS']
@@ -250,7 +272,7 @@ def generate_contract(root,sale_contract,account,contract_type,window,inventory,
     def calculate_total(*args):
         try:
             rate = float(rate_entry.get()) if rate_entry.get() else 0
-            quantity = float(quantity_entry.get()) if quantity_entry.get() else 0
+            quantity = float(quant_entry.get()) if quant_entry.get() else 0
 
             amount = rate * quantity
             amount_var.set(amount)
@@ -294,7 +316,7 @@ def generate_contract(root,sale_contract,account,contract_type,window,inventory,
     amount_entry.grid(row=2, column=1,padx=5)
 
     rate_entry.bind("<KeyRelease>",calculate_total)
-    quantity_entry.bind("<KeyRelease>",calculate_total)
+    quant_entry.bind("<KeyRelease>",calculate_total,check_quantity)
 
     tk.Label(contract_info, text="GST(%):").grid(row=2, column=2,padx=5)
     gst_default_value = 15
@@ -382,7 +404,7 @@ def generate_contract(root,sale_contract,account,contract_type,window,inventory,
         item = item_option.get()
         
         try:
-            quantity = int(quantity_entry.get())
+            quantity = int(quant_entry.get())
         except ValueError:
             messagebox.showerror("Error", "Fields can't be empty")
             return
@@ -1173,11 +1195,14 @@ def generate_invoice(root,invoices_to_save,account,inventory_sale,invoice_type,w
             if invoice_type == 'Sale':    
                 remaining_stock -= quantity
 
-                for i in inventory_item.find():
-                    if i.get('sld_stock','') != None:
-                        if i.get('sld_stock','') < i.get('quantity',''):
-                            sld_stock[len(sld_stock) + 1] = i
-                            break
+                if len(sld_stock) == 0:
+                    for i in inventory_item.find():
+                        if i.get('sld_stock','') != None:
+                            if i.get('sld_stock','') < i.get('quantity',''):
+                                sld_stock[len(sld_stock) + 1] = i
+                                if i.get('quantity','') - i.get('sld_stock','') >= quantity:
+                                   break
+
                 sld_stock[1]["sld_stock"] = sld_stock[1].get("sld_stock",0) + quantity
 
                 inventory_sale[len(inventory_sale) + 1] = {
