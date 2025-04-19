@@ -137,6 +137,10 @@ def main_menu_window(root,company_name,user_name):
 
 def sale_module_window(root,company_name,user_name):
     
+    clear_temp(sale_contracts, purchase_contracts, sale_transaction, purchase_transaction, inventory_sale,
+               existing_contracts, payments_temp, receipt_temp, pay_receip_temp, bank_temp, cash_temp,
+               client_temp, bank_ind_temp, tax_temp, pay_receip_balance, invoice_balance, sld_stock,
+               cost_of_goods)
     for widget in root.winfo_children():
         widget.destroy()
 
@@ -159,6 +163,10 @@ def sale_module_window(root,company_name,user_name):
 
 def purchase_module_window(root,company_name,user_name):
     
+    clear_temp(sale_contracts, purchase_contracts, sale_transaction, purchase_transaction, inventory_sale,
+               existing_contracts, payments_temp, receipt_temp, pay_receip_temp, bank_temp, cash_temp,
+               client_temp, bank_ind_temp, tax_temp, pay_receip_balance, invoice_balance, sld_stock,
+               cost_of_goods)
     for widget in root.winfo_children():
         widget.destroy()
 
@@ -181,6 +189,11 @@ def purchase_module_window(root,company_name,user_name):
 
 def payment_module_window(root,company_name,user_name):
 
+    clear_temp(sale_contracts, purchase_contracts, sale_transaction, purchase_transaction, inventory_sale,
+               existing_contracts, payments_temp, receipt_temp, pay_receip_temp, bank_temp, cash_temp,
+               client_temp, bank_ind_temp, tax_temp, pay_receip_balance, invoice_balance, sld_stock,
+               cost_of_goods)
+    
     for widget in root.winfo_children():
         widget.destroy()
 
@@ -204,6 +217,11 @@ def payment_module_window(root,company_name,user_name):
 
 def receipt_module_window(root,company_name,user_name):
 
+    clear_temp(sale_contracts, purchase_contracts, sale_transaction, purchase_transaction, inventory_sale,
+               existing_contracts, payments_temp, receipt_temp, pay_receip_temp, bank_temp, cash_temp,
+               client_temp, bank_ind_temp, tax_temp, pay_receip_balance, invoice_balance, sld_stock,
+               cost_of_goods)
+    
     for widget in root.winfo_children():
         widget.destroy()
 
@@ -227,6 +245,11 @@ def receipt_module_window(root,company_name,user_name):
 
 def inventory_module_window(root,company_name,user_name):
 
+    clear_temp(sale_contracts, purchase_contracts, sale_transaction, purchase_transaction, inventory_sale,
+               existing_contracts, payments_temp, receipt_temp, pay_receip_temp, bank_temp, cash_temp,
+               client_temp, bank_ind_temp, tax_temp, pay_receip_balance, invoice_balance, sld_stock,
+               cost_of_goods)
+
     for widget in root.winfo_children():
         widget.destroy()
 
@@ -248,6 +271,11 @@ def inventory_module_window(root,company_name,user_name):
     tk.Button(root, text="Exit",font=("Helvetica",10), width=20, command=root.destroy).pack(padx=10,pady=5)
 
 def client_module_window(root,company_name,user_name):
+
+    clear_temp(sale_contracts, purchase_contracts, sale_transaction, purchase_transaction, inventory_sale,
+               existing_contracts, payments_temp, receipt_temp, pay_receip_temp, bank_temp, cash_temp,
+               client_temp, bank_ind_temp, tax_temp, pay_receip_balance, invoice_balance, sld_stock,
+               cost_of_goods)
 
     for widget in root.winfo_children():
         widget.destroy()

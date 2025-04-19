@@ -17,11 +17,10 @@ invoice_balance = {}
 sld_stock = {}
 cost_of_goods = {}
 
-def clear_temp():
-    global sale_contracts, purchase_contracts, sale_transaction, purchase_transaction, inventory_sale
-    global existing_contracts, payments_temp, receipt_temp, pay_receip_temp, bank_temp, cash_temp
-    global client_temp, bank_ind_temp, tax_temp, pay_receip_balance, invoice_balance
-    global sld_stock, cost_of_goods
+def clear_temp(sale_contracts, purchase_contracts, sale_transaction, purchase_transaction, inventory_sale,
+               existing_contracts, payments_temp, receipt_temp, pay_receip_temp, bank_temp, cash_temp,
+               client_temp, bank_ind_temp, tax_temp, pay_receip_balance, invoice_balance, sld_stock,
+               cost_of_goods):
 
     sale_contracts.clear()
     purchase_contracts.clear()
