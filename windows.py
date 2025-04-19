@@ -79,7 +79,6 @@ def login_window(root,company_name):
 
 def main_menu_window(root,company_name,user_name):
 
-
     for widget in root.winfo_children():
         widget.destroy()
 

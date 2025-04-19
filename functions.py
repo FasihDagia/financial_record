@@ -1193,7 +1193,7 @@ def generate_invoice(root,invoices_to_save,account,inventory_sale,invoice_type,w
             # Updating inventory
             if invoice_type == 'Sale':    
                 remaining_stock -= quantity
-
+                quant = quantity
                 stock_sold = 0
                 if len(sld_stock) == 0:
                     for i in inventory_item.find():
@@ -1202,9 +1202,55 @@ def generate_invoice(root,invoices_to_save,account,inventory_sale,invoice_type,w
                                 sld_stock[len(sld_stock) + 1] = i
                                 stock_sold += i.get('quantity','') - i.get('sld_stock','')
                                 if stock_sold >= quantity:
-                                   break
-                sld_stock[1]["sld_stock"] = sld_stock[1].get("sld_stock",0) + quantity
-                print(stock_sold,"\n",sld_stock)    
+                                    break
+                else:
+            
+                    for i in sld_stock.values():
+                        if i.get('sld_stock','') != None:
+                            if i.get('sld_stock','') < i.get('quantity',''):
+                                stock_sold += i.get('quantity','') - i.get('sld_stock','')
+                                if stock_sold >= quantity:
+                                    break
+                    if stock_sold < quantity:
+                        for i in inventory_item.find():
+                            if i.get('sld_stock','') != None:
+                                if i.get('sld_stock','') < i.get('quantity',''):
+                                    for j in sld_stock.values():
+                                        if i.get('voucher_no','') != j.get('voucher_no',''):
+                                            sld_stock[len(sld_stock) + 1] = i
+                                    stock_sold += i.get('quantity','') - i.get('sld_stock','')
+                                    if stock_sold >= quantity:
+                                        break
+                
+                for invoice in sld_stock.values():
+                    stk_remain_sld_inv = invoice.get('quantity','') - invoice.get('sld_stock','')
+                    rate_goods = invoice.get('rate','')
+                    if quant > stk_remain_sld_inv:
+                        quant -= stk_remain_sld_inv
+                        cost = rate_goods*stk_remain_sld_inv
+                        quan = stk_remain_sld_inv
+                    else:
+                        stk_remain_sld_inv -= quant
+                        cost = rate_goods*quant
+                        quan = quant
+                        quant = 0
+                    
+                    cost_of_goods[len(cost_of_goods) + 1] = {
+                        's_no': sno_inventory,
+                        'date': date,   
+                        'voucher_no':voucher_no,
+                        'invoice_no': invoice_no,
+                        'item': item,
+                        'rate':rate_goods,
+                        'quantity': quan,
+                        'cost_of_goods':cost,
+                        'balance':0
+                    }
+                    if quant == 0:
+                        break
+                    
+                # print(stock_sold,quantity)
+                # print(sld_stock)
 
                 inventory_sale[len(inventory_sale) + 1] = {
                 's_no': sno_inventory,
