@@ -11,18 +11,17 @@ from reportlab.lib.enums import TA_LEFT
 def back(root,window,invoices,inventorys,existing_contracts,company_name,user_name):
 
     if len(inventorys) == 0 and len(invoices) == 0 :
+        invoices.clear()
+        inventorys.clear()            
+        existing_contracts.clear()
         window(root,company_name,user_name)
     else:
         confirm = messagebox.askyesno("Confirm", f"You have not saved the Invoices yet!\n Are you sure you want to go back?")
         if confirm:
             #deleting data from the temprory dictionary
             invoices.clear()
-
-            if inventorys != None:
-                inventorys.clear()
-            
-            if existing_contracts != None:
-                existing_contracts.clear()
+            inventorys.clear()            
+            existing_contracts.clear()
             
             window(root,company_name,user_name)
 
@@ -1195,15 +1194,17 @@ def generate_invoice(root,invoices_to_save,account,inventory_sale,invoice_type,w
             if invoice_type == 'Sale':    
                 remaining_stock -= quantity
 
+                stock_sold = 0
                 if len(sld_stock) == 0:
                     for i in inventory_item.find():
                         if i.get('sld_stock','') != None:
                             if i.get('sld_stock','') < i.get('quantity',''):
                                 sld_stock[len(sld_stock) + 1] = i
-                                if i.get('quantity','') - i.get('sld_stock','') >= quantity:
+                                stock_sold += i.get('quantity','') - i.get('sld_stock','')
+                                if stock_sold >= quantity:
                                    break
-
                 sld_stock[1]["sld_stock"] = sld_stock[1].get("sld_stock",0) + quantity
+                print(stock_sold,"\n",sld_stock)    
 
                 inventory_sale[len(inventory_sale) + 1] = {
                 's_no': sno_inventory,
@@ -1576,7 +1577,7 @@ def save(transactions,account,inventorys,existing_Contracts,contracts,inventory,
     else:
         messagebox.showerror("Error","No Invoices to save!")
 
-def save_contract(contracts,account):
+def save_contract(contracts,account,existing_contracts):
 
     if len(contracts) != 0:
         confirm = messagebox.askyesno("Confirm", f"Once the Contracts are saved you wont be able to cahnge them\nAre you sure you want to save?")
@@ -1586,6 +1587,7 @@ def save_contract(contracts,account):
                 account.insert_one(contract)
         
             contracts.clear()
+            existing_contracts.clear()
 
             messagebox.showinfo("Success","Contracts Saved Succesfully!")
     else:

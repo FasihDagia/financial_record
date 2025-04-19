@@ -226,6 +226,7 @@ def receipt_module_window(root,company_name,user_name):
     tk.Button(btn_frame_2, text="Exit",font=("Helvetica",10), width=15, command=root.destroy).grid(row=0,column=1, padx=5)
 
 def inventory_module_window(root,company_name,user_name):
+
     for widget in root.winfo_children():
         widget.destroy()
 
@@ -247,6 +248,7 @@ def inventory_module_window(root,company_name,user_name):
     tk.Button(root, text="Exit",font=("Helvetica",10), width=20, command=root.destroy).pack(padx=10,pady=5)
 
 def client_module_window(root,company_name,user_name):
+
     for widget in root.winfo_children():
         widget.destroy()
 
@@ -268,9 +270,8 @@ def client_module_window(root,company_name,user_name):
     tk.Button(root, text="Exit",font=("Helvetica",10), width=20, command=root.destroy).pack(padx=10,pady=5)
 
 def sale_contract_window(root,company_name,user_name):
-    global sale_contract,existing_contracts
+    
     account = db['sale_contract']
-
     existing_contract = account.find().sort("s_no", 1)
     sno_cont = 1
     for contract in existing_contract:
@@ -292,7 +293,7 @@ def sale_contract_window(root,company_name,user_name):
 
     tk.Button(button_frame,text='Generate Contract', width=15,command=lambda:generate_contract(root,sale_contracts,account,'Sale',sale_contract_window,inventory,customers,company_name,user_name)).grid(row=0, column=1,padx=5)
     tk.Button(button_frame, text= "Print Contract", width=15, command=lambda:print_contracts(root,sale_contracts,"SALE")).grid(row=0, column=2,padx=5)
-    tk.Button(button_frame, text="Save", width=15, command=lambda:save_contract(sale_contracts,account)).grid(row=0, column=3,padx=5)
+    tk.Button(button_frame, text="Save", width=15, command=lambda:save_contract(sale_contracts,account,existing_contracts)).grid(row=0, column=3,padx=5)
     tk.Button(button_frame, text="Back", width=15, command=lambda:back(root,sale_module_window,sale_contracts,inventory_sale,existing_contracts,company_name,user_name)).grid(row=0, column=4,padx=5)
     tk.Button(button_frame, text="Exit", width=15, command=root.destroy).grid(row=0, column=5,padx=5)
 
@@ -316,7 +317,6 @@ def sale_contract_window(root,company_name,user_name):
 
 def sale_invoice_window(root,company_name,user_name):
 
-    global sale_transaction,inventory_sale,existing_contracts
 
     account = db['sale_invoice']
     contracts = db["sale_contract"]
