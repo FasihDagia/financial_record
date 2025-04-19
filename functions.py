@@ -1244,10 +1244,15 @@ def generate_invoice(root,invoices_to_save,account,inventory_sale,invoice_type,w
                             balance_cost = last_entry.get("balance",0)
                     else:
                         balance_cost = cost_goods_temp[len(cost_goods_temp)]["balance"]
-                    
-                    balance_cost += cost
+
+                    if len(cost_goods_temp) == 0:
+                        sno_stock = no_entries + 1
+                    else:
+                        sno_stock = no_entries + len(cost_goods_temp) + 1
+
+                    balance_cost += cost 
                     cost_goods_temp[len(cost_goods_temp) + 1] = {
-                        's_no': sno,
+                        's_no': sno_stock,
                         'date': date,   
                         'voucher_no':voucher_no,
                         'invoice_no': invoice_no,
@@ -1257,13 +1262,13 @@ def generate_invoice(root,invoices_to_save,account,inventory_sale,invoice_type,w
                         'cost_of_goods':cost,
                         'balance':balance_cost
                     }
+
+                    #updating the sld_stock in the inventory
+                    update_sld_stock = invoice.get('sld_stock','') + quan
+                    invoice['sld_stock'] = float(update_sld_stock)
+
                     if quant == 0:
                         break
-                    
-                print(cost_goods_temp)
-
-                # print(stock_sold,quantity)
-                # print(sld_stock)
 
                 inventory_sale[len(inventory_sale) + 1] = {
                 's_no': sno_inventory,
