@@ -699,7 +699,7 @@ def print_contracts(root,contracts,contract_type):
             messagebox.showinfo("Success", f"Contract saved successfully at:\n{file_path}")
             popup_print_contract.destroy()
 
-def generate_invoice(root,invoices_to_save,account,inventory_sale,invoice_type,window,contracts,inventory,customers,pay_receip_balance,company_name,user_name,sld_stock,cost_of_goods):
+def generate_invoice(root,invoices_to_save,account,inventory_sale,invoice_type,window,contracts,inventory,customers,pay_receip_balance,company_name,user_name,sld_stock,cost_goods_temp,cost_goods):
 
     for widget in root.winfo_children():
         widget.destroy()
@@ -1234,9 +1234,20 @@ def generate_invoice(root,invoices_to_save,account,inventory_sale,invoice_type,w
                         cost = rate_goods*quant
                         quan = quant
                         quant = 0
+
+                    no_entries = cost_goods.count_documents({})
+                    if len(cost_goods_temp)==0:
+                        if no_entries == 0:
+                            balance_cost = 0 
+                        else:
+                            last_entry = cost_goods.find_one(sort=[("_id", -1)])
+                            balance_cost = last_entry.get("balance",0)
+                    else:
+                        balance_cost = cost_goods_temp[len(cost_goods_temp)]["balance"]
                     
-                    cost_of_goods[len(cost_of_goods) + 1] = {
-                        's_no': sno_inventory,
+                    balance_cost += cost
+                    cost_goods_temp[len(cost_goods_temp) + 1] = {
+                        's_no': sno,
                         'date': date,   
                         'voucher_no':voucher_no,
                         'invoice_no': invoice_no,
@@ -1244,11 +1255,13 @@ def generate_invoice(root,invoices_to_save,account,inventory_sale,invoice_type,w
                         'rate':rate_goods,
                         'quantity': quan,
                         'cost_of_goods':cost,
-                        'balance':0
+                        'balance':balance_cost
                     }
                     if quant == 0:
                         break
                     
+                print(cost_goods_temp)
+
                 # print(stock_sold,quantity)
                 # print(sld_stock)
 

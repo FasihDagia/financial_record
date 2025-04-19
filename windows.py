@@ -139,7 +139,7 @@ def sale_module_window(root,company_name,user_name):
     clear_temp(sale_contracts, purchase_contracts, sale_transaction, purchase_transaction, inventory_sale,
                existing_contracts, payments_temp, receipt_temp, pay_receip_temp, bank_temp, cash_temp,
                client_temp, bank_ind_temp, tax_temp, pay_receip_balance, invoice_balance, sld_stock,
-               cost_of_goods)
+               cost_goods_temp)
     for widget in root.winfo_children():
         widget.destroy()
 
@@ -165,7 +165,7 @@ def purchase_module_window(root,company_name,user_name):
     clear_temp(sale_contracts, purchase_contracts, sale_transaction, purchase_transaction, inventory_sale,
                existing_contracts, payments_temp, receipt_temp, pay_receip_temp, bank_temp, cash_temp,
                client_temp, bank_ind_temp, tax_temp, pay_receip_balance, invoice_balance, sld_stock,
-               cost_of_goods)
+               cost_goods_temp)
     for widget in root.winfo_children():
         widget.destroy()
 
@@ -191,7 +191,7 @@ def payment_module_window(root,company_name,user_name):
     clear_temp(sale_contracts, purchase_contracts, sale_transaction, purchase_transaction, inventory_sale,
                existing_contracts, payments_temp, receipt_temp, pay_receip_temp, bank_temp, cash_temp,
                client_temp, bank_ind_temp, tax_temp, pay_receip_balance, invoice_balance, sld_stock,
-               cost_of_goods)
+               cost_goods_temp)
     
     for widget in root.winfo_children():
         widget.destroy()
@@ -219,7 +219,7 @@ def receipt_module_window(root,company_name,user_name):
     clear_temp(sale_contracts, purchase_contracts, sale_transaction, purchase_transaction, inventory_sale,
                existing_contracts, payments_temp, receipt_temp, pay_receip_temp, bank_temp, cash_temp,
                client_temp, bank_ind_temp, tax_temp, pay_receip_balance, invoice_balance, sld_stock,
-               cost_of_goods)
+               cost_goods_temp)
     
     for widget in root.winfo_children():
         widget.destroy()
@@ -247,7 +247,7 @@ def inventory_module_window(root,company_name,user_name):
     clear_temp(sale_contracts, purchase_contracts, sale_transaction, purchase_transaction, inventory_sale,
                existing_contracts, payments_temp, receipt_temp, pay_receip_temp, bank_temp, cash_temp,
                client_temp, bank_ind_temp, tax_temp, pay_receip_balance, invoice_balance, sld_stock,
-               cost_of_goods)
+               cost_goods_temp)
 
     for widget in root.winfo_children():
         widget.destroy()
@@ -274,7 +274,7 @@ def client_module_window(root,company_name,user_name):
     clear_temp(sale_contracts, purchase_contracts, sale_transaction, purchase_transaction, inventory_sale,
                existing_contracts, payments_temp, receipt_temp, pay_receip_temp, bank_temp, cash_temp,
                client_temp, bank_ind_temp, tax_temp, pay_receip_balance, invoice_balance, sld_stock,
-               cost_of_goods)
+               cost_goods_temp)
 
     for widget in root.winfo_children():
         widget.destroy()
@@ -344,7 +344,7 @@ def sale_contract_window(root,company_name,user_name):
 
 def sale_invoice_window(root,company_name,user_name):
 
-
+    cost_goods = expenses[f'cost_of_goods_{company_name}'] 
     account = db['sale_invoice']
     contracts = db["sale_contract"]
 
@@ -369,7 +369,7 @@ def sale_invoice_window(root,company_name,user_name):
     button_frame = tk.Frame(root)
     button_frame.pack(pady=10)
 
-    tk.Button(button_frame,text='Generate Invoice', width=15,command=lambda:generate_invoice(root,sale_transaction,account,inventory_sale,"Sale",sale_invoice_window,existing_contracts,inventory,customers,pay_receip_balance,company_name,user_name,sld_stock,cost_of_goods)).grid(row=0, column=1,padx=5)
+    tk.Button(button_frame,text='Generate Invoice', width=15,command=lambda:generate_invoice(root,sale_transaction,account,inventory_sale,"Sale",sale_invoice_window,existing_contracts,inventory,customers,pay_receip_balance,company_name,user_name,sld_stock,cost_goods_temp,cost_goods)).grid(row=0, column=1,padx=5)
     tk.Button(button_frame, text="Print Invoice", width=15, command=lambda:print_invoice(sale_transaction,"SALE",root)).grid(row=0,column=2,padx=5)
     tk.Button(button_frame, text="Save", width=15, command=lambda:save(sale_transaction,account,inventory_sale,existing_contracts,contracts,inventory,pay_receip_balance,customers,'Sale')).grid(row=0, column=3,padx=5)
     tk.Button(button_frame, text="Back", width=15, command=lambda:back(root,sale_module_window,sale_transaction,inventory_sale,existing_contracts,company_name,user_name)).grid(row=0, column=4,padx=5)
@@ -530,7 +530,7 @@ def purchase_invoice_window(root,company_name,user_name):
     button_frame = tk.Frame(root)
     button_frame.pack(pady=10)
 
-    tk.Button(button_frame,text='Generate Invoice', width=15,command=lambda:generate_invoice(root,purchase_transaction,account,inventory_sale,"Purchase",purchase_invoice_window,existing_contracts,inventory,customers,pay_receip_balance,company_name,user_name,sld_stock,cost_of_goods)).grid(row=0, column=1,padx=5)
+    tk.Button(button_frame,text='Generate Invoice', width=15,command=lambda:generate_invoice(root,purchase_transaction,account,inventory_sale,"Purchase",purchase_invoice_window,existing_contracts,inventory,customers,pay_receip_balance,company_name,user_name,sld_stock,cost_goods_temp)).grid(row=0, column=1,padx=5)
     tk.Button(button_frame, text="Print Invoice", width=15, command=lambda:print_invoice(purchase_transaction,"PURCHASE",root)).grid(row=0,column=2,padx=5)
     tk.Button(button_frame, text="Save", width=15, command=lambda:save(purchase_transaction,account,inventory_sale,existing_contracts,contracts,inventory,pay_receip_balance,customers,'Purchase')).grid(row=0, column=3,padx=5)
     tk.Button(button_frame, text="Back", width=15, command=lambda:back(root,purchase_module_window,purchase_transaction,inventory_sale,existing_contracts,company_name,user_name)).grid(row=0, column=4,padx=5)
