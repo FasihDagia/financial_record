@@ -1204,7 +1204,6 @@ def generate_invoice(root,invoices_to_save,account,inventory_sale,invoice_type,w
                                 if stock_sold >= quantity:
                                     break
                 else:
-            
                     for i in sld_stock.values():
                         if i.get('sld_stock','') != None:
                             if i.get('sld_stock','') < i.get('quantity',''):
@@ -1595,7 +1594,7 @@ def load_contracts(table_contract,contracts):
         ))
         i+=1
 
-def save(transactions,account,inventorys,existing_Contracts,contracts,inventory,pay_receip_balance,customers,invoice_type):
+def save(transactions,account,inventorys,existing_Contracts,contracts,inventory,pay_receip_balance,customers,invoice_type,sld_stock,cost_goods_temp,cost_goods):
 
     if len(transactions) != 0:
         confirm = messagebox.askyesno("Confirm", f"Once the Invoices are saved you wont be able to cahnge them\nAre you sure you want to save invoices?")
@@ -1627,16 +1626,27 @@ def save(transactions,account,inventorys,existing_Contracts,contracts,inventory,
 
             #updating stock in inventory
             if inventorys != None:
-                for inventory_update in inventorys.values():
-                    item = inventory_update.get('item','')
+                for inventory_add in inventorys.values():
+                    item = inventory_add.get('item','')
                     inventory_item = inventory[item]
-                    inventory_item.insert_one(inventory_update)
+                    inventory_item.insert_one(inventory_add)
                     inventory_detail = inventory["inventory_details"]
-                    inventory_detail.update_one({'item':item},{'$set':{'remaining_stock':inventory_update.get('remaining_stock','')}})
+                    inventory_detail.update_one({'item':item},{'$set':{'remaining_stock':inventory_add.get('remaining_stock','')}})
+
+            if invoice_type == 'Sale':
+                for cost_update in cost_goods_temp.values():
+                    cost_goods.insert_one(cost_update)
+                
+                for inventory_upadte in sld_stock.values():
+                    item_name = inventory_upadte.get('item','')
+                    inventory_item = inventory[item_name]
+                    inventory_item.update_one({'s_no':inventory_upadte.get('s_no')},{'$set':{'sld_stock':inventory_upadte.get('sld_stock','')}})
 
             inventorys.clear()
             transactions.clear()
             pay_receip_balance.clear()
+            sld_stock.clear()
+            cost_goods_temp.clear()
             messagebox.showinfo("Success","Invoices saved Succesfully!")
     else:
         messagebox.showerror("Error","No Invoices to save!")
