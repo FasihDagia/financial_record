@@ -119,7 +119,7 @@ def table_contract(table_contract):
     table_contract.heading("Total Amount", text="Total Amount")
     table_contract.column("Total Amount", anchor="center", width=50)
 
-def generate_contract(root,sale_contract,account,contract_type,window,inventory,customers,company_name,user_name):
+def generate_contract(root,sale_contract,account,contract_type,window,inventory,customers,company_name,user_name,com_profile):
     
     for widget in root.winfo_children():
         widget.destroy()
@@ -129,6 +129,8 @@ def generate_contract(root,sale_contract,account,contract_type,window,inventory,
     root.maxsize(600,800)
 
     root.title("Generate Contract")
+
+    tax = com_profile['tax']
 
     tk.Label(root, text=f"{contract_type} Contract", font=("Helvetica", 16)).pack(pady=10)
     headings = tk.Frame()
@@ -250,8 +252,6 @@ def generate_contract(root,sale_contract,account,contract_type,window,inventory,
             messagebox.showerror("Error", "Quantity can't be more than the available stock")
             quantity_default.set(str(remaining_stock))
 
-    # Wrappers to use with trace and bind  
-
     tk.Label(contract_info, text="Quantity:").grid(row=0,column=2,padx=5)
     quantity_default = StringVar(value=0)
     quant_entry = tk.Entry(contract_info,width=10,textvariable=quantity_default)  
@@ -318,7 +318,8 @@ def generate_contract(root,sale_contract,account,contract_type,window,inventory,
     quant_entry.bind("<KeyRelease>",calculate_total,check_quantity)
 
     tk.Label(contract_info, text="GST(%):").grid(row=2, column=2,padx=5)
-    gst_default_value = 15
+    tax_percent = tax.find_one({"company_name":"DFT Enterprises"})
+    gst_default_value = tax_percent.get("gst_percent","")
     gst_default_value_assign = tk.StringVar(value=gst_default_value)
     gst_entry = tk.Entry(contract_info, width=width, textvariable=gst_default_value_assign)
     gst_entry.grid(row=2, column=3)
@@ -329,7 +330,9 @@ def generate_contract(root,sale_contract,account,contract_type,window,inventory,
     gst_amount_entry.grid(row=3, column=1,padx=5)
 
     tk.Label(contract_info, text="Further Tax(%):").grid(row=3, column=2,padx=5)
-    further_tax_entry = tk.Entry(contract_info, width=width)
+    fut_default_value = tax_percent.get("further_tax_percent","")
+    fut_default_value_assign = tk.StringVar(value=fut_default_value)
+    further_tax_entry = tk.Entry(contract_info, width=width,textvariable=fut_default_value_assign)
     further_tax_entry.grid(row=3, column=3)
 
     tk.Label(contract_info,text="Futher Tax Amount:").grid(row=4, column=0,pady=7)

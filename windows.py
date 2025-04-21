@@ -298,6 +298,7 @@ def client_module_window(root,company_name,user_name):
 
 def sale_contract_window(root,company_name,user_name):
     
+    com_profile = client[f'company_profile_{company_name.replace(" ","_").lower()}']
     account = db['sale_contract']
     existing_contract = account.find().sort("s_no", 1)
     sno_cont = 1
@@ -318,7 +319,7 @@ def sale_contract_window(root,company_name,user_name):
     button_frame = tk.Frame(root)
     button_frame.pack()
 
-    tk.Button(button_frame,text='Generate Contract', width=15,command=lambda:generate_contract(root,sale_contracts,account,'Sale',sale_contract_window,inventory,customers,company_name,user_name)).grid(row=0, column=1,padx=5)
+    tk.Button(button_frame,text='Generate Contract', width=15,command=lambda:generate_contract(root,sale_contracts,account,'Sale',sale_contract_window,inventory,customers,company_name,user_name,com_profile)).grid(row=0, column=1,padx=5)
     tk.Button(button_frame, text= "Print Contract", width=15, command=lambda:print_contracts(root,sale_contracts,"SALE")).grid(row=0, column=2,padx=5)
     tk.Button(button_frame, text="Save", width=15, command=lambda:save_contract(sale_contracts,account,existing_contracts)).grid(row=0, column=3,padx=5)
     tk.Button(button_frame, text="Back", width=15, command=lambda:back(root,sale_module_window,sale_contracts,inventory_sale,existing_contracts,company_name,user_name)).grid(row=0, column=4,padx=5)
@@ -455,7 +456,7 @@ def sale_return_window(root,inventory,company_name,user_name):
 
 def purchase_contract_window(root,company_name,user_name):
 
-    global purchase_contracts,existing_contracts
+    com_profile = client[f'company_profile_{company_name.replace(" ","_").lower()}']
     account = db['purchase_contract']
     existing_contract = account.find().sort("s_no", 1)
     existing_contracts = {}
@@ -477,7 +478,7 @@ def purchase_contract_window(root,company_name,user_name):
     button_frame = tk.Frame(root)
     button_frame.pack()
 
-    tk.Button(button_frame,text='Generate Contract', width=15,command=lambda:generate_contract(root,purchase_contracts,account,'Purchacse',purchase_contract_window,inventory,customers,company_name,user_name)).grid(row=0, column=1,padx=5)
+    tk.Button(button_frame,text='Generate Contract', width=15,command=lambda:generate_contract(root,purchase_contracts,account,'Purchacse',purchase_contract_window,inventory,customers,company_name,user_name,com_profile)).grid(row=0, column=1,padx=5)
     tk.Button(button_frame, text= "Print Contract", width=15, command=lambda:print_contracts(root,purchase_contracts,"PURCHASE")).grid(row=0, column=2,padx=5)
     tk.Button(button_frame, text="Save", width=15, command=lambda:save_contract(purchase_contracts,account)).grid(row=0, column=3,padx=5)
     tk.Button(button_frame, text="Back", width=15, command=lambda:back(root,purchase_module_window,purchase_contracts,inventory_sale,existing_contracts,company_name,user_name)).grid(row=0, column=4,padx=5)
