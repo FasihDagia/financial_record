@@ -5,7 +5,7 @@ import pymongo as pm
 
 from temp_data_store import *
 from database_connect import *
-from login_register import user_login,create_company
+from login_register import user_login,create_company,toggle_password
 from profile_functions import show_company_profile
 from functions import generate_contract,print_contracts,generate_invoice,save,load_transactions,table,back,return_invoice,print_invoice,table_contract,load_contracts,save_contract
 from inventory_functions import inventory_check,existing_products,add_product,remove_product
@@ -68,6 +68,9 @@ def login_window(root,company_name):
     tk.Label(entry_frame,text="Password:",font=("Helvetica",10)).grid(row=1,column=0,padx=10,pady=10)
     password = tk.Entry(entry_frame,width=30,show="*",font=("Helvetica",10,"bold"))
     password.grid(row=1,column=1,padx=10,pady=10)
+
+    toggle_btn = tk.Button(entry_frame, text='👁️', command=lambda:toggle_password(toggle_btn,password), relief='flat', cursor='hand2',width=0)
+    toggle_btn.grid(row=1,column=2,padx=2)
     
     login_button = tk.Button(login,text="Login",font=("Helvetica",10),width=20,command=lambda:user_login(username,password,client,login,login_button,root,main_menu_window,company_name,bck_button))
     login_button.pack(padx=10,pady=10)

@@ -4,6 +4,16 @@ from tkinter import ttk, messagebox, simpledialog,filedialog
 from datetime import datetime
 
 warning = None
+
+
+def toggle_password(toggle_btn,entry):
+    if entry.cget('show') == '':
+        entry.config(show='*')
+        toggle_btn.config(text='👁️')  # Eye icon
+    else:
+        entry.config(show='')
+        toggle_btn.config(text='🙈')  # Eye-off icon
+
 def user_login(username_entry, password_entry,client,login,login_button,root,window,company_name,bck_button):  
     global warning
     company_profile = client[f'company_profile_{company_name.lower().replace(" ","_")}']
