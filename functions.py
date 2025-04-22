@@ -1023,13 +1023,6 @@ def generate_invoice(root,invoices_to_save,account,inventory_sale,invoice_type,w
             voucher_no = voucher_entry.cget("text")
             invoice_no = invoice_entry.get()
 
-        saved_transactions = account.count_documents({})
-
-        if len(invoices_to_save) == 0:
-            sno = saved_transactions + 1
-        else:
-            sno = saved_transactions + len(invoices_to_save) + 1
-
         date = date_entry.get()
         contract_no = contract_option.get()  
         account_recevible = party_name_option.get()
@@ -1072,6 +1065,12 @@ def generate_invoice(root,invoices_to_save,account,inventory_sale,invoice_type,w
             messagebox.showerror("Error", "Fields can't be empty")
             return
         else:
+            saved_transactions = account.count_documents({})
+            if len(invoices_to_save) == 0:
+                sno = saved_transactions + 1
+            else:
+                sno = saved_transactions + len(invoices_to_save) + 1
+
             if len(invoices_to_save) == 0:
                 if saved_transactions == 0:
                     balance = 0
@@ -1082,46 +1081,7 @@ def generate_invoice(root,invoices_to_save,account,inventory_sale,invoice_type,w
                 balance = invoices_to_save[len(invoices_to_save)]['balance']
             
             balance += total_amount
-            
-            if invoice_type == 'Sale':
-                clients = customers[f"sale_invoice_{account_recevible}"] 
-            elif invoice_type == 'Purchase':
-                clients = customers[f"purchase_invoice_{account_recevible}"]
-
-            no_entries_2 = clients.count_documents({})
-            if len(pay_receip_balance) != 0:
-                balance2 = 0
-                for i in pay_receip_balance.values():
-                    if i.get("opp_acc","") == account_recevible:
-                        balance2 = i.get("balance",0)
-
-                if balance2 == 0:
-                    last_entry_2 = clients.find_one(sort=[("_id", -1)])
-                    balance2 = last_entry_2.get("balance",0)
-
-            elif len(pay_receip_balance) == 0:
-                if no_entries_2 == 0:
-                    balance2 = 0
-                else:
-                    last_entry_2 = clients.find_one(sort=[("_id", -1)])
-                    balance2 = last_entry_2.get("balance",0)
-
-
-            if len(pay_receip_balance) == 0:
-                sno2 = no_entries_2 + 1
-            else:
-                j = 0
-                sno2 = no_entries_2 + 1
-                for i in pay_receip_balance.values():
-                    if i.get("account_recevible","") == account_recevible:
-                        j +=1
-                        sno2 += j
-
-            if invoice_type == 'Sale':
-                balance2 -= total_amount
-            elif invoice_type == 'Purchase':
-                balance2 += total_amount
-
+    
             invoices_to_save[len(invoices_to_save) + 1] = {
                 's_no': sno,
                 'date': date,
@@ -1146,6 +1106,44 @@ def generate_invoice(root,invoices_to_save,account,inventory_sale,invoice_type,w
                 'balance': balance
             }
         
+            if invoice_type == 'Sale':
+                clients = customers[f"sale_invoice_{account_recevible}"] 
+            elif invoice_type == 'Purchase':
+                clients = customers[f"purchase_invoice_{account_recevible}"]
+
+            no_entries_2 = clients.count_documents({})
+            if len(pay_receip_balance) != 0:
+                balance2 = 0
+                for i in pay_receip_balance.values():
+                    if i.get("opp_acc","") == account_recevible:
+                        balance2 = i.get("balance",0)
+
+                if balance2 == 0:
+                    last_entry_2 = clients.find_one(sort=[("_id", -1)])
+                    balance2 = last_entry_2.get("balance",0)
+
+            elif len(pay_receip_balance) == 0:
+                if no_entries_2 == 0:
+                    balance2 = 0
+                else:
+                    last_entry_2 = clients.find_one(sort=[("_id", -1)])
+                    balance2 = last_entry_2.get("balance",0)
+
+            if len(pay_receip_balance) == 0:
+                sno2 = no_entries_2 + 1
+            else:
+                j = 0
+                sno2 = no_entries_2 + 1
+                for i in pay_receip_balance.values():
+                    if i.get("account_recevible","") == account_recevible:
+                        j +=1
+                        sno2 += j
+
+            if invoice_type == 'Sale':
+                balance2 -= total_amount
+            elif invoice_type == 'Purchase':
+                balance2 += total_amount
+
             pay_receip_balance[len(pay_receip_balance) + 1] = {
                 's_no': sno2,
                 'date': date,
@@ -1672,16 +1670,6 @@ def save_contract(contracts,account,existing_contracts):
 
 def return_invoice(root,inventory,invoice_return,contract_type,return_account,account,window,company_name,user_name):
 
-    # current_date = datetime.now()
-    # year = current_date.year
-    # if contract_type == 'sale':
-    #     contract_no = simpledialog.askstring("Input", "Enter Invoice NO:")
-    #     contract_no = f"SL{contract_no.zfill(5)}/{year}"
-
-    # else:
-    #     contract_no = simpledialog.askstring("Input", "Enter Voucher NO:")
-    #     contract_no = f"PU{contract_no.zfill(5)}/{year}"
-
     popup_print_contract = tk.Toplevel(root)
 
     popup_print_contract.geometry("300x100")
@@ -1714,58 +1702,11 @@ def return_invoice(root,inventory,invoice_return,contract_type,return_account,ac
     tk.Button(btn, text="Back", font=("Helvetica",8), width=10,command=popup_print_contract.destroy).grid(column=1,row=0,padx=5,pady=5)
 
     def return_invoice():
-
-        # for keys in list(invoice_return.keys()):  # Iterate over a copy of the keys
-        #     inv = invoice_return[keys]
-        #     if inv.get('contract_no','') == contract_no or inv.get('voucher_no','') == contract_no:
-
-        #         invoice_return[keys]['return'] = 'returned'
-        #         invoice_return[keys]['return_date'] = current_date.strftime("%Y-%m-%d")
-        #         sno_return = return_account.count_documents({})
-        #         invoice_return[keys]['s_no'] = sno_return + 1
-        #         return_account.insert_one(inv)
-
-        #         if keys == 1:
-        #             break
-        #         else:
-        #             balance = invoice_return[keys-1]['balance']
-
-        #             for i in range(keys+1,len(invoice_return)+1):
-        #                 total_amount = invoice_return[i]['total_amount']
-        #                 balance += total_amount
-        #                 s_no = invoice_return[i]['s_no']
-        #                 invoice_return[i]['balance'] = balance
-        #                 invoice_return[i]['s_no'] = s_no - 1
-
-        #         item = invoice_return[keys]['item']
-        #         inventory_item = inventory[item]
-        #         # if contract_type == 'sale':
-        #         #     # invoice = inventory_item.find_one({'contract_no':contract_no})
-        #         # else:
-        #             # invoice = inventory_item.find_one({'voucher_no':contract_no})
-
-        #         sno_inventory = invoice.get('s_no','')
-        #         if sno_inventory == 1:
-        #             remaining_stock = 0
-        #         else:
-        #             inven = inventory_item.find_one({'s_no':sno_inventory-1})
-        #             remaining_stock = inven.get('remaining_stock','')
-                
-        #         total_invoices = inventory_item.count_documents({})
-        #         for i in range(sno_inventory+1,total_invoices+1):
-        #             invoice_to_update = inventory_item.find_one({'s_no':i})
-        #             quantity = invoice_to_update.get('quantity')
-        #             voucher_no = invoice_to_update.get('voucher_no')
-
-        #             if voucher_no == None:
-        #                 remaining_stock -= quantity
-        #             else:
-        #                 remaining_stock += quantity
-                    
-        #             inventory_item.update_one({'s_no':i},{'$set':{'s_no':i-1,'remaining_stock':remaining_stock}})
-
-        #         del invoice_return[keys]    
-
+        if contract_type == 'sale':
+            invoice_no = contract_opt.get()
+        else:
+            voucher_no = contract_opt.get()
+        
         # account.delete_many({})
 
         # for invoices in invoice_return.values():
