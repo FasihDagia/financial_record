@@ -69,7 +69,7 @@ def login_window(root,company_name):
     password = tk.Entry(entry_frame,width=30,show="*",font=("Helvetica",10,"bold"))
     password.grid(row=1,column=1,padx=10,pady=10)
 
-    toggle_btn = tk.Button(entry_frame, text='👁️', command=lambda:toggle_password(toggle_btn,password), relief='flat', cursor='hand2',width=0)
+    toggle_btn = tk.Button(entry_frame, text='show', command=lambda:toggle_password(toggle_btn,password), relief='flat', cursor='hand2',width=5)
     toggle_btn.grid(row=1,column=2,padx=2)
     
     login_button = tk.Button(login,text="Login",font=("Helvetica",10),width=20,command=lambda:user_login(username,password,client,login,login_button,root,main_menu_window,company_name,bck_button))

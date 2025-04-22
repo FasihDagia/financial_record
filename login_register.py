@@ -9,10 +9,10 @@ warning = None
 def toggle_password(toggle_btn,entry):
     if entry.cget('show') == '':
         entry.config(show='*')
-        toggle_btn.config(text='👁️')  # Eye icon
+        toggle_btn.config(text='show')  # Eye icon
     else:
         entry.config(show='')
-        toggle_btn.config(text='🙈')  # Eye-off icon
+        toggle_btn.config(text='hide')  # Eye-off icon
 
 def user_login(username_entry, password_entry,client,login,login_button,root,window,company_name,bck_button):  
     global warning
