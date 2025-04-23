@@ -1717,7 +1717,7 @@ def return_invoice(root,inventory,invoice_return,contract_type,return_account,ac
                 def return_inv(inv_vou_no,permanent,amount,balance,operation,being_update,return_account):
                     current_date = datetime.now()
                     no_inv = 0
-                    no_inv_returned = 0
+    
                     for invoice in permanent.find():
                         if invoice.get("invoice_no","") == inv_vou_no or invoice.get("voucher_no","") == inv_vou_no:
                             s_no = invoice.get("s_no","")                           
@@ -1740,12 +1740,7 @@ def return_invoice(root,inventory,invoice_return,contract_type,return_account,ac
                             if being_update == "invoice":
                                 return_account.insert_one(invoice)
                                 permanent.delete_one({'return':'returned'})
-                            no_inv_returned +=1
-                        
-                        if no_inv > no_inv_returned+10:
-                            break
-
-
+                                           
 
                 # account.delete_({})
 
