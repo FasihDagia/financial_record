@@ -1686,6 +1686,7 @@ def return_invoice(root,inventory,invoice_return,contract_type,return_account,ac
             contract_options.append(contract.get('invoice_no',''))  
         contract_options.sort()    
         contract_opt = tk.StringVar(value="Invoice No")
+        type_return = "Invoice No"
     else:
         popup_print_contract.title("Return Voucher")
         tk.Label(frame,text=f"Voucher No:",font=("Helvetica",10)).grid(row=0,column=0,pady=5)
@@ -1693,25 +1694,64 @@ def return_invoice(root,inventory,invoice_return,contract_type,return_account,ac
             contract_options.append(contract.get('voucher_no',''))  
         contract_options.sort()    
         contract_opt = tk.StringVar(value="Voucher No")
+        type_return = "Voucher_no"
     contract_entry = tk.OptionMenu(frame, contract_opt, *contract_options)
     contract_entry.grid(row=0,column=1,pady=5)
 
     btn = tk.Frame(popup_print_contract)
     btn.pack()
-    tk.Button(btn, text="Return", font=("Helvetica",8), width=10 ,command=lambda:return_invoice).grid(column=0,row=0,padx=5,pady=5)
+    tk.Button(btn, text="Return", font=("Helvetica",8), width=10 ,command=lambda:return_in(type_return)).grid(column=0,row=0,padx=5,pady=5)
     tk.Button(btn, text="Back", font=("Helvetica",8), width=10,command=popup_print_contract.destroy).grid(column=1,row=0,padx=5,pady=5)
 
-    def return_invoice():
-        if contract_type == 'sale':
-            invoice_no = contract_opt.get()
-        else:
-            voucher_no = contract_opt.get()
+    def return_in(type_return):
         
-        # account.delete_many({})
+        inv_vou_no = contract_opt.get()
+        
+        if not inv_vou_no:
+            messagebox.showerror("Error", f"Select a{type_return}")
+            return
+        else:
+            confirm = messagebox.askyesno("Confirm", "Do you want to Delete?")
+            if confirm:
 
-        # for invoices in invoice_return.values():
-        #     account.insert_one(invoices)
+                def return_inv(inv_vou_no,permanent,amount,balance,operation,being_update,return_account):
+                    current_date = datetime.now()
+                    no_inv = 0
+                    no_inv_returned = 0
+                    for invoice in permanent.find():
+                        if invoice.get("invoice_no","") == inv_vou_no or invoice.get("voucher_no","") == inv_vou_no:
+                            s_no = invoice.get("s_no","")                           
+                            prev_inv = permanent.find_one({"s_no":s_no-1})
+                            if prev_inv == None:
+                                balan = 0
+                            else:
+                                balan = prev_inv.get(balance,"")
+                            count = permanent.count_documents({})
+                            permanent.update_one({"s_no":s_no},{"$set":{'return':'returned','return_date' : current_date.strftime("%Y-%m-%d")}})
+                            for inv in range(s_no+1,count+1):
+                                inv_update = permanent.find_one({"s_no":inv})
+                                amont = inv_update.get(amount,"")
+                                if operation == "+":
+                                   balan += amont
+                                elif operation == "-":
+                                    balan -= amont
+                                permanent.update_one({"s_no":inv},{"$set":{balance:balan}})
+                            
+                            if being_update == "invoice":
+                                return_account.insert_one(invoice)
+                                permanent.delete_one({'return':'returned'})
+                            no_inv_returned +=1
+                        
+                        if no_inv > no_inv_returned+10:
+                            break
 
-        # inventory_item.delete_one({"s_no":sno_inventory})
-        # messagebox.showinfo("Success", f"{contract_type.capitalize()} Invoice returned Successfully")
-        window(root,inventory,company_name,user_name)
+
+
+                # account.delete_({})
+
+                # for invoices in invoice_return.values():
+                #     account.insert_one(invoices)
+
+                # inventory_item.delete_one({"s_no":sno_inventory})
+                # messagebox.showinfo("Success", f"{contract_type.capitalize()} Invoice returned Successfully")
+                window(root,inventory,company_name,user_name)
