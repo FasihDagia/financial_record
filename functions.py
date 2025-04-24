@@ -926,7 +926,7 @@ def generate_invoice(root,invoices_to_save,account,inventory_sale,invoice_type,w
                 if (quantity + contract_details.get("delivered_qant","")) > contract_details['quantity']:
                     messagebox.showerror("Error", "Quantity can't be more than the agreed quantity")
                     quantity_default.set(contract_details.get("quantity", "")-contract_details.get("delivered_qant"))
-        
+                    
         calculate_total()
 
     def check_rate(*args):
@@ -1745,7 +1745,11 @@ def return_invoice(root,inventory,contract_type,return_account,account,window,co
 
                                 return_account.insert_one(invoice)
                                 permanent.delete_one({'return':'returned'})
-
+                            elif being_update == "cost_of_goods":
+                                pass
+                            elif being_update == "customer_inv":
+                                pass
+                            
                             no_inv +=1
                         no_documents = permanent.count_documents({"invoice_no":inv_vou_no})
                         if no_inv> no_documents:
