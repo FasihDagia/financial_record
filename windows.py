@@ -302,7 +302,7 @@ def client_module_window(root,company_name,user_name):
 def sale_contract_window(root,company_name,user_name):
     
     com_profile = client[f'company_profile_{company_name.replace(" ","_").lower()}']
-    account = db['sale_contract']
+    account = db[f'sale_contract_{company_name.replace(" ","_").lower()}']
     existing_contract = account.find().sort("s_no", 1)
     sno_cont = 1
     for contract in existing_contract:
@@ -349,8 +349,8 @@ def sale_contract_window(root,company_name,user_name):
 def sale_invoice_window(root,company_name,user_name):
 
     cost_goods = expenses[f'cost_of_goods_{company_name.lower().replace(" ","_")}'] 
-    account = db['sale_invoice']
-    contracts = db["sale_contract"]
+    account = db[f'sale_invoice_{company_name.lower().replace(" ","_")}']
+    contracts = db[f"sale_contract_{company_name.lower().replace(" ","_")}"]
 
     existing_contract = contracts.find().sort("s_no", 1)
     sno_cont = 1
@@ -400,10 +400,8 @@ def sale_invoice_window(root,company_name,user_name):
 
 def sale_return_window(root,inventory,company_name,user_name):
     
-    global sale_transaction,inventory_sale 
-
-    account = db['sale_invoice']
-    return_account = db['sale_return']
+    account = db[f'sale_invoice_{company_name.lower().replace(" ","_")}']
+    return_account = db[f'sale_return_{company_name.lower().replace(" ","_")}']
 
     for widget in root.winfo_children():
         widget.destroy()
@@ -460,7 +458,7 @@ def sale_return_window(root,inventory,company_name,user_name):
 def purchase_contract_window(root,company_name,user_name):
 
     com_profile = client[f'company_profile_{company_name.replace(" ","_").lower()}']
-    account = db['purchase_contract']
+    account = db[f'purchase_contract_{company_name.lower().replace(" ","_")}']
     existing_contract = account.find().sort("s_no", 1)
     existing_contracts = {}
     sno_cont = 1
@@ -509,8 +507,8 @@ def purchase_invoice_window(root,company_name,user_name):
 
     #accessing the particular collection
     cost_goods = expenses[f'cost_of_goods_{company_name.lower().replace(" ","_")}']
-    account = db['purchase_invoice']
-    contracts = db["purchase_contract"]
+    account = db[f'purchase_invoice_{company_name.lower().replace(" ","_")}']
+    contracts = db[f"purchase_contract_{company_name.lower().replace(" ","_")}"]
 
     existing_contract = contracts.find().sort("s_no", 1)
     sno_cont = 1
@@ -562,8 +560,8 @@ def purchase_invoice_window(root,company_name,user_name):
 
 def purchase_return_window(root,inventory,company_name,user_name):
     
-    account = db["purchase_invoice"]
-    return_account = db['purchase_return']
+    account = db[f"purchase_invoice_{company_name.lower().replace(" ","_")}"]
+    return_account = db[f'purchase_return_{company_name.lower().replace(" ","_")}']
 
     for widget in root.winfo_children():
         widget.destroy()
@@ -860,10 +858,10 @@ def remove_client_window(root,company_name,user_name):
 
 def bank_payment_window(root,company_name,user_name):
 
-    account = payment['bank_payment']
-    pay_receip = payment['pay_receip']
-    bank = payment['bank']
-    tax = payment['tax_payment']
+    account = payment[f'bank_payment_{company_name.lower().replace(" ","_")}']
+    pay_receip = payment[f'pay_receip_{company_name.lower().replace(" ","_")}']
+    bank = payment[f'bank_{company_name.lower().replace(" ","_")}']
+    tax = payment[f'tax_payment_{company_name.lower().replace(" ","_")}']
     heads = client[f'company_profile_{company_name.lower().replace(" ", "_")}']['heads']
     banks = client[f'company_profile_{company_name.lower().replace(" ", "_")}']['bank_accounts']
 
@@ -919,10 +917,10 @@ def bank_payment_window(root,company_name,user_name):
 
 def cash_payment_window(root,company_name,user_name):
     
-    account = payment['cash_payment']
-    pay_receip = payment['pay_receip']
-    cash = payment['cash']
-    tax = payment['tax_payment']
+    account = payment[f'cash_payment_{company_name.lower().replace(" ","_")}']
+    pay_receip = payment[f'pay_receip_{company_name.lower().replace(" ","_")}']
+    cash = payment[f'cash_{company_name.lower().replace(" ","_")}']
+    tax = payment[f'tax_payment_{company_name.lower().replace(" ","_")}']
     heads = client[f'company_profile_{company_name.lower().replace(" ", "_")}']['heads']
 
     for widget in root.winfo_children():
@@ -977,10 +975,10 @@ def cash_payment_window(root,company_name,user_name):
 
 def bank_receipt_window(root,company_name,user_name):
 
-    account = payment['bank_receipt']
-    pay_receip = payment['pay_receip']
-    bank = payment['bank']
-    tax = payment['tax_receipt']
+    account = payment[f'bank_receipt_{company_name.lower().replace(" ","_")}']
+    pay_receip = payment[f'pay_receip_{company_name.lower().replace(" ","_")}']
+    bank = payment[f'bank_{company_name.lower().replace(" ","_")}']
+    tax = payment[f'tax_receipt_{company_name.lower().replace(" ","_")}']
     heads = client[f'company_profile_{company_name.lower().replace(" ", "_")}']['heads']
     banks = client[f'company_profile_{company_name.lower().replace(" ", "_")}']['bank_accounts']
 
@@ -1036,10 +1034,10 @@ def bank_receipt_window(root,company_name,user_name):
 
 def cash_receipt_window(root,company_name,user_name):
 
-    account = payment['cash_receipt']
-    pay_receip = payment['pay_receip']
-    cash = payment['cash']
-    tax = payment['tax_payment']
+    account = payment[f'cash_receipt_{company_name.lower().replace(" ","_")}']
+    pay_receip = payment[f'pay_receip_{company_name.lower().replace(" ","_")}']
+    cash = payment[f'cash_{company_name.lower().replace(" ","_")}']
+    tax = payment[f'tax_payment_{company_name.lower().replace(" ","_")}']
     heads = client[f'company_profile_{company_name.lower().replace(" ", "_")}']['heads']
 
     for widget in root.winfo_children():

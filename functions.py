@@ -1738,6 +1738,7 @@ def return_invoice(root,inventory,invoice_return,contract_type,return_account,ac
                                 permanent.update_one({"s_no":inv},{"$set":{balance:balan}})
                             
                             if being_update == "invoice":
+                                
                                 return_account.insert_one(invoice)
                                 permanent.delete_one({'return':'returned'})
 
