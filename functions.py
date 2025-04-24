@@ -1668,7 +1668,7 @@ def save_contract(contracts,account,existing_contracts):
     else:
         messagebox.showerror("Error","No Contracts to save!")
 
-def return_invoice(root,inventory,invoice_return,contract_type,return_account,account,window,company_name,user_name):
+def return_invoice(root,inventory,contract_type,return_account,account,window,company_name,user_name,contracts):
 
     popup_print_contract = tk.Toplevel(root)
 
@@ -1714,7 +1714,7 @@ def return_invoice(root,inventory,invoice_return,contract_type,return_account,ac
             confirm = messagebox.askyesno("Confirm", "Do you want to Delete?")
             if confirm:
 
-                def return_inv(inv_vou_no,permanent,amount,balance,operation,being_update,return_account):
+                def return_inv(inv_vou_no,permanent,amount,balance,operation,being_update,return_account,contracts):
                     current_date = datetime.now()
                     no_inv = 0
     
@@ -1738,7 +1738,11 @@ def return_invoice(root,inventory,invoice_return,contract_type,return_account,ac
                                 permanent.update_one({"s_no":inv},{"$set":{balance:balan}})
                             
                             if being_update == "invoice":
-                                
+                                cont_no = invoice.get("contract_no","")
+                                quan = invoice.get("quantity","")
+                                contract = contracts.find_one({"contract_no":cont_no})
+                                contracts.update_one({"contract_no":cont_no},{"$set":{"delivered_qant":contract.get("delivered_qant","")-quan}})
+
                                 return_account.insert_one(invoice)
                                 permanent.delete_one({'return':'returned'})
 
@@ -1747,7 +1751,7 @@ def return_invoice(root,inventory,invoice_return,contract_type,return_account,ac
                         if no_inv> no_documents:
                             break               
                 
-                return_inv(inv_vou_no,account,"total_amount","balance","+","invoice",return_account)
+                return_inv(inv_vou_no,account,"total_amount","balance","+","invoice",return_account,contracts)
                 # account.delete_({})
 
                 # for invoices in invoice_return.values():
