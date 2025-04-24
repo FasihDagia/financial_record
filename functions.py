@@ -1737,6 +1737,7 @@ def return_invoice(root,inventory,contract_type,return_account,account,window,co
                                     balan -= amont
                                 permanent.update_one({"s_no":inv},{"$set":{balance:balan}})
                             
+                            #need to write some function which only runs when a specific conditions
                             if being_update == "invoice":
                                 cont_no = invoice.get("contract_no","")
                                 quan = invoice.get("quantity","")
