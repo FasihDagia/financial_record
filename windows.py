@@ -348,7 +348,7 @@ def sale_contract_window(root,company_name,user_name):
 
 def sale_invoice_window(root,company_name,user_name):
 
-    cost_goods = expenses[f'cost_of_goods_{company_name}'] 
+    cost_goods = expenses[f'cost_of_goods_{company_name.lower().replace(" ","_")}'] 
     account = db['sale_invoice']
     contracts = db["sale_contract"]
 
@@ -483,7 +483,7 @@ def purchase_contract_window(root,company_name,user_name):
 
     tk.Button(button_frame,text='Generate Contract', width=15,command=lambda:generate_contract(root,purchase_contracts,account,'Purchacse',purchase_contract_window,inventory,customers,company_name,user_name,com_profile)).grid(row=0, column=1,padx=5)
     tk.Button(button_frame, text= "Print Contract", width=15, command=lambda:print_contracts(root,purchase_contracts,"PURCHASE")).grid(row=0, column=2,padx=5)
-    tk.Button(button_frame, text="Save", width=15, command=lambda:save_contract(purchase_contracts,account)).grid(row=0, column=3,padx=5)
+    tk.Button(button_frame, text="Save", width=15, command=lambda:save_contract(purchase_contracts,account,existing_contracts)).grid(row=0, column=3,padx=5)
     tk.Button(button_frame, text="Back", width=15, command=lambda:back(root,purchase_module_window,purchase_contracts,inventory_sale,existing_contracts,company_name,user_name)).grid(row=0, column=4,padx=5)
     tk.Button(button_frame, text="Exit", width=15, command=root.destroy).grid(row=0, column=5,padx=5)
 
@@ -508,7 +508,7 @@ def purchase_contract_window(root,company_name,user_name):
 def purchase_invoice_window(root,company_name,user_name):
 
     #accessing the particular collection
-    cost_goods = expenses[f'cost_of_goods_{company_name}']
+    cost_goods = expenses[f'cost_of_goods_{company_name.lower().replace(" ","_")}']
     account = db['purchase_invoice']
     contracts = db["purchase_contract"]
 

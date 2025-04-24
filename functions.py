@@ -149,9 +149,9 @@ def generate_contract(root,sale_contract,account,contract_type,window,inventory,
     year = current_date.year
 
     if contract_type == "Sale":
-        contract = f"SL{str(contract_no).zfill(5)}/{year}"
+        contract = f"SLC{str(contract_no).zfill(5)}/{year}"
     else:        
-        contract = f"PU{str(contract_no).zfill(5)}/{year}"
+        contract = f"PUC{str(contract_no).zfill(5)}/{year}"
  
     tk.Label(headings,text=contract,font=("Helvetica", 12)).grid(row=1,column=3)
 
@@ -738,7 +738,7 @@ def generate_invoice(root,invoices_to_save,account,inventory_sale,invoice_type,w
         current_date = datetime.now()
         year = current_date.year
 
-        invoice = f"SL{str(invoice_no).zfill(5)}/{year}"
+        invoice = f"SLI{str(invoice_no).zfill(5)}/{year}"
         invoice_entry = tk.Label(headings,text=invoice,font=("Helvetica", 12))
         invoice_entry.grid(row=1,column=3)
         contract_col = 1
@@ -755,7 +755,7 @@ def generate_invoice(root,invoices_to_save,account,inventory_sale,invoice_type,w
 
         current_date = datetime.now()
         year = current_date.year
-        voucher = f"PU{str(voucher_no).zfill(5)}/{year}"
+        voucher = f"PUI{str(voucher_no).zfill(5)}/{year}"
 
         voucher_entry = tk.Label(headings,text=voucher,font=("Helvetica", 12))
         voucher_entry.grid(row=1,column=3)
@@ -1740,8 +1740,13 @@ def return_invoice(root,inventory,invoice_return,contract_type,return_account,ac
                             if being_update == "invoice":
                                 return_account.insert_one(invoice)
                                 permanent.delete_one({'return':'returned'})
-                                           
 
+                            no_inv +=1
+                        no_documents = permanent.count_documents({"invoice_no":inv_vou_no})
+                        if no_inv> no_documents:
+                            break               
+                
+                return_inv(inv_vou_no,account,"total_amount","balance","+","invoice",return_account)
                 # account.delete_({})
 
                 # for invoices in invoice_return.values():
