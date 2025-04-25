@@ -813,7 +813,6 @@ def generate_invoice(root,invoices_to_save,account,inventory_sale,invoice_type,w
             Further_tax_amount_var.set("Invalid input")
             total_var.set("Invalid input")
 
-
     def get_contract_info(*args):
                 
         contract_no = contract_option.get()
@@ -921,12 +920,15 @@ def generate_invoice(root,invoices_to_save,account,inventory_sale,invoice_type,w
         else:
             quantity = float(quantity_str)
         contract_no = contract_option.get()
-        for contract_details in contracts.values():
-            if contract_details.get("contract_no","") == contract_no:
-                if (quantity + contract_details.get("delivered_qant","")) > contract_details['quantity']:
-                    messagebox.showerror("Error", "Quantity can't be more than the agreed quantity")
-                    quantity_default.set(contract_details.get("quantity", "")-contract_details.get("delivered_qant"))
-                    
+
+        def set_quan():
+            for contract_details in contracts.values():
+                if contract_details.get("contract_no","") == contract_no:
+                    if (quantity + contract_details.get("delivered_qant","")) > contract_details['quantity']:
+                        messagebox.showerror("Error", "Quantity can't be more than the agreed quantity")
+                        quantity_default.set(contract_details.get("quantity", "")-contract_details.get("delivered_qant"))
+
+        set_quan()  
         calculate_total()
 
     def check_rate(*args):
@@ -1304,20 +1306,32 @@ def generate_invoice(root,invoices_to_save,account,inventory_sale,invoice_type,w
                     'sld_stock': 0,
                     'remaining_stock': remaining_stock
                 }
-            
+
             window(root,company_name,user_name)
             
             for contract in contracts.values():
                 if contract.get("contract_no") == contract_no:
-                    if contract.get("delivered_qant","") == None:
+                    delivered = contract.get("delivered_qant","")
+        
+                    if contract["delivered_qant"] == 0.0:
                         contract["delivered_qant"] = quantity
                     else:
-                        contract["delivered_qant"] += quantity
+                        contract["delivered_qant"] = delivered+quantity
 
                     if contract.get("quantity", "") == contract.get("delivered_qant",""):
                         contract["progress"] = "completed"
                     break
-            
+            # else:
+            #     for contract in contracts.values():
+            #         if contract.get("contract_no") == contract_no:
+            #             if contract.get("delivered_qant","") == 0.0:
+            #                 contract["delivered_qant"] = quantity
+            #             else:
+            #                 contract["delivered_qant"] += quantity
+
+            #             if contract.get("quantity", "") == contract.get("delivered_qant",""):
+            #                 contract["progress"] = "completed"
+            #             break
             messagebox.showinfo("Success", "Invoice Generated!")
 
     tk.Button(root, text="Add", command=lambda:add(window), width=15).pack(padx=5,pady=5)

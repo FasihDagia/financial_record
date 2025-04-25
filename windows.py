@@ -352,11 +352,12 @@ def sale_invoice_window(root,company_name,user_name):
     account = db[f'sale_invoice']
     contracts = db[f"sale_contract"]
 
-    existing_contract = contracts.find().sort("s_no", 1)
-    sno_cont = 1
-    for contract in existing_contract:
-            existing_contracts[sno_cont] = contract
-            sno_cont+=1
+    if len(existing_contracts) == 0:
+        existing_contract = contracts.find().sort("s_no", 1)
+        sno_cont = 1
+        for contract in existing_contract:
+                existing_contracts[sno_cont] = contract
+                sno_cont+=1
 
     #removing existing widgets
     for widget in root.winfo_children():
@@ -511,11 +512,12 @@ def purchase_invoice_window(root,company_name,user_name):
     account = db[f'purchase_invoice']
     contracts = db[f"purchase_contract"]
 
-    existing_contract = contracts.find().sort("s_no", 1)
-    sno_cont = 1
-    for contract in existing_contract:
-            existing_contracts[sno_cont] = contract
-            sno_cont+=1
+    if len(existing_contracts) == 0:
+        existing_contract = contracts.find().sort("s_no", 1)
+        sno_cont = 1
+        for contract in existing_contract:
+                existing_contracts[sno_cont] = contract
+                sno_cont+=1
 
     #removing existing widgets
     for widget in root.winfo_children():
