@@ -1321,17 +1321,6 @@ def generate_invoice(root,invoices_to_save,account,inventory_sale,invoice_type,w
                     if contract.get("quantity", "") == contract.get("delivered_qant",""):
                         contract["progress"] = "completed"
                     break
-            # else:
-            #     for contract in contracts.values():
-            #         if contract.get("contract_no") == contract_no:
-            #             if contract.get("delivered_qant","") == 0.0:
-            #                 contract["delivered_qant"] = quantity
-            #             else:
-            #                 contract["delivered_qant"] += quantity
-
-            #             if contract.get("quantity", "") == contract.get("delivered_qant",""):
-            #                 contract["progress"] = "completed"
-            #             break
             messagebox.showinfo("Success", "Invoice Generated!")
 
     tk.Button(root, text="Add", command=lambda:add(window), width=15).pack(padx=5,pady=5)
