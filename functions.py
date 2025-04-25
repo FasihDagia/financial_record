@@ -1768,5 +1768,5 @@ def return_invoice(root,inventory,contract_type,return_account,account,window,co
                 #     account.insert_one(invoices)
 
                 # inventory_item.delete_one({"s_no":sno_inventory})
-                # messagebox.showinfo("Success", f"{contract_type.capitalize()} Invoice returned Successfully")
+                messagebox.showinfo("Success", f"{contract_type.capitalize()} Invoice returned Successfully")
                 window(root,inventory,company_name,user_name)
