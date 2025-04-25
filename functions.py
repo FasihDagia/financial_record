@@ -1282,6 +1282,7 @@ def generate_invoice(root,invoices_to_save,account,inventory_sale,invoice_type,w
                 'unit': unit,
                 'rate': rate,
                 'amount': amount,
+                'type': invoice_type,
                 'remaining_stock': remaining_stock
             }
 
@@ -1299,6 +1300,7 @@ def generate_invoice(root,invoices_to_save,account,inventory_sale,invoice_type,w
                     'unit': unit,
                     'rate': rate,
                     'amount': amount,
+                    'type': invoice_type,
                     'sld_stock': 0,
                     'remaining_stock': remaining_stock
                 }
