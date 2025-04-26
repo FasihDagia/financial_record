@@ -1705,10 +1705,10 @@ def return_invoice(root,inventory,contract_type,return_account,account,window,co
 
     btn = tk.Frame(popup_print_contract)
     btn.pack()
-    tk.Button(btn, text="Return", font=("Helvetica",8), width=10 ,command=lambda:return_in(type_return)).grid(column=0,row=0,padx=5,pady=5)
+    tk.Button(btn, text="Return", font=("Helvetica",8), width=10 ,command=lambda:return_in(type_return,inventory,contract_type,return_account,account,window,company_name,user_name,contracts)).grid(column=0,row=0,padx=5,pady=5)
     tk.Button(btn, text="Back", font=("Helvetica",8), width=10,command=popup_print_contract.destroy).grid(column=1,row=0,padx=5,pady=5)
 
-    def return_in(type_return):
+    def return_in(type_return,inventory,contract_type,return_account,account,window,company_name,user_name,contracts):
         
         inv_vou_no = contract_opt.get()
         
@@ -1740,7 +1740,7 @@ def return_invoice(root,inventory,contract_type,return_account,account,window,co
                                    balan += amont
                                 elif operation == "-":
                                     balan -= amont
-                                permanent.update_one({"s_no":inv},{"$set":{balance:balan}})
+                                permanent.update_one({"s_no":inv},{"$set":{'s_no':inv_update.get("s_no","")-1,balance:balan}})
                             
                             #need to write some function which only runs when a specific conditions
                             if being_update == "invoice":
@@ -1750,17 +1750,39 @@ def return_invoice(root,inventory,contract_type,return_account,account,window,co
                                 contracts.update_one({"contract_no":cont_no},{"$set":{"delivered_qant":contract.get("delivered_qant","")-quan}})
 
                                 return_account.insert_one(invoice)
-                                permanent.delete_one({'return':'returned'})
-                            elif being_update == "cost_of_goods":
-                                pass
-                            elif being_update == "customer_inv":
-                                pass
+                            permanent.delete_one({'return':'returned'})
+                            
                             
                             no_inv +=1
                         no_documents = permanent.count_documents({"invoice_no":inv_vou_no})
                         if no_inv> no_documents:
                             break               
                 
+                def return_inventory(inv_vou_no,inventory,quantity,remaining_stock,account,inv_vou):
+                    invoice = account.find_one({inv_vou:inv_vou_no})
+                    item = invoice.get("item","")
+                    inventory_item = inventory[item]
+                    for invoice in inventory_item.find():
+                        if invoice.get("invoice_no","") == inv_vou_no or invoice.get("voucher_no","") == inv_vou_no:
+                            s_no = invoice.get("s_no","")
+                            inventory_item.update_one({"s_no":s_no},{"$set":{'return':'returned'}})
+                            prev_inv = inventory_item.find_one({"s_no":s_no-1})
+                            if prev_inv == None:
+                                balan = 0
+                            else:
+                                balan = prev_inv.get(remaining_stock,"")
+                            count = inventory_item.count_documents({})
+                            for inv in range(s_no+1,count+1):
+                                inv_update = inventory_item.find_one({"s_no":inv})
+                                amont = inv_update.get(quantity,"")
+                                if inv.get("type","") == "Purhase":
+                                    balan += amont
+                                elif inv.get("type","") == "Sale":
+                                    balan -= amont
+                                inventory_item.update_one({"s_no":inv},{"$set":{"s_no":inv_update.get("s_no","")-1,remaining_stock:balan}})
+                            inventory_item.delete_one({'return':'returned'})
+                            break
+
                 return_inv(inv_vou_no,account,"total_amount","balance","+","invoice",return_account,contracts)
                 # account.delete_({})
 
