@@ -1673,7 +1673,7 @@ def save_contract(contracts,account,existing_contracts):
     else:
         messagebox.showerror("Error","No Contracts to save!")
 
-def return_invoice(root,inventory,contract_type,return_account,account,window,company_name,user_name,contracts):
+def return_invoice(root,inventory,contract_type,return_account,account,window,company_name,user_name,contracts,cost_goods,customers):
 
     popup_print_contract = tk.Toplevel(root)
 
@@ -1705,10 +1705,10 @@ def return_invoice(root,inventory,contract_type,return_account,account,window,co
 
     btn = tk.Frame(popup_print_contract)
     btn.pack()
-    tk.Button(btn, text="Return", font=("Helvetica",8), width=10 ,command=lambda:return_in(type_return,inventory,contract_type,return_account,account,window,company_name,user_name,contracts)).grid(column=0,row=0,padx=5,pady=5)
+    tk.Button(btn, text="Return", font=("Helvetica",8), width=10 ,command=lambda:return_in(type_return,inventory,contract_type,return_account,account,window,company_name,user_name,contracts,cost_goods,customers)).grid(column=0,row=0,padx=5,pady=5)
     tk.Button(btn, text="Back", font=("Helvetica",8), width=10,command=popup_print_contract.destroy).grid(column=1,row=0,padx=5,pady=5)
 
-    def return_in(type_return,inventory,contract_type,return_account,account,window,company_name,user_name,contracts):
+    def return_in(type_return,inventory,contract_type,return_account,account,window,company_name,user_name,contracts,cost_goods,customers):
         
         inv_vou_no = contract_opt.get()
         
@@ -1782,13 +1782,39 @@ def return_invoice(root,inventory,contract_type,return_account,account,window,co
                                 inventory_item.update_one({"s_no":inv},{"$set":{"s_no":inv_update.get("s_no","")-1,remaining_stock:balan}})
                             inventory_item.delete_one({'return':'returned'})
                             break
+                
+                
+                inv = account.find_one({"voucher_no":inv_vou_no})
 
-                return_inv(inv_vou_no,account,"total_amount","balance","+","invoice",return_account,contracts)
-                # account.delete_({})
+                if contract_type == 'sale':
+                    inv = account.find_one({"invoice_no":inv_vou_no})
+                    name = inv.get("opp_acc","")
+                    customer = customers[f"sale_invoice_{name}"]
+                    transaction_type = customers[f"receipt_{name}"]
+                    # invoice
+                    return_inv(inv_vou_no,account,"total_amount","balance","+","invoice",return_account,contracts)
+                    #inventory
+                    return_inventory(inv_vou_no,inventory,"quantity","remaining_stock",account,"invoice_no")
+                    #cost of goods
+                    return_inv(inv_vou_no,cost_goods,"cost_of_goods","balance","+","cost_goods",return_account,contracts)
+                    #customer_invoice
+                    return_inv(inv_vou_no,customer,"amount","balance","-","customer_invoice",return_account,contracts)
+                    #customer_receipt
+                    return_inv(inv_vou_no,transaction_type,"amount","balance","-","customer_receipt",return_account,contracts)
+                elif contract_type == 'purchase':
+                    inv = account.find_one({"voucher_no":inv_vou_no})
+                    print(inv)
+                    name = inv.get("opp_acc","")
+                    customer = customers[f"purchase_invoice_{name}"]
+                    transaction_type = customers[f"payment_{name}"]
+                    # invoice
+                    return_inv(inv_vou_no,account,"total_amount","balance","+","invoice",return_account,contracts)
+                    #inventory
+                    return_inventory(inv_vou_no,inventory,"quantity","remaining_stock",account,"voucher_no")
+                    #customer_invoice
+                    return_inv(inv_vou_no,customer,"amount","balance","+","customer_invoice",return_account,contracts)
+                    #customer_receipt
+                    return_inv(inv_vou_no,transaction_type,"amount","balance","+","customer_receipt",return_account,contracts)
 
-                # for invoices in invoice_return.values():
-                #     account.insert_one(invoices)
-
-                # inventory_item.delete_one({"s_no":sno_inventory})
                 messagebox.showinfo("Success", f"{contract_type.capitalize()} Invoice returned Successfully")
                 window(root,inventory,company_name,user_name)

@@ -401,6 +401,7 @@ def sale_invoice_window(root,company_name,user_name):
 
 def sale_return_window(root,inventory,company_name,user_name):
     
+    cost_goods = expenses[f'cost_of_goods']
     account = db[f'sale_invoice']
     return_account = db[f'sale_return']
     contracts = db[f"sale_contract"]
@@ -437,7 +438,7 @@ def sale_return_window(root,inventory,company_name,user_name):
     button_frame = tk.Frame(root)
     button_frame.pack(pady=10)
 
-    tk.Button(button_frame,text='Return Invoice', width=15,command=lambda:return_invoice(root,inventory,'sale',return_account,account,sale_return_window,company_name,user_name,contracts)).grid(row=0, column=2,padx=5)
+    tk.Button(button_frame,text='Return Invoice', width=15,command=lambda:return_invoice(root,inventory,'sale',return_account,account,sale_return_window,company_name,user_name,contracts,cost_goods,customers)).grid(row=0, column=2,padx=5)
     tk.Button(button_frame, text="Back", width=15, command=lambda:sale_module_window(root,company_name,user_name)).grid(row=0, column=3,padx=5)
     tk.Button(button_frame, text="Exit", width=15, command=root.destroy).grid(row=0, column=4,padx=5)
 
@@ -563,6 +564,7 @@ def purchase_invoice_window(root,company_name,user_name):
 
 def purchase_return_window(root,inventory,company_name,user_name):
     
+    cost_goods = expenses[f'cost_of_goods']
     account = db[f"purchase_invoice"]
     return_account = db[f'purchase_return']
     contracts = db[f"purchase_contract"]
@@ -602,7 +604,7 @@ def purchase_return_window(root,inventory,company_name,user_name):
     style.configure("Treeview.Heading", font=("Helvetica", 10, "bold"))  
     style.configure("Treeview", font=("Helvetica", 8)) 
 
-    tk.Button(button_frame,text='Return Invoice', width=15,command=lambda:return_invoice(root,inventory,'purchase',return_account,account,purchase_return_window,company_name,user_name,contracts)).grid(row=0, column=2,padx=5)
+    tk.Button(button_frame,text='Return Invoice', width=15,command=lambda:return_invoice(root,inventory,'purchase',return_account,account,purchase_return_window,company_name,user_name,contracts,cost_goods,customers)).grid(row=0, column=2,padx=5)
     tk.Button(button_frame, text="Back", width=15, command=lambda:purchase_module_window(root,company_name,user_name)).grid(row=0, column=3,padx=5)
     tk.Button(button_frame, text="Exit", width=15, command=root.destroy).grid(row=0, column=4,padx=5)
 
