@@ -1782,9 +1782,6 @@ def return_invoice(root,inventory,contract_type,return_account,account,window,co
                                 inventory_item.update_one({"s_no":inv},{"$set":{"s_no":inv_update.get("s_no","")-1,remaining_stock:balan}})
                             inventory_item.delete_one({'return':'returned'})
                             break
-                
-                
-                inv = account.find_one({"voucher_no":inv_vou_no})
 
                 if contract_type == 'sale':
                     inv = account.find_one({"invoice_no":inv_vou_no})
