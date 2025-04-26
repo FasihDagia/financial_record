@@ -1803,7 +1803,6 @@ def return_invoice(root,inventory,contract_type,return_account,account,window,co
                     return_inv(inv_vou_no,transaction_type,"amount","balance","-","customer_receipt",return_account,contracts)
                 elif contract_type == 'purchase':
                     inv = account.find_one({"voucher_no":inv_vou_no})
-                    print(inv)
                     name = inv.get("opp_acc","")
                     customer = customers[f"purchase_invoice_{name}"]
                     transaction_type = customers[f"payment_{name}"]
