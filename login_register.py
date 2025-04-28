@@ -5,6 +5,14 @@ from datetime import datetime
 
 warning = None
 
+def center_window(root, width, height):
+    screen_width = root.winfo_screenwidth()
+    screen_height = root.winfo_screenheight()
+    x = (screen_width // 2) - (width // 2)
+    y = (screen_height // 2) - (height // 2)
+    root.geometry(f"{width}x{height}+{x}+{y}")
+    root.minsize(width, height)
+    root.maxsize(width, height)
 
 def toggle_password(toggle_btn,entry):
     if entry.cget('show') == '':
@@ -66,9 +74,7 @@ def create_company(root,client,window):
     for widget in root.winfo_children():
         widget.destroy()
 
-    root.geometry("600x700")
-    root.minsize(350,275)
-    root.maxsize(600,700)
+    center_window(root, 600, 700)
 
     root.title("Create Company")
 
