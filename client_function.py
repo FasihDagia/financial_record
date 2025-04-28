@@ -11,7 +11,6 @@ def center_window(root, width, height):
     root.minsize(width, height)
     root.maxsize(width, height)
 
-
 def client_check(table_client,customers):
 
     clients_names = customers["customer_info"].find()

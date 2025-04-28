@@ -3,6 +3,15 @@ from tkinter import *
 from tkinter import messagebox
 from datetime import datetime
 
+def center_window(root, width, height):
+    screen_width = root.winfo_screenwidth()
+    screen_height = root.winfo_screenheight()
+    x = (screen_width // 2) - (width // 2)
+    y = (screen_height // 2) - (height // 2)
+    root.geometry(f"{width}x{height}+{x}+{y}")
+    root.minsize(width, height)
+    root.maxsize(width, height)
+
 def inventory_check(table_inventory,inventory):
 
     product_names = inventory.list_collection_names()
@@ -56,9 +65,8 @@ def add_product(root,inventory,window,company_name,user_name):
     for widget in root.winfo_children():
         widget.destroy()
 
-    root.geometry("250x300")
-    root.minsize(200,250)
-
+    center_window(root, 250, 300)
+    
     root.title("Add Product")
 
     tk.Label(root, text="Add Product", font=("Helvetica-bold", 16)).pack(pady=10)
@@ -110,8 +118,7 @@ def remove_product(root,inventory,window,company_name,user_name):
     for widget in root.winfo_children():
         widget.destroy()
 
-    root.geometry("250x300")
-    root.minsize(200,250)
+    center_window(root, 250, 300)
 
     root.title("Add Product")
 
