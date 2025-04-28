@@ -1135,11 +1135,11 @@ def generate_invoice(root,invoices_to_save,account,inventory_sale,invoice_type,w
                 sno2 = no_entries_2 + 1
             else:
                 j = 0
-                sno2 = no_entries_2 + 1
+                sno2 = no_entries_2 +1
                 for i in pay_receip_balance.values():
-                    if i.get("account_recevible","") == account_recevible:
+                    if i.get("opp_acc","") == account_recevible:
                         j +=1
-                        sno2 += j
+                sno2 += j        
 
             if invoice_type == 'Sale':
                 balance2 -= total_amount
