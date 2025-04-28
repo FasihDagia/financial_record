@@ -5,14 +5,21 @@ from datetime import datetime
 
 warning = None
 
-def add_bank_account(root,bank_accounts,com_name,client,window_show,user_name,window_main):
+def center_window(root, width, height):
+    screen_width = root.winfo_screenwidth()
+    screen_height = root.winfo_screenheight()
+    x = (screen_width // 2) - (width // 2)
+    y = (screen_height // 2) - (height // 2)
+    root.geometry(f"{width}x{height}+{x}+{y}")
+    root.minsize(width, height)
+    root.maxsize(width, height)
+
+def add_bank_account(root,bank_accounts,com_name,client,user_name,window_main):
 
     for widget in root.winfo_children():
         widget.destroy()
 
-    root.geometry("500x300")
-    root.minsize(500,300)
-    root.maxsize(1000,900)
+    center_window(root, 500, 300)
 
     root.title(f"Add Bank Account/{com_name}")
 
@@ -76,9 +83,7 @@ def delete_bank_account(root,bank_accounts,com_name,client,user_name,window_main
     for widget in root.winfo_children():
         widget.destroy()
 
-    root.geometry("500x300")
-    root.minsize(500,300)
-    root.maxsize(1000,900)
+    center_window(root, 500, 300)
 
     root.title(f"Remove Bank Account/{com_name}")
 
@@ -170,9 +175,7 @@ def show_bank_account_edit(root,bank_accounts,com_name,client,user_name,window_m
     for widget in root.winfo_children():
         widget.destroy()
 
-    root.geometry("900x400")
-    root.minsize(900,300)
-    root.maxsize(1000,900)
+    center_window(root, 900, 400)
 
     root.title(f"Bank Accounts/{com_name}")
 
@@ -214,7 +217,7 @@ def show_bank_account_edit(root,bank_accounts,com_name,client,user_name,window_m
         j += 1    
     btn_frame = tk.Frame(root)
     btn_frame.pack(pady=10)
-    tk.Button(btn_frame,text = "Add Bank Account",font=("Helvetica",10),width=20,command=lambda:add_bank_account(root,bank_accounts,com_name,client,add_bank_account,user_name,window_main)).grid(row=0,column=0,pady=10,padx=5)
+    tk.Button(btn_frame,text = "Add Bank Account",font=("Helvetica",10),width=20,command=lambda:add_bank_account(root,bank_accounts,com_name,client,user_name,window_main)).grid(row=0,column=0,pady=10,padx=5)
     tk.Button(btn_frame,text = "Delete Bank Account",font=("Helvetica",10),width=20,command=lambda:delete_bank_account(root,bank_accounts,com_name,client,user_name,window_main)).grid(row=0,column=1,pady=10,padx=5)
     tk.Button(btn_frame,text = "Back",font=("Helvetica",10),width=20,command=lambda: edit_company_profile(root,client,window_main,com_name,user_name)).grid(row=0,column=2,pady=10,padx=5)
 
@@ -223,9 +226,7 @@ def show_bank_account(root,bank_accounts,com_name,client,user_name,window_main):
     for widget in root.winfo_children():
         widget.destroy()
 
-    root.geometry("900x400")
-    root.minsize(900,300)
-    root.maxsize(1000,900)
+    center_window(root, 900, 400)
 
     root.title(f"Bank Accounts/{com_name}")
 
@@ -273,9 +274,7 @@ def delete_employee(root,employees,com_name,client,user_name,window_main,window_
     for widget in root.winfo_children():
         widget.destroy()
 
-    root.geometry("550x600")
-    root.minsize(550,600)
-    root.maxsize(1000,900)
+    center_window(root, 550, 600)
 
     root.title(f"Edit Employee/{com_name}")
 
@@ -422,9 +421,7 @@ def edit_employee(root,employees,com_name,client,window_show,user_name,window_ma
     for widget in root.winfo_children():
         widget.destroy()
 
-    root.geometry("550x600")
-    root.minsize(550,600)
-    root.maxsize(1000,900)
+    center_window(root, 550, 600)
 
     root.title(f"Edit Employee/{com_name}")
 
@@ -586,9 +583,7 @@ def add_employee(root,employees,com_name,client,window_show,user_name,window_mai
     for widget in root.winfo_children():
         widget.destroy()
     
-    root.geometry("550x600")
-    root.minsize(550,600)
-    root.maxsize(1000,900)
+    center_window(root, 550, 600)
     
     root.title(f"Add Employee/{com_name}")
     
@@ -705,10 +700,8 @@ def show_employees_edit(root,employees,com_name,client,user_name,window_main):
     for widget in root.winfo_children():
         widget.destroy()
 
-    root.geometry("900x400")
-    root.minsize(900,300)
-    root.maxsize(1000,900)
-
+    center_window(root, 900, 400)
+    
     root.title(f"Edit Employees/{com_name}")
 
     style = ttk.Style()
@@ -766,10 +759,8 @@ def show_employees(root,employees,com_name,client,user_name,window_main):
     for widget in root.winfo_children():
         widget.destroy()
 
-    root.geometry("900x400")
-    root.minsize(900,300)
-    root.maxsize(1000,900)
-
+    center_window(root, 900, 400)
+    
     root.title(f"Employees/{com_name}")
 
     style = ttk.Style()
@@ -821,10 +812,8 @@ def remove_head(root,heads,com_name,client,user_name,window_main):
     for widget in root.winfo_children():
         widget.destroy()
 
-    root.geometry("550x330")
-    root.minsize(550,350)
-    root.maxsize(1000,900)
-
+    center_window(root, 550, 330)
+    
     root.title(f"Edit Head/{com_name}")
 
     head_frame = tk.Frame(root)
@@ -906,10 +895,8 @@ def edit_head(root,heads,com_name,client,user_name,window_main):
     for widget in root.winfo_children():
         widget.destroy()
 
-    root.geometry("550x330")
-    root.minsize(550,350)
-    root.maxsize(1000,900)
-
+    center_window(root, 550, 330)
+    
     root.title(f"Edit Head/{com_name}")
 
     head_frame = tk.Frame(root)
@@ -995,9 +982,7 @@ def add_head(root,heads,com_name,client,user_name,window_main):
     for widget in root.winfo_children():
         widget.destroy()
     
-    root.geometry("550x330")
-    root.minsize(550,330)
-    root.maxsize(1000,900)
+    center_window(root, 550, 330)
     
     root.title(f"Add Head/{com_name}")
     
@@ -1051,9 +1036,7 @@ def show_edit_heads(root,heads,com_name,client,user_name,window_main):
     for widget in root.winfo_children():
         widget.destroy()
 
-    root.geometry("600x400")
-    root.minsize(900,300)
-    root.maxsize(1000,900)
+    center_window(root, 600, 400)
 
     root.title(f"Edit Head Types/{com_name}")
 
@@ -1096,10 +1079,8 @@ def show_heads(root,heads,com_name,client,user_name,window_main):
     for widget in root.winfo_children():
         widget.destroy()
 
-    root.geometry("500x400")
-    root.minsize(900,300)
-    root.maxsize(1000,900)
-
+    center_window(root, 600, 400)
+    
     root.title(f"Head Types/{com_name}")
 
     style = ttk.Style()
@@ -1154,9 +1135,7 @@ def show_company_profile(root,client,window_main,com_name,user_name):
     for widget in root.winfo_children():
         widget.destroy()
 
-    root.geometry("575x700")
-    root.minsize(350,275)
-    root.maxsize(600,700)
+    center_window(root, 575, 700)
 
     root.title(f"Company Profile/{com_name}")
 
@@ -1273,9 +1252,7 @@ def edit_company_profile(root,client,window_main,com_name,user_name):
     for widget in root.winfo_children():
         widget.destroy()
 
-    root.geometry("600x700")
-    root.minsize(350,275)
-    root.maxsize(600,700)
+    center_window(root, 600, 700)
 
     root.title("Create Company")
 
