@@ -13,14 +13,20 @@ from client_function import client_check,existing_clients,add_client,remove_clie
 from bank_payment_receipt_functions import generate_bank_payments,load_payments_receipt,save_bank_payment_receipt,generate_bank_receipt
 from cash_payment_receipt_function import generate_cash_receipt,generate_cash_payments,save_cash_payments_receipt,go_back
 
+def center_window(root, width, height):
+    screen_width = root.winfo_screenwidth()
+    screen_height = root.winfo_screenheight()
+    x = (screen_width // 2) - (width // 2)
+    y = (screen_height // 2) - (height // 2)
+    root.geometry(f"{width}x{height}+{x}+{y}")
+    root.minsize(width, height)
+    root.maxsize(width, height)
+
 def home_page(root):
-    
     for widget in root.winfo_children():
         widget.destroy()
-
-    root.geometry("450x275")
-    root.minsize(350,275)
-    root.maxsize(450,500)
+    
+    center_window(root, 450, 275)
 
     root.title("Financial Records")
 
@@ -85,9 +91,7 @@ def main_menu_window(root,company_name,user_name):
     for widget in root.winfo_children():
         widget.destroy()
 
-    root.geometry("450x325")
-    root.minsize(350,325)
-    root.maxsize(450,500)
+    center_window(root, 450, 325)
 
     root.title(f"Main Menu/{company_name}/{user_name}")   
 
@@ -146,9 +150,7 @@ def sale_module_window(root,company_name,user_name):
     for widget in root.winfo_children():
         widget.destroy()
 
-    root.geometry("450x225")
-    root.minsize(350,200)
-    root.maxsize(450,500)
+    center_window(root, 450, 225)
 
     root.title("Sale Module")
 
@@ -172,9 +174,8 @@ def purchase_module_window(root,company_name,user_name):
     for widget in root.winfo_children():
         widget.destroy()
 
-    root.geometry("450x225")
-    root.minsize(350,200)
-    root.maxsize(500,500)
+    center_window(root, 450, 225)
+   
 
     root.title("Purchase Module")
 
@@ -199,9 +200,7 @@ def payment_module_window(root,company_name,user_name):
     for widget in root.winfo_children():
         widget.destroy()
 
-    root.geometry("450x225")
-    root.minsize(350,200)
-    root.maxsize(500,500)
+    center_window(root, 450, 225)
 
     root.title("Payment Module")
 
@@ -227,9 +226,7 @@ def receipt_module_window(root,company_name,user_name):
     for widget in root.winfo_children():
         widget.destroy()
 
-    root.geometry("450x225")
-    root.minsize(350,200)
-    root.maxsize(500,500)
+    center_window(root, 450, 225)
 
     root.title("Receipt Module")
 
@@ -255,9 +252,7 @@ def inventory_module_window(root,company_name,user_name):
     for widget in root.winfo_children():
         widget.destroy()
 
-    root.geometry("450x225")
-    root.minsize(350,200)
-    root.maxsize(450,500)
+    center_window(root, 450, 225)
 
     root.title("Inventory Module")
 
@@ -282,9 +277,7 @@ def client_module_window(root,company_name,user_name):
     for widget in root.winfo_children():
         widget.destroy()
 
-    root.geometry("450x225")
-    root.minsize(350,200)
-    root.maxsize(450,500)
+    center_window(root, 450, 225)
 
     root.title("Client Module")
 
@@ -312,8 +305,7 @@ def sale_contract_window(root,company_name,user_name):
     for widget in root.winfo_children():
         widget.destroy()
 
-    root.geometry("1400x800")
-    root.minsize(1400,700)
+    center_window(root, 1500, 800)
 
     root.title("Sale Contract")
 
@@ -364,8 +356,8 @@ def sale_invoice_window(root,company_name,user_name):
         widget.destroy()
 
     #basic window dimensions
-    root.geometry("1500x800")
-    root.minsize(1500,700)
+    center_window(root, 1500, 800)
+
     #window title
     root.title(f"Sale Invoice")
 
@@ -409,8 +401,8 @@ def sale_return_window(root,inventory,company_name,user_name):
     for widget in root.winfo_children():
         widget.destroy()
 
-    root.geometry("1500x800")
-    root.minsize(1500,700)
+    center_window(root, 1500, 800)
+    
     #window title
     root.title(f"Sale Return")
 
@@ -471,9 +463,7 @@ def purchase_contract_window(root,company_name,user_name):
 
     for widget in root.winfo_children():
         widget.destroy()
-
-    root.geometry("1400x800")
-    root.minsize(1400,700)
+    center_window(root, 1500, 800)
 
     root.title("Purchase Contract")
 
@@ -525,8 +515,8 @@ def purchase_invoice_window(root,company_name,user_name):
         widget.destroy()
 
     #basic window dimensions
-    root.geometry("1500x800")
-    root.minsize(1500,700)
+    center_window(root, 1500, 800)
+    
     #window title
     root.title(f"Purchase Invoice")
 
@@ -572,8 +562,8 @@ def purchase_return_window(root,inventory,company_name,user_name):
     for widget in root.winfo_children():
         widget.destroy()
 
-    root.geometry("1500x800")
-    root.minsize(1500,700)
+    center_window(root, 1500, 800)
+    
     #window title
     root.title(f"Purchase Return")
 
@@ -624,8 +614,7 @@ def inventory_window(root,company_name,user_name):
     for widget in root.winfo_children():
         widget.destroy()
     
-    root.geometry("1200x600")
-    root.minsize(1200,500)
+    center_window(root, 1200, 600)
 
     root.title("Inventory")
 
@@ -669,10 +658,9 @@ def add_product_window(root,company_name,user_name):
     
     for widget in root.winfo_children():
         widget.destroy()
-
-    root.geometry("900x600")
-    root.minsize(900,600)
-
+    
+    center_window(root, 900, 600)
+    
     root.title("Add Product")
 
     tk.Label(text="Add Products",font=("Helvetica-bold",25)).pack(pady=30)
@@ -707,8 +695,7 @@ def remove_product_window(root,company_name,user_name):
     for widget in root.winfo_children():
         widget.destroy()
 
-    root.geometry("900x600")
-    root.minsize(900,600)
+    center_window(root, 900, 600)
 
     root.title("Remove Product")
 
@@ -744,8 +731,7 @@ def client_window(root,company_name,user_name):
     for widget in root.winfo_children():
         widget.destroy()
 
-    root.geometry("1050x600")
-    root.minsize(1050,600)
+    center_window(root, 1050, 600)
 
     root.title("Clients")
 
@@ -785,8 +771,7 @@ def add_client_window(root,company_name,user_name):
     for widget in root.winfo_children():
         widget.destroy()
 
-    root.geometry("900x600")
-    root.minsize(900,600)
+    center_window(root, 900, 600)
 
     root.title("Add Clients")
 
@@ -826,8 +811,7 @@ def remove_client_window(root,company_name,user_name):
     for widget in root.winfo_children():
         widget.destroy()
 
-    root.geometry("900x600")
-    root.minsize(1050,600)
+    center_window(root, 900, 600)
 
     root.title("Remove Clients")
 
@@ -876,8 +860,7 @@ def bank_payment_window(root,company_name,user_name):
 
     root.title("Bank Payments")
 
-    root.geometry("1100x600")
-    root.minsize(1100,600)
+    center_window(root, 1100, 600)
 
     tk.Label(root, text="Bank Payments", font=("Helvetica",24,"bold")).pack(pady=30)
 
@@ -934,8 +917,7 @@ def cash_payment_window(root,company_name,user_name):
 
     root.title("Cash Payments")
 
-    root.geometry("1000x600")
-    root.minsize(1000,600)
+    center_window(root, 1100, 600)
 
     tk.Label(root, text="Cash Payments", font=("Helvetica",24,"bold")).pack(pady=30)
 
@@ -993,8 +975,7 @@ def bank_receipt_window(root,company_name,user_name):
 
     root.title("Bank Receipts")
 
-    root.geometry("1000x600")
-    root.minsize(1000,600)
+    center_window(root, 1100, 600)
 
     tk.Label(root, text="Bank Receipts", font=("Helvetica",24,"bold")).pack(pady=30)
 
@@ -1051,8 +1032,7 @@ def cash_receipt_window(root,company_name,user_name):
 
     root.title("Cash Receipts")
 
-    root.geometry("1000x600")
-    root.minsize(1000,600)
+    center_window(root, 1100, 600)
 
     tk.Label(root, text="Cash Receipts", font=("Helvetica",24,"bold")).pack(pady=30)
 
