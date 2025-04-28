@@ -2,6 +2,16 @@ import tkinter as tk
 from tkinter import *
 from tkinter import messagebox
 
+def center_window(root, width, height):
+    screen_width = root.winfo_screenwidth()
+    screen_height = root.winfo_screenheight()
+    x = (screen_width // 2) - (width // 2)
+    y = (screen_height // 2) - (height // 2)
+    root.geometry(f"{width}x{height}+{x}+{y}")
+    root.minsize(width, height)
+    root.maxsize(width, height)
+
+
 def client_check(table_client,customers):
 
     clients_names = customers["customer_info"].find()
@@ -60,8 +70,7 @@ def add_client(root,window,customers,company_name,user_name):
     for widget in root.winfo_children():
         widget.destroy()
 
-    root.geometry("250x300")
-    root.minsize(250,300)
+    center_window(root, 250, 300)
 
     root.title("Add Client")
 
@@ -126,8 +135,7 @@ def remove_client(root,window,customers,company_name,user_name):
     for widget in root.winfo_children():
         widget.destroy()
 
-    root.geometry("250x325")
-    root.minsize(250,340)
+    center_window(root, 250, 325)
 
     root.title("Add Client")
 
