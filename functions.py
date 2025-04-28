@@ -8,6 +8,15 @@ from reportlab.lib import colors
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.enums import TA_LEFT
 
+def center_window(root, width, height):
+    screen_width = root.winfo_screenwidth()
+    screen_height = root.winfo_screenheight()
+    x = (screen_width // 2) - (width // 2)
+    y = (screen_height // 2) - (height // 2)
+    root.geometry(f"{width}x{height}+{x}+{y}")
+    root.minsize(width, height)
+    root.maxsize(width, height)
+
 def back(root,window,invoices,inventorys,existing_contracts,company_name,user_name):
 
     if len(inventorys) == 0 and len(invoices) == 0 :
@@ -124,9 +133,7 @@ def generate_contract(root,sale_contract,account,contract_type,window,inventory,
     for widget in root.winfo_children():
         widget.destroy()
     
-    root.geometry("525x700")
-    root.minsize(500,700)
-    root.maxsize(600,800)
+    center_window(root,525,700)
 
     root.title("Generate Contract")
 
@@ -648,6 +655,7 @@ def print_contracts(root,contracts,contract_type):
     else:
         popup_print_contract = tk.Toplevel(root)
 
+        center_window(popup_print_contract,300,100)
         popup_print_contract.geometry("300x100")
         popup_print_contract.minsize(300,100)
 
@@ -707,10 +715,7 @@ def generate_invoice(root,invoices_to_save,account,inventory_sale,invoice_type,w
     for widget in root.winfo_children():
         widget.destroy()
     
-    root.geometry("500x700")
-    root.minsize(500,700)
-    root.maxsize(600,750)
-
+    center_window(root,500,700)
 
     root.title("Generate Invoice")
 
@@ -1424,9 +1429,7 @@ def print_invoice(invoices,invoice_type,root):
 
         popup_print_invoice = tk.Toplevel(root)
 
-        popup_print_invoice.geometry("300x100")
-        popup_print_invoice.minsize(300,100)
-
+        center_window(popup_print_invoice, 300, 100)
         popup_print_invoice.title("Print Invoice")
 
         frame = tk.Frame(popup_print_invoice )
@@ -1677,9 +1680,7 @@ def return_invoice(root,inventory,contract_type,return_account,account,window,co
 
     popup_print_contract = tk.Toplevel(root)
 
-    popup_print_contract.geometry("300x100")
-    popup_print_contract.minsize(300,100)
-
+    center_window(popup_print_contract, 300, 100)
 
     frame = tk.Frame(popup_print_contract)
     frame.pack()
