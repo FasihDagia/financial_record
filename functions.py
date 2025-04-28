@@ -1782,49 +1782,45 @@ def return_invoice(root,inventory,contract_type,return_account,account,window,co
                             break
 
                 if contract_type == 'sale':
-                    # try:
-                    inv = account.find_one({"invoice_no":inv_vou_no})
-                    item = inv.get("item","")
-                    print(inv)
-                    name = inv.get("opp_acc","")
-                    print(name)
-                    customer = customers[f"sale_invoice_{name}"]
-                    transaction_type = customers[f"receipt_{name}"]
-                        # invoice
-                    return_inv(inv_vou_no,account,"total_amount","balance","+","invoice",return_account,contracts)
+                    try:
+                        inv = account.find_one({"invoice_no":inv_vou_no})
+                        item = inv.get("item","")
+                        name = inv.get("opp_acc","")
+                        customer = customers[f"sale_invoice_{name}"]
+                        transaction_type = customers[f"receipt_{name}"]
+                         # invoice
+                        return_inv(inv_vou_no,account,"total_amount","balance","+","invoice",return_account,contracts)
                         #inventory
-                    return_inventory(inv_vou_no,inventory,"quantity","remaining_stock",item)
+                        return_inventory(inv_vou_no,inventory,"quantity","remaining_stock",item)
                         #cost of goods
-                    return_inv(inv_vou_no,cost_goods,"cost_of_goods","balance","+","cost_goods",return_account,contracts)
+                        return_inv(inv_vou_no,cost_goods,"cost_of_goods","balance","+","cost_goods",return_account,contracts)
                         #customer_invoice
-                    return_inv(inv_vou_no,customer,"amount","balance","-","customer_invoice",return_account,contracts)
+                        return_inv(inv_vou_no,customer,"amount","balance","-","customer_invoice",return_account,contracts)
                         #customer_receipt
-                    return_inv(inv_vou_no,transaction_type,"amount","balance","-","customer_receipt",return_account,contracts,item)
-                    # except Exception as e:
-                        # print(f"Error: {e}")
-                        # messagebox.showerror("Error", "Invoice not found")
-                        # return
+                        return_inv(inv_vou_no,transaction_type,"amount","balance","-","customer_receipt",return_account,contracts,item)
+                    except Exception as e:
+                        print(f"Error: {e}")
+                        messagebox.showerror("Error", "Invoice not found")
+                        return
                 elif contract_type == 'purchase':
-                    # try:
-                    inv = account.find_one({"voucher_no":inv_vou_no})
-                    item = inv.get("item","")
-                    print(inv)
-                    name = inv.get("opp_acc","")
-                    print(name)
-                    customer = customers[f"purchase_invoice_{name}"]
-                    transaction_type = customers[f"payment_{name}"]
-                        # invoice
-                    return_inv(inv_vou_no,account,"total_amount","balance","+","invoice",return_account,contracts)
-                    #inventory
-                    return_inventory(inv_vou_no,inventory,"quantity","remaining_stock",item)
+                    try:
+                        inv = account.find_one({"voucher_no":inv_vou_no})
+                        item = inv.get("item","")
+                        name = inv.get("opp_acc","")
+                        customer = customers[f"purchase_invoice_{name}"]
+                        transaction_type = customers[f"payment_{name}"]
+                         # invoice
+                        return_inv(inv_vou_no,account,"total_amount","balance","+","invoice",return_account,contracts)
+                        #inventory
+                        return_inventory(inv_vou_no,inventory,"quantity","remaining_stock",item)
                         #customer_invoice
-                    return_inv(inv_vou_no,customer,"amount","balance","+","customer_invoice",return_account,contracts)
+                        return_inv(inv_vou_no,customer,"amount","balance","+","customer_invoice",return_account,contracts)
                         #customer_receipt
-                    return_inv(inv_vou_no,transaction_type,"amount","balance","+","customer_receipt",return_account,contracts)
-                    # except Exception as e:
-                    #     print(f"Error: {e}")
-                    #     messagebox.showerror("Error", "Voucher not found")
-                    #     return
+                        return_inv(inv_vou_no,transaction_type,"amount","balance","+","customer_receipt",return_account,contracts)
+                    except Exception as e:
+                        print(f"Error: {e}")
+                        messagebox.showerror("Error", "Voucher not found")
+                        return
 
                 messagebox.showinfo("Success", f"{contract_type.capitalize()} Invoice returned Successfully")
                 window(root,inventory,company_name,user_name)
