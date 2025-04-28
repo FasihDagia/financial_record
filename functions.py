@@ -1716,7 +1716,7 @@ def return_invoice(root,inventory,contract_type,return_account,account,window,co
             messagebox.showerror("Error", f"Select a{type_return}")
             return
         else:
-            confirm = messagebox.askyesno("Confirm", "Do you want to Delete?")
+            confirm = messagebox.askyesno("Confirm", "Do you want to Return?")
             if confirm:
 
                 def return_inv(inv_vou_no,permanent,amount,balance,operation,being_update,return_account,contracts):
@@ -1758,9 +1758,7 @@ def return_invoice(root,inventory,contract_type,return_account,account,window,co
                         if no_inv> no_documents:
                             break               
                 
-                def return_inventory(inv_vou_no,inventory,quantity,remaining_stock,account,inv_vou):
-                    invoice = account.find_one({inv_vou:inv_vou_no})
-                    item = invoice.get("item","")
+                def return_inventory(inv_vou_no,inventory,quantity,remaining_stock,item):
                     inventory_item = inventory[item]
                     for invoice in inventory_item.find():
                         if invoice.get("invoice_no","") == inv_vou_no or invoice.get("voucher_no","") == inv_vou_no:
@@ -1775,42 +1773,58 @@ def return_invoice(root,inventory,contract_type,return_account,account,window,co
                             for inv in range(s_no+1,count+1):
                                 inv_update = inventory_item.find_one({"s_no":inv})
                                 amont = inv_update.get(quantity,"")
-                                if inv.get("type","") == "Purhase":
+                                if inv_update.get("type","") == "Purhase":
                                     balan += amont
-                                elif inv.get("type","") == "Sale":
+                                elif inv_update.get("type","") == "Sale":
                                     balan -= amont
                                 inventory_item.update_one({"s_no":inv},{"$set":{"s_no":inv_update.get("s_no","")-1,remaining_stock:balan}})
                             inventory_item.delete_one({'return':'returned'})
                             break
 
                 if contract_type == 'sale':
+                    # try:
                     inv = account.find_one({"invoice_no":inv_vou_no})
+                    item = inv.get("item","")
+                    print(inv)
                     name = inv.get("opp_acc","")
+                    print(name)
                     customer = customers[f"sale_invoice_{name}"]
                     transaction_type = customers[f"receipt_{name}"]
-                    # invoice
+                        # invoice
                     return_inv(inv_vou_no,account,"total_amount","balance","+","invoice",return_account,contracts)
-                    #inventory
-                    return_inventory(inv_vou_no,inventory,"quantity","remaining_stock",account,"invoice_no")
-                    #cost of goods
+                        #inventory
+                    return_inventory(inv_vou_no,inventory,"quantity","remaining_stock",item)
+                        #cost of goods
                     return_inv(inv_vou_no,cost_goods,"cost_of_goods","balance","+","cost_goods",return_account,contracts)
-                    #customer_invoice
+                        #customer_invoice
                     return_inv(inv_vou_no,customer,"amount","balance","-","customer_invoice",return_account,contracts)
-                    #customer_receipt
-                    return_inv(inv_vou_no,transaction_type,"amount","balance","-","customer_receipt",return_account,contracts)
+                        #customer_receipt
+                    return_inv(inv_vou_no,transaction_type,"amount","balance","-","customer_receipt",return_account,contracts,item)
+                    # except Exception as e:
+                        # print(f"Error: {e}")
+                        # messagebox.showerror("Error", "Invoice not found")
+                        # return
                 elif contract_type == 'purchase':
+                    # try:
                     inv = account.find_one({"voucher_no":inv_vou_no})
+                    item = inv.get("item","")
+                    print(inv)
                     name = inv.get("opp_acc","")
+                    print(name)
                     customer = customers[f"purchase_invoice_{name}"]
                     transaction_type = customers[f"payment_{name}"]
-                    # invoice
+                        # invoice
                     return_inv(inv_vou_no,account,"total_amount","balance","+","invoice",return_account,contracts)
                     #inventory
-                    return_inventory(inv_vou_no,inventory,"quantity","remaining_stock",account,"voucher_no")
-                    #customer_invoice
+                    return_inventory(inv_vou_no,inventory,"quantity","remaining_stock",item)
+                        #customer_invoice
                     return_inv(inv_vou_no,customer,"amount","balance","+","customer_invoice",return_account,contracts)
-                    #customer_receipt
+                        #customer_receipt
                     return_inv(inv_vou_no,transaction_type,"amount","balance","+","customer_receipt",return_account,contracts)
+                    # except Exception as e:
+                    #     print(f"Error: {e}")
+                    #     messagebox.showerror("Error", "Voucher not found")
+                    #     return
 
                 messagebox.showinfo("Success", f"{contract_type.capitalize()} Invoice returned Successfully")
                 window(root,inventory,company_name,user_name)
