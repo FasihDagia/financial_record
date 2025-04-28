@@ -294,7 +294,7 @@ def client_module_window(root,company_name,user_name):
 
 def sale_contract_window(root,company_name,user_name):
     
-    com_profile = client[f'company_profile']
+    com_profile = client[f'company_profile_{company_name.lower().replace(" ","_")}']
     account = db[f'sale_contract']
     existing_contract = account.find().sort("s_no", 1)
     sno_cont = 1
@@ -452,7 +452,7 @@ def sale_return_window(root,inventory,company_name,user_name):
 
 def purchase_contract_window(root,company_name,user_name):
 
-    com_profile = client[f'company_profile']
+    com_profile = client[f'company_profile_{company_name.lower().replace(" ","_")}']
     account = db[f'purchase_contract']
     existing_contract = account.find().sort("s_no", 1)
     existing_contracts = {}

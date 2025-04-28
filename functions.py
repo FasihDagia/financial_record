@@ -318,7 +318,7 @@ def generate_contract(root,sale_contract,account,contract_type,window,inventory,
     quant_entry.bind("<KeyRelease>",calculate_total,check_quantity)
 
     tk.Label(contract_info, text="GST(%):").grid(row=2, column=2,padx=5)
-    tax_percent = tax.find_one({"company_name":"DFT Enterprises"})
+    tax_percent = tax.find_one({"company_name":company_name})
     gst_default_value = tax_percent.get("gst_percent","")
     gst_default_value_assign = tk.StringVar(value=gst_default_value)
     gst_entry = tk.Entry(contract_info, width=width, textvariable=gst_default_value_assign)
