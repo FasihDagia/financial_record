@@ -4,6 +4,15 @@ from tkinter import ttk, messagebox, simpledialog,filedialog
 from datetime import datetime
 from num2words import num2words
 
+def center_window(root, width, height):
+    screen_width = root.winfo_screenwidth()
+    screen_height = root.winfo_screenheight()
+    x = (screen_width // 2) - (width // 2)
+    y = (screen_height // 2) - (height // 2)
+    root.geometry(f"{width}x{height}+{x}+{y}")
+    root.minsize(width, height)
+    root.maxsize(width, height)
+
 def go_back(root,window,payments,pay_receip_temp,company_name,user_name):
     if len(payments) == 0 and len(pay_receip_temp) == 0:
         window(root,company_name,user_name)
@@ -21,8 +30,7 @@ def generate_cash_receipt(root,window,receipt_temp,receipt,pay_receip,pay_receip
 
     root.title("Generate Receipt")
 
-    root.geometry("600x500")
-    root.minsize(600,500)
+    center_window(root, 600, 500)
 
     tk.Label(root,text="Generate Cash Receipt Voucher",font=("helvetica",18,"bold")).pack(pady=30)
 
@@ -257,8 +265,7 @@ def generate_cash_payments(root,window,payments_temp,payment,pay_receip,pay_rece
 
     root.title("Generate Payment")
 
-    root.geometry("600x500")
-    root.minsize(600,500)
+    center_window(root, 600, 500)
 
     tk.Label(root,text="Generate Cash Payment Voucher",font=("helvetica",18,"bold")).pack(pady=30)
 
