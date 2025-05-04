@@ -121,6 +121,7 @@ def main_menu_window(root,company_name,user_name):
         "Receipt Module": lambda: receipt_module_window(root,company_name,user_name),
         "Inventory Module": lambda: inventory_module_window(root,company_name,user_name),
         "Client Module": lambda: client_module_window(root,company_name,user_name),
+        "Ledger Module": lambda: ledger_module_window(root,company_name,user_name),
         "Company Profile": lambda: show_company_profile(root, client, main_menu_window, company_name, user_name),
     }
 
@@ -291,6 +292,29 @@ def client_module_window(root,company_name,user_name):
     tk.Button(btn_frame,text="Remove Client",font=("Helvetica",10),width=20,command=lambda:remove_client_window(root,company_name,user_name)).grid(padx=10,pady=10,row=1,column=0)
     tk.Button(btn_frame, text="Back",font=("Helvetica",10), width=20, command=lambda:main_menu_window(root,company_name,user_name)).grid(row=1, column=1,padx=10,pady=10)
     tk.Button(root, text="Exit",font=("Helvetica",10), width=20, command=root.destroy).pack(padx=10,pady=5)
+
+def ledger_module_window(root,company_name,user_name):
+    clear_temp(sale_contracts, purchase_contracts, sale_transaction, purchase_transaction, inventory_sale,
+               existing_contracts, payments_temp, receipt_temp, pay_receip_temp, bank_temp, cash_temp,
+               client_temp, bank_ind_temp, tax_temp, pay_receip_balance, invoice_balance, sld_stock,
+               cost_goods_temp)
+
+    for widget in root.winfo_children():
+        widget.destroy()
+
+    center_window(root, 450, 225)
+
+    root.title("Ledger Module")
+
+    tk.Label(root,text="Ledger Module",font=("Helvetica",20)).pack(padx=50,pady=5)
+
+    btn_frame = Frame()
+    btn_frame.pack(fill=X, padx=33, pady=10)
+
+    tk.Button(btn_frame,text="Sale Ledger", font=("Helvetica",10),width=20,command=lambda:ledger_window(root,company_name,user_name,"Sale")).grid(padx=10,pady=10,row=0,column=0)
+    tk.Button(btn_frame,text="Purchase Ledger", font=("Helvetica",10),width=20,command=lambda:ledger_window(root,company_name,user_name,"Purchase")).grid(padx=10,pady=10,row=0,column=1)
+    tk.Button(btn_frame,text="Back", font=("Helvetica",10),width=20,command=lambda:main_menu_window(root,company_name,user_name)).grid(padx=10,pady=10,row=2,column=0)
+    tk.Button(btn_frame, text="Exit",font=("Helvetica",10), width=20, command=root.destroy).grid(padx=10,pady=5,row=2,column=1)
 
 def sale_contract_window(root,company_name,user_name):
     
@@ -1075,3 +1099,45 @@ def cash_receipt_window(root,company_name,user_name):
     table_receipt.column("Balance", anchor="center", width=75)
 
     load_payments_receipt(table_receipt,cash_temp)
+
+def ledger_window(root,company_name,user_name,type_of_ledger):
+
+    for widget in root.winfo_children():
+        widget.destroy()
+
+    center_window(root, 1200, 600)
+
+    root.title(f"{type_of_ledger} Ledger")
+
+    tk.Label(text="Ledger",font=("Helvetica-bold",25)).pack(pady=30)
+
+    style = ttk.Style()
+    style.configure("Treeview.Heading", font=("Helvetica", 10, "bold"))  
+    style.configure("Treeview", font=("Helvetica", 8))  
+
+    btn_frame = tk.Frame(root)
+    btn_frame.pack(pady=10)
+
+    tk.Button(btn_frame, text="Back", width=20, command=lambda:ledger_module_window(root,company_name,user_name)).grid(row=0, column=3,padx=5)
+    tk.Button(btn_frame, text="Exit", width=20, command=root.destroy).grid(row=0, column=4,padx=5)
+
+    table_ledger = ttk.Treeview(root, columns=("S.NO","Date","Voucher No","Account Receivable","Head Type","Description","Amount","Tax Amount","Total Amount"), show="headings")
+    table_ledger.pack(fill=tk.BOTH, pady=20)
+
+    table_ledger.heading("S.NO", text="S.NO")
+    table_ledger.column("S.NO", anchor="center", width=50)
+    table_ledger.heading("Date", text="Date")
+    table_ledger.column("Date", anchor="center", width=75)
+    table_ledger.heading("Voucher No", text="Voucher No")
+    table_ledger.column("Voucher No", anchor="center", width=75)
+    table_ledger.heading("Account Receivable", text="Account Receivable")
+    table_ledger.column("Account Receivable", anchor="center", width=100)
+    table_ledger.heading("Head Type", text="Head Type")
+    table_ledger.column("Head Type", anchor="center", width=100)
+    table_ledger.heading("Description", text="Description")
+    table_ledger.column("Description", anchor="center", width=300)
+    table_ledger.heading("Amount", text="Amount")
+    table_ledger.column("Amount", anchor="center", width=75)
+    table_ledger.heading("Tax Amount", text="Tax Amount")
+    table_ledger.column("Tax Amount", anchor="center", width=75)
+    table_ledger.heading("Total Amount", text="Total Amount")
