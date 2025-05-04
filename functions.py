@@ -445,7 +445,7 @@ def generate_contract(root,sale_contract,account,contract_type,window,inventory,
         if additional_clauses == "Optional":
             additional_clauses =None
 
-        if not date or not terms_payment or not amount or party_name == 'Name' or not quantity or unit == 'Unit' or not rate or not gst or item == 'Product Name':
+        if not date or not terms_payment or not amount or not party_name or not quantity or not unit  or not rate or not gst or not item :
             messagebox.showerror("Error", "Fields can't be empty")
             return
         else:
@@ -1660,7 +1660,7 @@ def save(transactions,account,inventorys,existing_Contracts,contracts,inventory,
     else:
         messagebox.showerror("Error","No Invoices to save!")
 
-def save_contract(contracts,account,existing_contracts):
+def save_contract(contracts,account,existing_contracts,table_new_contracts,sale_contracts,table_existing_contracts):
 
     if len(contracts) != 0:
         confirm = messagebox.askyesno("Confirm", f"Once the Contracts are saved you wont be able to cahnge them\nAre you sure you want to save?")
@@ -1673,8 +1673,11 @@ def save_contract(contracts,account,existing_contracts):
             existing_contracts.clear()
 
             messagebox.showinfo("Success","Contracts Saved Succesfully!")
+            load_contracts(table_new_contracts,sale_contracts)
+            load_contracts(table_existing_contracts,existing_contracts)
     else:
         messagebox.showerror("Error","No Contracts to save!")
+    
 
 def return_invoice(root,inventory,contract_type,return_account,account,window,company_name,user_name,contracts,cost_goods,customers):
 
