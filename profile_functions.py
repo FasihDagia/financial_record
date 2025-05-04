@@ -458,6 +458,7 @@ def edit_employee(root,employees,com_name,client,window_show,user_name,window_ma
             rec_mod_var.set(employee_info.get("receipt_module", 0))
             cli_mod_var.set(employee_info.get("client_module", 0))
             inv_mod_var.set(employee_info.get("inventory_module", 0))
+            led_mod_var.set(employee_info.get("ledger_module", 0))
             comp_mod_var.set(employee_info.get("company_profile_module", 0))
 
     tk.Label(employee_frame,text = "Employee ID:",font=("Helvetica",10)).grid(row=1,column=0,padx=5,pady=10)
@@ -531,9 +532,13 @@ def edit_employee(root,employees,com_name,client,window_show,user_name,window_ma
     inv_mod_check = tk.Checkbutton(access_frame, text="inventory Module", variable=inv_mod_var,font=("Helvetica",10))
     inv_mod_check.grid(row=2,column=1,pady=10,padx=5)
 
+    led_mod_var = tk.IntVar()
+    led_mod_check = tk.Checkbutton(access_frame, text="Ledger Module", variable=led_mod_var,font=("Helvetica",10))
+    led_mod_check.grid(row=2,column=2,pady=10,padx=5)
+
     comp_mod_var = tk.IntVar()
     comp_mod_check = tk.Checkbutton(access_frame, text="Company Profile", variable=comp_mod_var,font=("Helvetica",10))
-    comp_mod_check.grid(row=2,column=2,pady=10,padx=5)
+    comp_mod_check.grid(row=2,column=3,pady=10,padx=5)
 
     emp_id_var.trace_add("write", get_employee_info)
 
@@ -564,6 +569,7 @@ def edit_employee(root,employees,com_name,client,window_show,user_name,window_ma
         rec_mod = rec_mod_var.get()
         cli_mod = cli_mod_var.get()
         inv_mod = inv_mod_var.get()
+        led_mod = led_mod_var.get()
         comp_mod = comp_mod_var.get()
 
         if not emp_name or not emp_email or not emp_phone or not emp_address or not emp_username or not emp_password:
@@ -573,7 +579,7 @@ def edit_employee(root,employees,com_name,client,window_show,user_name,window_ma
             add_btn.pack(pady=10)
             return
 
-        employees.update_one({"emp_id":emp_id}, {"$set": {"name":emp_name, "email":emp_email, "phone_no":emp_phone, "address":emp_address, "username":emp_username, "password":emp_password, "sale_module":sal_mod, "purchase_module":pur_mod, "payment_module":pay_mod, "receipt_module":rec_mod, "client_module":cli_mod, "inventory_module":inv_mod, "company_profile_module":comp_mod}})
+        employees.update_one({"emp_id":emp_id}, {"$set": {"name":emp_name, "email":emp_email, "phone_no":emp_phone, "address":emp_address, "username":emp_username, "password":emp_password, "sale_module":sal_mod, "purchase_module":pur_mod, "payment_module":pay_mod, "receipt_module":rec_mod, "client_module":cli_mod, "inventory_module":inv_mod, "company_profile_module":comp_mod, "ledger_module":led_mod}})
         
         messagebox.showinfo("Success", "Employee Edited Successfully!")
         show_employees_edit(root, employees, com_name, client,  user_name, window_main)
