@@ -311,6 +311,7 @@ def delete_employee(root,employees,com_name,client,user_name,window_main,window_
             rec_mod_var.set(employee_info.get("receipt_module", 0))
             cli_mod_var.set(employee_info.get("client_module", 0))
             inv_mod_var.set(employee_info.get("inventory_module", 0))
+            led_mod_var.set(employee_info.get("ledger_module", 0))
             comp_mod_var.set(employee_info.get("company_profile_module", 0))
 
     tk.Label(employee_frame,text = "Employee ID:",font=("Helvetica",10)).grid(row=1,column=0,padx=5,pady=10)
@@ -384,9 +385,13 @@ def delete_employee(root,employees,com_name,client,user_name,window_main,window_
     inv_mod_check = tk.Checkbutton(access_frame, text="inventory Module", variable=inv_mod_var,font=("Helvetica",10))
     inv_mod_check.grid(row=2,column=1,pady=10,padx=5)
 
+    led_mod_var = tk.IntVar()
+    led_mod_check = tk.Checkbutton(access_frame, text="Ledger Module", variable=led_mod_var,font=("Helvetica",10))
+    led_mod_check.grid(row=2,column=2,pady=10,padx=5)
+
     comp_mod_var = tk.IntVar()
     comp_mod_check = tk.Checkbutton(access_frame, text="Company Profile", variable=comp_mod_var,font=("Helvetica",10))
-    comp_mod_check.grid(row=2,column=2,pady=10,padx=5)
+    comp_mod_check.grid(row=2,column=3,pady=10,padx=5)
 
     emp_id_var.trace_add("write", get_employee_info)
 
