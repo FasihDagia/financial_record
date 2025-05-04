@@ -108,6 +108,7 @@ def main_menu_window(root,company_name,user_name):
         "Receipt Module": employee.get("receipt_module", 0),
         "Inventory Module": employee.get("inventory_module", 0),
         "Client Module": employee.get("client_module", 0),
+        "Ledger Module": employee.get("ledger_module", 0),
         "Company Profile": employee.get("company_profile_module", 0),
     }
 
