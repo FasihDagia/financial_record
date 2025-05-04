@@ -1660,7 +1660,7 @@ def save(transactions,account,inventorys,existing_Contracts,contracts,inventory,
     else:
         messagebox.showerror("Error","No Invoices to save!")
 
-def save_contract(contracts,account,existing_contracts,table_new_contracts,sale_contracts,table_existing_contracts):
+def save_contract(contracts,account,existing_contracts):
 
     if len(contracts) != 0:
         confirm = messagebox.askyesno("Confirm", f"Once the Contracts are saved you wont be able to cahnge them\nAre you sure you want to save?")
@@ -1673,8 +1673,6 @@ def save_contract(contracts,account,existing_contracts,table_new_contracts,sale_
             existing_contracts.clear()
 
             messagebox.showinfo("Success","Contracts Saved Succesfully!")
-            load_contracts(table_new_contracts,sale_contracts)
-            load_contracts(table_existing_contracts,existing_contracts)
     else:
         messagebox.showerror("Error","No Contracts to save!")
     

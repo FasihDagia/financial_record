@@ -341,7 +341,7 @@ def sale_contract_window(root,company_name,user_name):
 
     tk.Button(button_frame,text='Generate Contract', width=15,command=lambda:generate_contract(root,sale_contracts,account,'Sale',sale_contract_window,inventory,customers,company_name,user_name,com_profile)).grid(row=0, column=1,padx=5)
     tk.Button(button_frame, text= "Print Contract", width=15, command=lambda:print_contracts(root,sale_contracts,"SALE")).grid(row=0, column=2,padx=5)
-    tk.Button(button_frame, text="Save", width=15, command=lambda:save_contract(sale_contracts,account,existing_contracts,table_existing_contracts,sale_contracts,table_existing_contracts)).grid(row=0, column=3,padx=5)
+    tk.Button(button_frame, text="Save", width=15, command=lambda:save_contract(sale_contracts,account,existing_contracts)).grid(row=0, column=3,padx=5)
     tk.Button(button_frame, text="Back", width=15, command=lambda:back(root,sale_module_window,sale_contracts,inventory_sale,existing_contracts,company_name,user_name)).grid(row=0, column=4,padx=5)
     tk.Button(button_frame, text="Exit", width=15, command=root.destroy).grid(row=0, column=5,padx=5)
 
