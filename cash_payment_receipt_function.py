@@ -78,7 +78,7 @@ def generate_cash_receipt(root,window,receipt_temp,receipt,pay_receip,pay_receip
     tk.Label(entry_frame,text="Account Payable:",font=('helvetica',10)).grid(pady=10,row=1,column=2)
     acc_recev_options = []
     for i in customers['customer_info'].find():
-            acc_recev_options.append(i.get('account_receivable',''))  
+            acc_recev_options.append(i.get('opp_acc',''))  
     if len(acc_recev_options) == 0:
         acc_recev_options.append("No Accounts to show")  
     acc_recev_options.sort()      

@@ -50,7 +50,7 @@ def generate_bank_payments(root,window,payments_temp,payment,pay_receip,pay_rece
     for i in banks.find({}):
         bank_options.append(i.get('bank_name',''))
     if len(bank_options) == 0:
-        bank_options.append("No Bankss to show") 
+        bank_options.append("No Banks to show") 
     bank_options.sort()
     bank_option = tk.StringVar(value="Banks")
     bank_entry = OptionMenu(entry_frame, bank_option , *bank_options)
