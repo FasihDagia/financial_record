@@ -1110,8 +1110,18 @@ def ledger_window(root,company_name,user_name,type_of_ledger):
 
     root.title(f"{type_of_ledger} Ledger")
 
-    tk.Label(text="Ledger",font=("Helvetica-bold",25)).pack(pady=30)
+    account_name = []
+    for name in customers["customer_info"].find():
+        account_name.append(name.get('opp_acc'))
 
+    tk.Label(root,text=f"{type_of_ledger} Ledger",font=("Helvetica-bold",22)).pack(pady=10)
+
+    tk.Label(root,text="Select Account:",font=("Helvetica-bold",15)).pack(pady=10)
+    selected_account = tk.StringVar(value="Select Account")
+    acc_entry = tk.OptionMenu(root, selected_account, *account_name)
+    acc_entry.config(width=20, font=("Helvetica", 10))
+    acc_entry.pack(pady=5)
+    
     style = ttk.Style()
     style.configure("Treeview.Heading", font=("Helvetica", 10, "bold"))  
     style.configure("Treeview", font=("Helvetica", 8))  
@@ -1122,7 +1132,7 @@ def ledger_window(root,company_name,user_name,type_of_ledger):
     tk.Button(btn_frame, text="Back", width=20, command=lambda:ledger_module_window(root,company_name,user_name)).grid(row=0, column=3,padx=5)
     tk.Button(btn_frame, text="Exit", width=20, command=root.destroy).grid(row=0, column=4,padx=5)
 
-    table_ledger = ttk.Treeview(root, columns=("S.NO","Date","Voucher No","Account Receivable","Head Type","Description","Amount","Tax Amount","Total Amount"), show="headings")
+    table_ledger = ttk.Treeview(root, columns=("S.NO","Date","Voucher No","Account Receivable","Head Type","Description","Amount","Tax Amount","Total Amount"), show="headings",height=25)
     table_ledger.pack(fill=tk.BOTH, pady=20)
 
     table_ledger.heading("S.NO", text="S.NO")
