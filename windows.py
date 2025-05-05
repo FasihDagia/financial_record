@@ -1110,6 +1110,11 @@ def ledger_window(root,company_name,user_name,type_of_ledger):
 
     root.title(f"{type_of_ledger} Ledger")
 
+    if type_of_ledger == "Sale":
+        inv_vouch_no = "Invoice No"
+    elif type_of_ledger == "Purchase":
+        inv_vouch_no = "Voucher No"
+
     account_name = []
     for name in customers["customer_info"].find():
         account_name.append(name.get('opp_acc'))
@@ -1132,23 +1137,22 @@ def ledger_window(root,company_name,user_name,type_of_ledger):
     tk.Button(btn_frame, text="Back", width=20, command=lambda:ledger_module_window(root,company_name,user_name)).grid(row=0, column=3,padx=5)
     tk.Button(btn_frame, text="Exit", width=20, command=root.destroy).grid(row=0, column=4,padx=5)
 
-    table_ledger = ttk.Treeview(root, columns=("S.NO","Date","Voucher No","Account Receivable","Head Type","Description","Amount","Tax Amount","Total Amount"), show="headings",height=25)
+    table_ledger = ttk.Treeview(root, columns=("S.NO","Date",inv_vouch_no,"Head Type","Description","Credit","Debit","Balance"), show="headings",height=25)
     table_ledger.pack(fill=tk.BOTH, pady=20)
 
     table_ledger.heading("S.NO", text="S.NO")
     table_ledger.column("S.NO", anchor="center", width=50)
     table_ledger.heading("Date", text="Date")
     table_ledger.column("Date", anchor="center", width=75)
-    table_ledger.heading("Voucher No", text="Voucher No")
-    table_ledger.column("Voucher No", anchor="center", width=75)
-    table_ledger.heading("Account Receivable", text="Account Receivable")
-    table_ledger.column("Account Receivable", anchor="center", width=100)
+    table_ledger.heading(inv_vouch_no, text=inv_vouch_no)
+    table_ledger.column(inv_vouch_no, anchor="center", width=75)
     table_ledger.heading("Head Type", text="Head Type")
     table_ledger.column("Head Type", anchor="center", width=100)
     table_ledger.heading("Description", text="Description")
     table_ledger.column("Description", anchor="center", width=300)
-    table_ledger.heading("Amount", text="Amount")
-    table_ledger.column("Amount", anchor="center", width=75)
-    table_ledger.heading("Tax Amount", text="Tax Amount")
-    table_ledger.column("Tax Amount", anchor="center", width=75)
-    table_ledger.heading("Total Amount", text="Total Amount")
+    table_ledger.heading("Credit", text="Credit")
+    table_ledger.column("Credit", anchor="center", width=75)
+    table_ledger.heading("Debit", text="Debit")
+    table_ledger.column("Debit", anchor="center", width=75)
+    table_ledger.heading("Balance", text="Balance")
+    table_ledger.column("Balance", anchor="center", width=75)
