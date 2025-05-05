@@ -341,7 +341,7 @@ def generate_bank_receipt(root,window,receipt_temp,receipt,pay_receip,pay_receip
     for i in banks.find({}):
         bank_options.append(i.get('bank_name',''))
     if len(bank_options) == 0:
-        bank_options.append("No Bankss to show") 
+        bank_options.append("No Banks to show") 
     bank_options.sort()
     bank_option = tk.StringVar(value="Banks")
     bank_entry = OptionMenu(entry_frame, bank_option , *bank_options)
@@ -355,7 +355,7 @@ def generate_bank_receipt(root,window,receipt_temp,receipt,pay_receip,pay_receip
     tk.Label(entry_frame,text="Account Payable:",font=('helvetica',9)).grid(pady=10,row=2,column=0)
     acc_pay_options = []
     for i in customers['customer_info'].find():
-            acc_pay_options.append(i.get('account_receivable',''))  
+            acc_pay_options.append(i.get('opp_acc',''))  
     if len(acc_pay_options) == 0:
         acc_pay_options.append("No Accounts to show")  
     acc_pay_options.sort()      
