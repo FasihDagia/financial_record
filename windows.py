@@ -12,6 +12,7 @@ from inventory_functions import inventory_check,existing_products,add_product,re
 from client_function import client_check,existing_clients,add_client,remove_client
 from bank_payment_receipt_functions import generate_bank_payments,load_payments_receipt,save_bank_payment_receipt,generate_bank_receipt
 from cash_payment_receipt_function import generate_cash_receipt,generate_cash_payments,save_cash_payments_receipt,go_back
+from ledger_functions import show_account
 
 def center_window(root, width, height):
     screen_width = root.winfo_screenwidth()
@@ -1134,6 +1135,7 @@ def ledger_window(root,company_name,user_name,type_of_ledger):
     btn_frame = tk.Frame(root)
     btn_frame.pack(pady=10)
 
+    tk.Button(btn_frame, text="Show Account", width=20, command=lambda:show_account()).grid(row=0,column=2,pady=10)
     tk.Button(btn_frame, text="Back", width=20, command=lambda:ledger_module_window(root,company_name,user_name)).grid(row=0, column=3,padx=5)
     tk.Button(btn_frame, text="Exit", width=20, command=root.destroy).grid(row=0, column=4,padx=5)
 
