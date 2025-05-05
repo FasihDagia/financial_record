@@ -20,7 +20,7 @@ def generate_bank_payments(root,window,payments_temp,payment,pay_receip,pay_rece
 
     root.title("Generate Payment")
 
-    center_window(root,600,500)
+    center_window(root,600,550)
 
     tk.Label(root,text="Generate Bank Payment Voucher",font=("helvetica",18,"bold")).pack(pady=30)
 
