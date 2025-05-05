@@ -313,7 +313,7 @@ def generate_cash_payments(root,window,payments_temp,payment,pay_receip,pay_rece
     tk.Label(entry_frame,text="Account Receivable:",font=('helvetica',9)).grid(pady=10,row=1,column=2)
     acc_recev_options = []
     for i in customers['customer_info'].find():
-            acc_recev_options.append(i.get('account_receivable',''))  
+            acc_recev_options.append(i.get('opp_acc',''))  
     if len(acc_recev_options) == 0:
         acc_recev_options.append("No Accounts to show")  
     acc_recev_options.sort()      
