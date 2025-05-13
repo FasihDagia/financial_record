@@ -32,7 +32,7 @@ def client_check(table_client,customers):
     for contract in clients.values():
         table_client.insert("", tk.END, values=(
             i,
-            contract.get('party_name', ''),
+            contract.get('opp_acc', ''),
             contract.get('party_address', ''),
             contract.get('party_phone', ''),
             contract.get('party_email', ''),
@@ -57,7 +57,7 @@ def existing_clients(table_client, customers):
     for contract in clients.values():
         table_client.insert("", tk.END, values=(
             i,
-            contract.get('party_name', ''),
+            contract.get('opp_acc', ''),
             contract.get('party_address', ''),
             contract.get('party_phone', ''),
             contract.get('party_email', ''),
@@ -115,7 +115,7 @@ def add_client(root,window,customers,company_name,user_name):
         else:
             exist = clients_info.find_one({'account_receivable':name})
             if exist == None:
-                details = {'party_name':name,'party_email':email,'party_phone':phone,'party_address':address}
+                details = {'opp_acc':name,'party_email':email,'party_phone':phone,'party_address':address}
                 clients_info.insert_one(details)
 
                 if name in customers.list_collection_names():
