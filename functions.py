@@ -1110,7 +1110,9 @@ def generate_invoice(root,invoices_to_save,account,inventory_sale,invoice_type,w
                 'further_tax_amount': further_tax_amount,
                 'total_amount': total_amount,
                 'description': description,
-                'balance': balance
+                'balance': balance,
+                'amount_cleared':0,
+                'progress': 'pending'
             }
         
             if invoice_type == 'Sale':
@@ -1158,7 +1160,7 @@ def generate_invoice(root,invoices_to_save,account,inventory_sale,invoice_type,w
                 'voucher_no': voucher_no,
                 'opp_acc': account_recevible,
                 'amount': amount,
-                'balance': balance2
+                'balance': balance2,
             }
         
             # For inventory 
