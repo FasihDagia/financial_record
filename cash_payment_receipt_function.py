@@ -94,7 +94,7 @@ def generate_cash_receipt(root,window,receipt_temp,receipt,pay_receip,pay_receip
     invoice_no_entry = tk.OptionMenu(entry_frame, invoice_var , *invoice_options)
     invoice_no_entry.grid(row=1,column=3,padx=5)
     
-    invoice_var.trace("w", on_invoice_select)
+    invoice_var.trace_add("w", on_invoice_select)
 
     def update_invoice_menu(invoices):
         menu = invoice_no_entry["menu"]
