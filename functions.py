@@ -1112,7 +1112,7 @@ def generate_invoice(root,invoices_to_save,account,inventory_sale,invoice_type,w
                 'description': description,
                 'balance': balance,
                 'amount_cleared':0,
-                'progress': 'pending'
+                'status': 'pending'
             }
         
             if invoice_type == 'Sale':

@@ -23,14 +23,14 @@ def go_back(root,window,payments,pay_receip_temp,company_name,user_name):
             pay_receip_temp.clear()
             window(root,company_name,user_name)
 
-def generate_cash_receipt(root,window,receipt_temp,receipt,pay_receip,pay_receip_temp,customers,client_temp,cash,cash_temp,tax,tax_temp,invoice_balance,heads,company_name,user_name):
+def generate_cash_receipt(root,window,receipt_temp,receipt,pay_receip,pay_receip_temp,customers,client_temp,cash,cash_temp,tax,tax_temp,invoice_balance,heads,company_name,user_name,db):
     
     for widget in root.winfo_children():
         widget.destroy()
 
     root.title("Generate Receipt")
 
-    center_window(root, 600, 500)
+    center_window(root, 600, 550)
 
     tk.Label(root,text="Generate Cash Receipt Voucher",font=("helvetica",18,"bold")).pack(pady=30)
 
@@ -75,17 +75,62 @@ def generate_cash_receipt(root,window,receipt_temp,receipt,pay_receip,pay_receip
     account_entry = tk.Entry(entry_frame, width=20, textvariable=account_default)
     account_entry.grid(row=1,column=1,padx=5)
 
-    tk.Label(entry_frame,text="Account Payable:",font=('helvetica',10)).grid(pady=10,row=1,column=2)
+    def on_invoice_select(*args):
+        selected_invoice = invoice_var.get()
+        if selected_invoice != "Invoice No":
+            for i in db['sale_invoice'].find():
+                if i.get('invoice_no') == selected_invoice:
+                    acc_recev_default.set(i.get('opp_acc',''))
+                    acc_recev_entry.config(state='disabled')
+
+    tk.Label(entry_frame,text="Invoice No:",font=('helvetica',9)).grid(pady=10,row=1,column=2)
+    invoice_options = []
+    for i in db['sale_invoice'].find():
+            invoice_options.append(i.get('invoice_no',''))
+    if len(invoice_options) == 0:
+        invoice_options.append("No Invoice to show")
+    invoice_options.sort()
+    invoice_var = tk.StringVar(value="Invoice No")
+    invoice_no_entry = tk.OptionMenu(entry_frame, invoice_var , *invoice_options)
+    invoice_no_entry.grid(row=1,column=3,padx=5)
+    
+    invoice_var.trace("w", on_invoice_select)
+
+    def update_invoice_menu(invoices):
+        menu = invoice_no_entry["menu"]
+        menu.delete(0, "end")
+        for invoice in invoices:
+            menu.add_command(label=invoice, command=lambda value=invoice: invoice_var.set(value))
+        invoice_var.set("Invoice No")
+
+    def on_acc_recev_select(*args):
+        selected_acc_recev = acc_recev_entry.get()
+        
+        if selected_acc_recev != "Account Payable":
+            invoice_options.clear()    
+            for i in db['sale_invoice'].find():
+                if i.get('opp_acc') == selected_acc_recev:
+                    invoice_options.append(i.get('invoice_no',''))
+            if len(invoice_options) == 0:
+                invoice_options.append("No Invoice to show")
+            invoice_options.sort()
+            update_invoice_menu(invoice_options)
+
+
+    tk.Label(entry_frame,text="Account Payable:",font=('helvetica',10)).grid(pady=10,row=2,column=0)
     acc_recev_options = []
     for i in customers['customer_info'].find():
             acc_recev_options.append(i.get('opp_acc',''))  
     if len(acc_recev_options) == 0:
         acc_recev_options.append("No Accounts to show")  
     acc_recev_options.sort()      
-    acc_recev_entry = ttk.Combobox(entry_frame, values=acc_recev_options, width=15)
-    acc_recev_entry.grid(row=1,column=3,padx=5)
+    acc_recev_default = tk.StringVar(value="Account Payable")
+    acc_recev_entry = ttk.Combobox(entry_frame, values=acc_recev_options, width=15,textvariable=acc_recev_default)
+    acc_recev_entry.grid(row=2,column=1,padx=5)
     
-    tk.Label(entry_frame, text="Head Type:", font=("helvetica",10)).grid(pady=10,row=2,column=0)
+    acc_recev_entry.bind("<<ComboboxSelected>>", on_acc_recev_select)
+
+    tk.Label(entry_frame, text="Head Type:", font=("helvetica",10)).grid(pady=10,row=2,column=2)
     exp_type_options = []
     for i in heads.find():
         exp_type_options.append(i.get('hd_name',''))
@@ -94,20 +139,20 @@ def generate_cash_receipt(root,window,receipt_temp,receipt,pay_receip,pay_receip
     exp_type_option = tk.StringVar(value="Head Types")
     exp_type_entry = OptionMenu(entry_frame, exp_type_option , *exp_type_options)
     exp_type_entry.config(width=19)
-    exp_type_entry.grid(row=2,column=1,padx=5)
+    exp_type_entry.grid(row=2,column=3,padx=5)
 
-    tk.Label(entry_frame, text="Amount:", font=("helvetica",10)).grid(pady=10,row=2,column=2)
+    tk.Label(entry_frame, text="Amount:", font=("helvetica",10)).grid(pady=10,row=3,column=0)
     amount_entry = tk.Entry(entry_frame, width=20)
-    amount_entry.grid(row=2,column=3,padx=5)
+    amount_entry.grid(row=3,column=1,padx=5)
 
-    tk.Label(entry_frame,text="Tax Percent:",font=("helvetica",10)).grid(pady=10,row=3,column=0)
+    tk.Label(entry_frame,text="Tax Percent:",font=("helvetica",10)).grid(pady=10,row=3,column=2)
     tax_p_entry= tk.Entry(entry_frame, width=20)
-    tax_p_entry.grid(row=3,column=1,padx=5)
+    tax_p_entry.grid(row=3,column=3,padx=5)
 
-    tk.Label(entry_frame, text="Tax Amount:", font=("helvetica",10)).grid(pady=10,row=3,column=2)
+    tk.Label(entry_frame, text="Tax Amount:", font=("helvetica",10)).grid(pady=10,row=4,column=0)
     tax_amount_var = tk.StringVar(value=0.00)
     tax_amount_entry = tk.Entry(entry_frame, width=20,textvariable=tax_amount_var)
-    tax_amount_entry.grid(row=3,column=3,padx=5)
+    tax_amount_entry.grid(row=4,column=1,padx=5)
     
     des_frame = tk.Frame(root)
     des_frame.pack(pady=5)
@@ -145,6 +190,7 @@ def generate_cash_receipt(root,window,receipt_temp,receipt,pay_receip,pay_receip
         tax_percent = float(tax_p_entry.get())
         tax_amount = float(tax_amount_entry.get())
         total_amount = float(total_var.get())
+        invoice_no = invoice_var.get() or None
 
         amountiw = num2words(total_amount).upper()
 
@@ -180,6 +226,7 @@ def generate_cash_receipt(root,window,receipt_temp,receipt,pay_receip,pay_receip
                     "s_no":sno,
                     "date":date,
                     "voucher_no":vouch_no,
+                    "invoice_no":invoice_no,
                     "head_type":exp_type,
                     "account":account,
                     "opp_acc":acc_pay,
@@ -232,6 +279,7 @@ def generate_cash_receipt(root,window,receipt_temp,receipt,pay_receip,pay_receip
                         "s_no":sno2,
                         "date":date,
                         "voucher_no":vouch_no,
+                        "invoice_no":invoice_no,
                         "head_type":exp_type,
                         "account":account,
                         "opp_acc":acc_pay,
@@ -255,7 +303,14 @@ def generate_cash_receipt(root,window,receipt_temp,receipt,pay_receip,pay_receip
             #for tax record
             records(tax_temp,tax,tax_amount,"add")
 
-            messagebox.showinfo("Success","Cash Payment Generated Succesfully!")
+            if invoice_no != None:
+                for i in db['sale_invoice'].find():
+                    if i.get('invoice_no') == invoice_no:
+                        db['sale_invoice'].update_one({"invoice_no": invoice_no}, {"$set": {"amount_cleared": i.get("amount_cleared",0) + total_amount}})
+                        if i.get("amount_cleared",0)  == i.get("total_amount",0):
+                            db['sale_invoice'].update_one({"invoice_no": invoice_no}, {"$set": {"status":"Paid"}})
+
+            messagebox.showinfo("Success","Cash Receipt Generated Succesfully!")
             window(root,company_name,user_name)
 
 def generate_cash_payments(root,window,payments_temp,payment,pay_receip,pay_receip_temp,customers,client_temp,cash,cash_temp,tax,tax_temp,invoice_balance,heads,company_name,user_name):
