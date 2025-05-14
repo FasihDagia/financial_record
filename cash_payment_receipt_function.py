@@ -600,6 +600,13 @@ def generate_cash_payments(root,window,payments_temp,payment,pay_receip,pay_rece
             #for tax record
             records(tax_temp,tax,tax_amount,"add")
 
+            if invoice_no != None:
+                for i in db['purchase_invoice'].find():
+                    if i.get('voucher_no') == invoice_no:
+                        db['purchase_invoice'].update_one({"voucher_no": invoice_no}, {"$set": {"amount_cleared": i.get("amount_cleared",0) + total_amount}})
+                        if i.get("amount_cleared",0)  == i.get("total_amount",0):
+                            db['purchase_invoice'].update_one({"voucher_no": invoice_no}, {"$set": {"status":"Paid"}})
+
             messagebox.showinfo("Success","Cash Payment Generated Succesfully!")
             window(root,company_name,user_name)
 

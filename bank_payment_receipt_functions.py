@@ -353,11 +353,18 @@ def generate_bank_payments(root,window,payments_temp,payment,pay_receip,pay_rece
 
             #for tax record
             records(tax_temp,tax,tax_amount,"add")
+
+            if invoice_no != None:
+                for i in db['purchase_invoice'].find():
+                    if i.get('voucher_no') == invoice_no:
+                        db['purchase_invoice'].update_one({"voucher_no": invoice_no}, {"$set": {"amount_cleared": i.get("amount_cleared",0) + total_amount}})
+                        if i.get("amount_cleared",0)  == i.get("total_amount",0):
+                            db['purchase_invoice'].update_one({"voucher_no": invoice_no}, {"$set": {"status":"Paid"}})
             
             messagebox.showinfo("Success","Bank Payment Generated Succesfully!")
             window(root,company_name,user_name)
 
-def generate_bank_receipt(root,window,receipt_temp,receipt,pay_receip,pay_receip_temp,customers,client_temp,bank,bank_temp,indvidual_bank,bank_ind_temp,tax,tax_temp,invoice_balance,heads,banks,company_name,user_name):
+def generate_bank_receipt(root,window,receipt_temp,receipt,pay_receip,pay_receip_temp,customers,client_temp,bank,bank_temp,indvidual_bank,bank_ind_temp,tax,tax_temp,invoice_balance,heads,banks,company_name,user_name,db):
     
     for widget in root.winfo_children():
         widget.destroy()
@@ -404,18 +411,68 @@ def generate_bank_receipt(root,window,receipt_temp,receipt,pay_receip,pay_receip
     tk.Label(entry_frame,text="Cheque No:",font=('helvetica',9)).grid(pady=10,row=1,column=2)
     cheque_entry = tk.Entry(entry_frame, width=20)
     cheque_entry.grid(row=1,column=3,padx=5)
+    
+    def on_invoice_select(*args):
+        selected_invoice = invoice_var.get()
+        if selected_invoice != "Invoice No":
+            for i in db['sale_invoice'].find():
+                if i.get('invoice_no') == selected_invoice:
+                    acc_recev_default.set(i.get('opp_acc',''))
+                    acc_recev_entry.config(state='disabled')
+        else:
+            acc_recev_entry.config(state='normal')
 
-    tk.Label(entry_frame,text="Account Payable:",font=('helvetica',9)).grid(pady=10,row=2,column=0)
+    tk.Label(entry_frame,text="Invoice No:",font=('helvetica',9)).grid(pady=10,row=2,column=0)
+    invoice_options = []
+    for i in db['sale_invoice'].find():
+            invoice_options.append(i.get('invoice_no',''))
+    if len(invoice_options) == 0:
+        invoice_options.append("No Invoice to show")
+    else:
+        invoice_options.append("Invoice No")
+    invoice_options.sort()
+    invoice_var = tk.StringVar(value="Invoice No")
+    invoice_no_entry = tk.OptionMenu(entry_frame, invoice_var , *invoice_options)
+    invoice_no_entry.config(width=19)
+    invoice_no_entry.grid(row=2,column=1,padx=5)
+    
+    invoice_var.trace_add("write", on_invoice_select)
+
+    def update_invoice_menu(invoices):
+        menu = invoice_no_entry["menu"]
+        menu.delete(0, "end")
+        for invoice in invoices:
+            menu.add_command(label=invoice, command=lambda value=invoice: invoice_var.set(value))
+        invoice_var.set("Invoice No")
+
+    def on_acc_recev_select(*args):
+        selected_acc_recev = acc_recev_entry.get()
+        
+        if selected_acc_recev != "Account Payable":
+            invoice_options.clear()    
+            invoice_options.append("Invoice No")
+            for i in db['sale_invoice'].find():
+                if i.get('opp_acc') == selected_acc_recev:
+                    invoice_options.append(i.get('invoice_no',''))
+            if len(invoice_options) == 0:
+                invoice_options.append("No Invoice to show")
+            invoice_options.sort()
+            update_invoice_menu(invoice_options)
+
+    tk.Label(entry_frame,text="Account Payable:",font=('helvetica',9)).grid(pady=10,row=2,column=2)
     acc_pay_options = []
     for i in customers['customer_info'].find():
             acc_pay_options.append(i.get('opp_acc',''))  
     if len(acc_pay_options) == 0:
         acc_pay_options.append("No Accounts to show")  
     acc_pay_options.sort()      
-    acc_pay_entry = ttk.Combobox(entry_frame, values=acc_pay_options, width=20)
-    acc_pay_entry.grid(row=2,column=1,padx=5)
+    acc_recev_default = tk.StringVar(value="Accounts")
+    acc_recev_entry = ttk.Combobox(entry_frame, values=acc_pay_options, width=18,textvariable=acc_recev_default)
+    acc_recev_entry.grid(row=2,column=3,padx=5)
 
-    tk.Label(entry_frame, text="Head Type:", font=("helvetica",10)).grid(pady=10,row=2,column=2)
+    acc_recev_entry.bind("<<ComboboxSelected>>", on_acc_recev_select)
+
+    tk.Label(entry_frame, text="Head Type:", font=("helvetica",10)).grid(pady=10,row=3,column=0)
     exp_type_options = []
     for i in heads.find({}):
         exp_type_options.append(i.get('hd_name',''))
@@ -424,7 +481,7 @@ def generate_bank_receipt(root,window,receipt_temp,receipt,pay_receip,pay_receip
     exp_type_option = tk.StringVar(value="Head Types")
     exp_type_entry = OptionMenu(entry_frame, exp_type_option , *exp_type_options)
     exp_type_entry.config(width=19)
-    exp_type_entry.grid(row=2,column=3,padx=5)
+    exp_type_entry.grid(row=3,column=1,padx=5)
 
     def calculate_total(*args):
         try:
@@ -440,18 +497,18 @@ def generate_bank_receipt(root,window,receipt_temp,receipt,pay_receip,pay_receip
             tax_amount_var.set(0.00)
             total_var.set(0.00)
 
-    tk.Label(entry_frame, text="Amount:", font=("helvetica",10)).grid(pady=10,row=3,column=0)
+    tk.Label(entry_frame, text="Amount:", font=("helvetica",10)).grid(pady=10,row=3,column=2)
     amount_entry = tk.Entry(entry_frame, width=20)
-    amount_entry.grid(row=3,column=1,padx=5)
+    amount_entry.grid(row=3,column=3,padx=5)
 
-    tk.Label(entry_frame,text="Tax Percent:",font=("helvetica",10)).grid(pady=10,row=3,column=2)
+    tk.Label(entry_frame,text="Tax Percent:",font=("helvetica",10)).grid(pady=10,row=4,column=0)
     tax_p_entry= tk.Entry(entry_frame, width=20)
-    tax_p_entry.grid(row=3,column=3,padx=5)
+    tax_p_entry.grid(row=4,column=1,padx=5)
 
-    tk.Label(entry_frame, text="Tax Amount:", font=("helvetica",10)).grid(pady=10,row=4,column=0)
+    tk.Label(entry_frame, text="Tax Amount:", font=("helvetica",10)).grid(pady=10,row=4,column=2)
     tax_amount_var = tk.StringVar(value=0.00)
     tax_amount_entry = tk.Entry(entry_frame, width=20,textvariable=tax_amount_var)
-    tax_amount_entry.grid(row=4,column=1,padx=5)
+    tax_amount_entry.grid(row=4,column=3,padx=5)
     
     des_frame = tk.Frame(root)
     des_frame.pack(pady=5)
@@ -482,7 +539,7 @@ def generate_bank_receipt(root,window,receipt_temp,receipt,pay_receip,pay_receip
         date = date_entry.get()
         vouch_no = voucher
         account = bank_option.get()
-        acc_pay = acc_pay_entry.get()
+        acc_pay = acc_recev_entry.get()
         exp_type = exp_type_option.get()
         description = description_entry.get("1.0", "end-1c")
         amount = float(amount_entry.get())
@@ -490,7 +547,7 @@ def generate_bank_receipt(root,window,receipt_temp,receipt,pay_receip,pay_receip
         tax_amount = float(tax_amount_entry.get())
         total_amount = float(total_var.get())
         cheque_no = cheque_entry.get() or None
-
+        invoice_no = invoice_var.get() or None
         amountiw = num2words(total_amount).upper()
 
         if not date or not vouch_no or not account or not acc_pay or not exp_type or not description or not amount or not tax_percent or not tax_amount or not total_amount:
@@ -523,6 +580,7 @@ def generate_bank_receipt(root,window,receipt_temp,receipt,pay_receip,pay_receip
                     "s_no":sno,
                     "date":date,
                     "voucher_no":vouch_no,
+                    "invoice_no":invoice_no,
                     "head_type":exp_type,
                     "account":account,
                     "cheque_no":cheque_no,
@@ -575,6 +633,7 @@ def generate_bank_receipt(root,window,receipt_temp,receipt,pay_receip,pay_receip
                     "s_no":sno2,
                     "date":date,
                     "voucher_no":vouch_no,
+                    "invoice_no":invoice_no,
                     "head_type":exp_type,
                     "account":account,
                     "cheque_no":cheque_no,
@@ -628,6 +687,7 @@ def generate_bank_receipt(root,window,receipt_temp,receipt,pay_receip,pay_receip
                 "s_no":sno4,
                 "date":date,
                 "voucher_no":vouch_no,
+                "invoice_no":invoice_no,
                 "head_type":exp_type,
                 "account":account,
                 "opp_acc":acc_pay,
@@ -642,6 +702,13 @@ def generate_bank_receipt(root,window,receipt_temp,receipt,pay_receip,pay_receip
 
             #for tax record
             records(tax_temp,tax,tax_amount,"add")
+            
+            if invoice_no != None:
+                for i in db['sale_invoice'].find():
+                    if i.get('invoice_no') == invoice_no:
+                        db['sale_invoice'].update_one({"invoice_no": invoice_no}, {"$set": {"amount_cleared": i.get("amount_cleared",0) + total_amount}})
+                        if i.get("amount_cleared",0)  == i.get("total_amount",0):
+                            db['sale_invoice'].update_one({"invoice_no": invoice_no}, {"$set": {"status":"Paid"}})
 
         messagebox.showinfo("Success","Bank Payment Generated Succesfully!")
         window(root,company_name,user_name)
