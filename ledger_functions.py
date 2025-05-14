@@ -1,2 +1,5 @@
-def show_account():
+def sale_show_account():
+    pass
+
+def purchase_show_account():
     pass

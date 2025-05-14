@@ -12,7 +12,7 @@ from inventory_functions import inventory_check,existing_products,add_product,re
 from client_function import client_check,existing_clients,add_client,remove_client
 from bank_payment_receipt_functions import generate_bank_payments,load_payments_receipt,save_bank_payment_receipt,generate_bank_receipt
 from cash_payment_receipt_function import generate_cash_receipt,generate_cash_payments,save_cash_payments_receipt,go_back
-from ledger_functions import show_account
+from ledger_functions import sale_show_account,purchase_show_account
 
 def center_window(root, width, height):
     screen_width = root.winfo_screenwidth()
@@ -313,8 +313,8 @@ def ledger_module_window(root,company_name,user_name):
     btn_frame = Frame()
     btn_frame.pack(fill=X, padx=33, pady=10)
 
-    tk.Button(btn_frame,text="Sale Ledger", font=("Helvetica",10),width=20,command=lambda:ledger_window(root,company_name,user_name,"Sale")).grid(padx=10,pady=10,row=0,column=0)
-    tk.Button(btn_frame,text="Purchase Ledger", font=("Helvetica",10),width=20,command=lambda:ledger_window(root,company_name,user_name,"Purchase")).grid(padx=10,pady=10,row=0,column=1)
+    tk.Button(btn_frame,text="Sale Ledger", font=("Helvetica",10),width=20,command=lambda:sale_ledger_window(root,company_name,user_name)).grid(padx=10,pady=10,row=0,column=0)
+    tk.Button(btn_frame,text="Purchase Ledger", font=("Helvetica",10),width=20,command=lambda:purchase_ledger_window(root,company_name,user_name)).grid(padx=10,pady=10,row=0,column=1)
     tk.Button(btn_frame,text="Back", font=("Helvetica",10),width=20,command=lambda:main_menu_window(root,company_name,user_name)).grid(padx=10,pady=10,row=2,column=0)
     tk.Button(btn_frame, text="Exit",font=("Helvetica",10), width=20, command=root.destroy).grid(padx=10,pady=5,row=2,column=1)
 
@@ -1102,25 +1102,20 @@ def cash_receipt_window(root,company_name,user_name):
 
     load_payments_receipt(table_receipt,cash_temp)
 
-def ledger_window(root,company_name,user_name,type_of_ledger):
+def sale_ledger_window(root,company_name,user_name):
 
     for widget in root.winfo_children():
         widget.destroy()
 
     center_window(root, 1200, 600)
 
-    root.title(f"{type_of_ledger} Ledger")
-
-    if type_of_ledger == "Sale":
-        inv_vouch_no = "Invoice No"
-    elif type_of_ledger == "Purchase":
-        inv_vouch_no = "Voucher No"
+    root.title("Sale Ledger")
 
     account_name = []
     for name in customers["customer_info"].find():
         account_name.append(name.get('opp_acc'))
 
-    tk.Label(root,text=f"{type_of_ledger} Ledger",font=("Helvetica-bold",22)).pack(pady=10)
+    tk.Label(root,text="Sale Ledger",font=("Helvetica-bold",22)).pack(pady=10)
 
     tk.Label(root,text="Select Account:",font=("Helvetica-bold",15)).pack(pady=10)
     selected_account = tk.StringVar(value="Select Account")
@@ -1135,19 +1130,71 @@ def ledger_window(root,company_name,user_name,type_of_ledger):
     btn_frame = tk.Frame(root)
     btn_frame.pack(pady=10)
 
-    tk.Button(btn_frame, text="Show Account", width=20, command=lambda:show_account()).grid(row=0,column=2,pady=10)
+    tk.Button(btn_frame, text="Show Account", width=20, command=lambda:sale_show_account()).grid(row=0,column=2,pady=10)
     tk.Button(btn_frame, text="Back", width=20, command=lambda:ledger_module_window(root,company_name,user_name)).grid(row=0, column=3,padx=5)
     tk.Button(btn_frame, text="Exit", width=20, command=root.destroy).grid(row=0, column=4,padx=5)
 
-    table_ledger = ttk.Treeview(root, columns=("S.NO","Date",inv_vouch_no,"Head Type","Description","Credit","Debit","Balance"), show="headings",height=25)
+    table_ledger = ttk.Treeview(root, columns=("S.NO","Date","Invoice No","Head Type","Description","Credit","Debit","Balance"), show="headings",height=25)
     table_ledger.pack(fill=tk.BOTH, pady=20)
 
     table_ledger.heading("S.NO", text="S.NO")
     table_ledger.column("S.NO", anchor="center", width=50)
     table_ledger.heading("Date", text="Date")
     table_ledger.column("Date", anchor="center", width=75)
-    table_ledger.heading(inv_vouch_no, text=inv_vouch_no)
-    table_ledger.column(inv_vouch_no, anchor="center", width=75)
+    table_ledger.heading("Invoice No", text="Invoice No")
+    table_ledger.column("Invoice No", anchor="center", width=75)
+    table_ledger.heading("Head Type", text="Head Type")
+    table_ledger.column("Head Type", anchor="center", width=100)
+    table_ledger.heading("Description", text="Description")
+    table_ledger.column("Description", anchor="center", width=300)
+    table_ledger.heading("Credit", text="Credit")
+    table_ledger.column("Credit", anchor="center", width=75)
+    table_ledger.heading("Debit", text="Debit")
+    table_ledger.column("Debit", anchor="center", width=75)
+    table_ledger.heading("Balance", text="Balance")
+    table_ledger.column("Balance", anchor="center", width=75)
+
+def purchase_ledger_window(root,company_name,user_name):
+
+    for widget in root.winfo_children():
+        widget.destroy()
+
+    center_window(root, 1200, 600)
+
+    root.title("Purchase Ledger")
+
+    account_name = []
+    for name in customers["customer_info"].find():
+        account_name.append(name.get('opp_acc'))
+
+    tk.Label(root,text=f"Purchase Ledger",font=("Helvetica-bold",22)).pack(pady=10)
+
+    tk.Label(root,text="Select Account:",font=("Helvetica-bold",15)).pack(pady=10)
+    selected_account = tk.StringVar(value="Select Account")
+    acc_entry = tk.OptionMenu(root, selected_account, *account_name)
+    acc_entry.config(width=20, font=("Helvetica", 10))
+    acc_entry.pack(pady=5)
+    
+    style = ttk.Style()
+    style.configure("Treeview.Heading", font=("Helvetica", 10, "bold"))  
+    style.configure("Treeview", font=("Helvetica", 8))  
+
+    btn_frame = tk.Frame(root)
+    btn_frame.pack(pady=10)
+
+    tk.Button(btn_frame, text="Show Account", width=20, command=lambda:purchase_show_account()).grid(row=0,column=2,pady=10)
+    tk.Button(btn_frame, text="Back", width=20, command=lambda:ledger_module_window(root,company_name,user_name)).grid(row=0, column=3,padx=5)
+    tk.Button(btn_frame, text="Exit", width=20, command=root.destroy).grid(row=0, column=4,padx=5)
+
+    table_ledger = ttk.Treeview(root, columns=("S.NO","Date","Voucher No","Head Type","Description","Credit","Debit","Balance"), show="headings",height=25)
+    table_ledger.pack(fill=tk.BOTH, pady=20)
+
+    table_ledger.heading("S.NO", text="S.NO")
+    table_ledger.column("S.NO", anchor="center", width=50)
+    table_ledger.heading("Date", text="Date")
+    table_ledger.column("Date", anchor="center", width=75)
+    table_ledger.heading("Voucher No", text="Voucher No")
+    table_ledger.column("Voucher No", anchor="center", width=75)
     table_ledger.heading("Head Type", text="Head Type")
     table_ledger.column("Head Type", anchor="center", width=100)
     table_ledger.heading("Description", text="Description")
