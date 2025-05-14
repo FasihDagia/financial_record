@@ -82,6 +82,8 @@ def generate_cash_receipt(root,window,receipt_temp,receipt,pay_receip,pay_receip
                 if i.get('invoice_no') == selected_invoice:
                     acc_recev_default.set(i.get('opp_acc',''))
                     acc_recev_entry.config(state='disabled')
+        else:
+            acc_recev_entry.config(state='normal')
 
     tk.Label(entry_frame,text="Invoice No:",font=('helvetica',9)).grid(pady=10,row=1,column=2)
     invoice_options = []
@@ -89,6 +91,8 @@ def generate_cash_receipt(root,window,receipt_temp,receipt,pay_receip,pay_receip
             invoice_options.append(i.get('invoice_no',''))
     if len(invoice_options) == 0:
         invoice_options.append("No Invoice to show")
+    else:
+        invoice_options.append("Invoice No")
     invoice_options.sort()
     invoice_var = tk.StringVar(value="Invoice No")
     invoice_no_entry = tk.OptionMenu(entry_frame, invoice_var , *invoice_options)
@@ -108,6 +112,7 @@ def generate_cash_receipt(root,window,receipt_temp,receipt,pay_receip,pay_receip
         
         if selected_acc_recev != "Account Payable":
             invoice_options.clear()    
+            invoice_options.append("Invoice No")
             for i in db['sale_invoice'].find():
                 if i.get('opp_acc') == selected_acc_recev:
                     invoice_options.append(i.get('invoice_no',''))
@@ -372,6 +377,8 @@ def generate_cash_payments(root,window,payments_temp,payment,pay_receip,pay_rece
                 if i.get('voucher_no') == selected_invoice:
                     acc_recev_default.set(i.get('opp_acc',''))
                     acc_recev_entry.config(state='disabled')
+        else:
+            acc_recev_entry.config(state='normal')
 
     tk.Label(entry_frame,text="Invoice No:",font=('helvetica',9)).grid(pady=10,row=1,column=2)
     invoice_options = []
@@ -379,6 +386,8 @@ def generate_cash_payments(root,window,payments_temp,payment,pay_receip,pay_rece
             invoice_options.append(i.get('voucher_no',''))
     if len(invoice_options) == 0:
         invoice_options.append("No Invoice to show")
+    else:
+        invoice_options.append("Invoice No")
     invoice_options.sort()
     invoice_var = tk.StringVar(value="Invoice No")
     invoice_no_entry = tk.OptionMenu(entry_frame, invoice_var , *invoice_options)
@@ -398,6 +407,7 @@ def generate_cash_payments(root,window,payments_temp,payment,pay_receip,pay_rece
         
         if selected_acc_recev != "Account Payable":
             invoice_options.clear()    
+            invoice_options.append("Invoice No")
             for i in db['purchase_invoice'].find():
                 if i.get('opp_acc') == selected_acc_recev:
                     invoice_options.append(i.get('voucher_no',''))
