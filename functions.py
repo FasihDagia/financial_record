@@ -1677,7 +1677,6 @@ def save_contract(contracts,account,existing_contracts):
             messagebox.showinfo("Success","Contracts Saved Succesfully!")
     else:
         messagebox.showerror("Error","No Contracts to save!")
-    
 
 def return_invoice(root,inventory,contract_type,return_account,account,window,company_name,user_name,contracts,cost_goods,customers):
 
