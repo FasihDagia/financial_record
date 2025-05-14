@@ -1130,7 +1130,7 @@ def sale_ledger_window(root,company_name,user_name):
     btn_frame = tk.Frame(root)
     btn_frame.pack(pady=10)
 
-    tk.Button(btn_frame, text="Show Account", width=20, command=lambda:sale_show_account()).grid(row=0,column=2,pady=10)
+    tk.Button(btn_frame, text="Show Account", width=20, command=lambda:sale_show_account(selected_account,customers,table_ledger)).grid(row=0,column=2,pady=10)
     tk.Button(btn_frame, text="Back", width=20, command=lambda:ledger_module_window(root,company_name,user_name)).grid(row=0, column=3,padx=5)
     tk.Button(btn_frame, text="Exit", width=20, command=root.destroy).grid(row=0, column=4,padx=5)
 
@@ -1182,7 +1182,7 @@ def purchase_ledger_window(root,company_name,user_name):
     btn_frame = tk.Frame(root)
     btn_frame.pack(pady=10)
 
-    tk.Button(btn_frame, text="Show Account", width=20, command=lambda:purchase_show_account()).grid(row=0,column=2,pady=10)
+    tk.Button(btn_frame, text="Show Account", width=20, command=lambda:purchase_show_account(selected_account,customers,table_ledger)).grid(row=0,column=2,pady=10)
     tk.Button(btn_frame, text="Back", width=20, command=lambda:ledger_module_window(root,company_name,user_name)).grid(row=0, column=3,padx=5)
     tk.Button(btn_frame, text="Exit", width=20, command=root.destroy).grid(row=0, column=4,padx=5)
 
