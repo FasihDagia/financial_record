@@ -1086,7 +1086,6 @@ def generate_invoice(root,invoices_to_save,account,inventory_sale,invoice_type,w
                     balance = last_save_transaction.get('balance', 0)
             else:
                 balance = invoices_to_save[len(invoices_to_save)]['balance']
-            
             balance += total_amount
     
             invoices_to_save[len(invoices_to_save) + 1] = {
@@ -1160,6 +1159,7 @@ def generate_invoice(root,invoices_to_save,account,inventory_sale,invoice_type,w
                 'voucher_no': voucher_no,
                 'opp_acc': account_recevible,
                 'amount': amount,
+                'invoice_type': invoice_type,
                 'balance': balance2,
             }
         
