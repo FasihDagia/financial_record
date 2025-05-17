@@ -48,7 +48,7 @@ def purchase_show_account(acc_name,customers,table_ledger):
                 j,
                 entry.get('date', ''),
                 entry.get('voucher_no', '0'),
-                entry.get('head_type','Nill'),
+                entry.get('head_type',''),
                 entry.get('Description', ''),
                 entry.get('', '0'),
                 entry.get('amount', ''),

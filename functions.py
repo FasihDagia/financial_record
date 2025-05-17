@@ -1160,7 +1160,7 @@ def generate_invoice(root,invoices_to_save,account,inventory_sale,invoice_type,w
                 'head_type': None,
                 'description': description,
                 'opp_acc': account_recevible,
-                'amount': amount,
+                'amount': total_amount,
                 'invoice_type': invoice_type,
                 'balance': balance2,
             }
