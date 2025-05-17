@@ -387,9 +387,6 @@ def generate_bank_payments(root,window,payments_temp,payment,pay_receip,pay_rece
                         j["amount_cleared"] = j.get("amount_cleared",0) + total_amount
                         if j.get("amount_cleared",0)  == j.get("total_amount",0):
                             j["status"] = "Paid"
-                        # db['purchase_invoice'].update_one({"voucher_no": invoice_no}, {"$set": {"amount_cleared": i.get("amount_cleared",0) + total_amount}})
-                        # if i.get("amount_cleared",0)  == i.get("total_amount",0):
-                        #     db['purchase_invoice'].update_one({"voucher_no": invoice_no}, {"$set": {"status":"Paid"}})
             
             messagebox.showinfo("Success","Bank Payment Generated Succesfully!")
             window(root,company_name,user_name)
@@ -527,6 +524,23 @@ def generate_bank_receipt(root,window,receipt_temp,receipt,pay_receip,pay_receip
             tax_amount_var.set(0.00)
             total_var.set(0.00)
 
+    def amount_check(*args):
+        amnt = amount_entry.get()
+        invoice_no = invoice_var.get() or None
+        if invoice_no != None:
+            for i in db['sale_invoice'].find():
+                if i.get('invoice_no') == invoice_no:
+                    if float(amnt) + i.get("amount_cleared") > i.get('total_amount',0):
+                        messagebox.showerror("Error","Amount cannot be greater than Invoice Amount")
+                        amount_entry.delete(0,tk.END)
+                        amount_entry.insert(0,i.get('total_amount',0)-i.get("amount_cleared",0))
+                    elif float(amnt) < 0:
+                        messagebox.showerror("Error","Amount cannot be negative")
+                        amount_entry.delete(0,tk.END)
+                        amount_entry.insert(0,i.get('total_amount',0)-i.get("amount_cleared",0))
+
+        calculate_total()
+
     tk.Label(entry_frame, text="Amount:", font=("helvetica",10)).grid(pady=10,row=3,column=2)
     amount_entry = tk.Entry(entry_frame, width=20)
     amount_entry.grid(row=3,column=3,padx=5)
@@ -548,7 +562,7 @@ def generate_bank_receipt(root,window,receipt_temp,receipt,pay_receip,pay_receip
     description_entry.grid(row=0,column=1)
 
     tax_p_entry.bind("<KeyRelease>", calculate_total)
-    amount_entry.bind("<KeyRelease>", calculate_total)
+    amount_entry.bind("<KeyRelease>", amount_check)
 
     total_frame = tk.Frame()
     total_frame.pack()
@@ -572,10 +586,10 @@ def generate_bank_receipt(root,window,receipt_temp,receipt,pay_receip,pay_receip
         acc_pay = acc_recev_entry.get()
         exp_type = exp_type_option.get()
         description = description_entry.get("1.0", "end-1c")
-        amount = float(amount_entry.get())
-        tax_percent = float(tax_p_entry.get())
-        tax_amount = float(tax_amount_entry.get())
-        total_amount = float(total_var.get())
+        amount = amount_entry.get()
+        tax_percent = tax_p_entry.get()
+        tax_amount = tax_amount_entry.get()
+        total_amount = total_var.get()
         cheque_no = cheque_entry.get() or None
         invoice_no = invoice_var.get() or None
         amountiw = num2words(total_amount).upper()
@@ -584,6 +598,12 @@ def generate_bank_receipt(root,window,receipt_temp,receipt,pay_receip,pay_receip
             messagebox.showerror("Error","Please fill all the fields")
             return
         else:
+
+            amount = float(amount)
+            tax_percent = float(tax_percent)
+            tax_amount = float(tax_amount)
+            total_amount = float(total_amount)
+
             def records(temp,permanent,amounts,operation):
                 
                 no_entries = permanent.count_documents({})
@@ -732,13 +752,16 @@ def generate_bank_receipt(root,window,receipt_temp,receipt,pay_receip,pay_receip
 
             #for tax record
             records(tax_temp,tax,tax_amount,"add")
-            
+
             if invoice_no != None:
                 for i in db['sale_invoice'].find():
                     if i.get('invoice_no') == invoice_no:
-                        db['sale_invoice'].update_one({"invoice_no": invoice_no}, {"$set": {"amount_cleared": i.get("amount_cleared",0) + total_amount}})
-                        if i.get("amount_cleared",0)  == i.get("total_amount",0):
-                            db['sale_invoice'].update_one({"invoice_no": invoice_no}, {"$set": {"status":"Paid"}})
+                        invoice_temp[len(invoice_temp)+1] = i
+                for j in invoice_temp.values():
+                    if j.get('invoice_no') == invoice_no:
+                        j["amount_cleared"] = j.get("amount_cleared",0) + total_amount
+                        if j.get("amount_cleared",0)  == j.get("total_amount",0):
+                            j["status"] = "Paid"
 
         messagebox.showinfo("Success","Bank Payment Generated Succesfully!")
         window(root,company_name,user_name)
