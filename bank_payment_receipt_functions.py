@@ -452,7 +452,8 @@ def generate_bank_receipt(root,window,receipt_temp,receipt,pay_receip,pay_receip
     tk.Label(entry_frame,text="Invoice No:",font=('helvetica',9)).grid(pady=10,row=2,column=0)
     invoice_options = []
     for i in db['sale_invoice'].find():
-            invoice_options.append(i.get('invoice_no',''))
+            if i.get("status") == "pending":
+                invoice_options.append(i.get('invoice_no',''))
     if len(invoice_options) == 0:
         invoice_options.append("No Invoice to show")
     else:
