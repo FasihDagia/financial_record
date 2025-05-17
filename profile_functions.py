@@ -1054,7 +1054,7 @@ def show_edit_heads(root,heads,com_name,client,user_name,window_main):
     for widget in root.winfo_children():
         widget.destroy()
 
-    center_window(root, 600, 400)
+    center_window(root, 650, 400)
 
     root.title(f"Edit Head Types/{com_name}")
 
@@ -1088,10 +1088,10 @@ def show_edit_heads(root,heads,com_name,client,user_name,window_main):
     
     btn_frame = tk.Frame(root)
     btn_frame.pack(pady=10)
-    tk.Button(btn_frame,text = "Add Head",font=("Helvetica",10),width=20,command=lambda:add_head(root,heads,com_name,client,user_name,window_main)).grid(row=0,column=0,pady=10,padx=5)
-    tk.Button(btn_frame,text = "Edit Head",font=("Helvetica",10),width=20,command=lambda:edit_head(root,heads,com_name,client,user_name,window_main)).grid(row=0,column=1,pady=10,padx=5)
-    tk.Button(btn_frame,text = "Remove Head",font=("Helvetica",10),width=20,command=lambda:remove_head(root,heads,com_name,client,user_name,window_main)).grid(row=0,column=2,pady=10,padx=5)
-    tk.Button(btn_frame,text = "Back",font=("Helvetica",10),width=20,command=lambda: edit_company_profile(root,client,window_main,com_name,user_name)).grid(row=0,column=3,pady=10,padx=5)
+    tk.Button(btn_frame,text = "Add Head",font=("Helvetica",10),width=15,command=lambda:add_head(root,heads,com_name,client,user_name,window_main)).grid(row=0,column=0,pady=10,padx=5)
+    tk.Button(btn_frame,text = "Edit Head",font=("Helvetica",10),width=15,command=lambda:edit_head(root,heads,com_name,client,user_name,window_main)).grid(row=0,column=1,pady=10,padx=5)
+    tk.Button(btn_frame,text = "Remove Head",font=("Helvetica",10),width=15,command=lambda:remove_head(root,heads,com_name,client,user_name,window_main)).grid(row=0,column=2,pady=10,padx=5)
+    tk.Button(btn_frame,text = "Back",font=("Helvetica",10),width=15,command=lambda: edit_company_profile(root,client,window_main,com_name,user_name)).grid(row=0,column=3,pady=10,padx=5)
 
 def show_heads(root,heads,com_name,client,user_name,window_main):
     for widget in root.winfo_children():
