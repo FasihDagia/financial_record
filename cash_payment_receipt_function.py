@@ -663,7 +663,7 @@ def generate_cash_payments(root,window,payments_temp,payment,pay_receip,pay_rece
             messagebox.showinfo("Success","Cash Payment Generated Succesfully!")
             window(root,company_name,user_name)
 
-def save_cash_payments_receipt(payments_temp,payment,pay_receip,pay_receip_temp,type,customers,client_temp,cash,cash_temp,tax,tax_temp):
+def save_cash_payments_receipt(payments_temp,payment,pay_receip,pay_receip_temp,type,customers,client_temp,cash,cash_temp,tax,tax_temp,db,invoice_temp,invoice_balance):
     
     if len(payments_temp) != 0 and len(pay_receip_temp) != 0:
         confirm = messagebox.askyesno("Confirm", f"Once the Particulars are saved you wont be able to cahnge them\nAre you sure you want to save?")
@@ -682,19 +682,37 @@ def save_cash_payments_receipt(payments_temp,payment,pay_receip,pay_receip_temp,
                 name = customer_update.get('opp_acc','')
                 if type == "pay":
                     customer = customers[f"payment_{name}"]
-                    invoice_customer = customers[f"purchase_invoice_{name}"]
                 elif type == "recep":
                     customer = customers[f"receipt_{name}"]
-                    invoice_customer = customers[f"sale_invoice_{name}"]
 
                 customer.insert_one(customer_update)
+            
+            for invoice_update in invoice_balance.values():
+                name = invoice_update.get('opp_acc','')
+                if type == "pay":
+                    invoice_customer = customers[f"purchase_invoice_{name}"]
+                elif type == "recep":
+                    invoice_customer = customers[f"sale_invoice_{name}"]
+
                 invoice_customer.insert_one(customer_update)
+            
+            for pay in invoice_temp.values():
+                if type == "pay":
+                    for i in db['purchase_invoice'].find():
+                        if pay.get('voucher_no') == i.get("voucher_no"):
+                            db['purchase_invoice'].update_one({"voucher_no": pay.get("voucher_no")}, {"$set": {"amount_cleared": pay.get("amount_cleared",0),"status":pay.get("status","")}})
+                elif type == "recep":
+                    for i in db['sale_invoice'].find():
+                        if pay.get('invoice_no') == i.get("invoice_no"):
+                            db['sale_invoice'].update_one({"invoice_no": pay.get("invoice_no")}, {"$set": {"amount_cleared": pay.get("amount_cleared",0),"status":pay.get("status","")}})
 
             pay_receip_temp.clear()
             payments_temp.clear()
             cash_temp.clear()
             client_temp.clear()
             tax_temp.clear()
+            invoice_temp.clear()
+            invoice_balance.clear()
 
             if type == "pay":
                 messagebox.showinfo("Success","Payments saved succesfully!")

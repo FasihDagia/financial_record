@@ -814,7 +814,6 @@ def save_bank_payment_receipt(payments_temp,payment,pay_receip,pay_receip_temp,t
                         if pay.get('invoice_no') == i.get("invoice_no"):
                             db['sale_invoice'].update_one({"invoice_no": pay.get("invoice_no")}, {"$set": {"amount_cleared": pay.get("amount_cleared",0),"status":pay.get("status","")}})
 
-            
             for customer_update in client_temp.values():
                 name = customer_update.get('opp_acc','')
                 if type == "pay":
@@ -843,6 +842,7 @@ def save_bank_payment_receipt(payments_temp,payment,pay_receip,pay_receip_temp,t
             bank_ind_temp.clear()
             tax_temp.clear()
             invoice_balance.clear()
+            invoice_temp.clear()
 
             if type == "pay":
                 messagebox.showinfo("Success","Payments saved succesfully!")
