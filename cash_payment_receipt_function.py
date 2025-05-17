@@ -479,21 +479,21 @@ def generate_cash_payments(root,window,payments_temp,payment,pay_receip,pay_rece
 
     def generate(root,window,payments_temp,payment,pay_receip,pay_receip_temp,customers,client_temp,cash,cash_temp,tax,tax_temp):
         
-        try:
-            date = date_entry.get()
-            vouch_no = voucher
-            account = account_entry.get()
-            acc_recev = acc_recev_entry.get()
-            exp_type = exp_type_option.get()
-            description = description_entry.get("1.0", "end-1c")
-            amount = float(amount_entry.get())
-            tax_percent = float(tax_p_entry.get())
-            tax_amount = float(tax_amount_entry.get())
-            total_amount = float(total_var.get())
-            amountiw = num2words(total_amount).upper()
-            invoice_no = invoice_var.get() or None
-        except Exception as e:
-            messagebox.showerror("Error",f"Please fill all the fields{e}")
+        date = date_entry.get()
+        vouch_no = voucher
+        account = account_entry.get()
+        acc_recev = acc_recev_entry.get()
+        exp_type = exp_type_option.get()
+        description = description_entry.get("1.0", "end-1c")
+        amount = float(amount_entry.get())
+        tax_percent = float(tax_p_entry.get())
+        tax_amount = float(tax_amount_entry.get())
+        total_amount = float(total_var.get())
+        amountiw = num2words(total_amount).upper()
+        invoice_no = invoice_var.get() or None
+
+        if not date or not vouch_no or not account or not acc_recev or not exp_type or not description or not amount or not tax_percent or not tax_amount or not total_amount:
+            messagebox.showerror("Error","Please fill all the fields")
             return
         else:
             def records(temp,permanent,amounts,operation):
