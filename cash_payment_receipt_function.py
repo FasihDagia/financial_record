@@ -318,7 +318,7 @@ def generate_cash_receipt(root,window,receipt_temp,receipt,pay_receip,pay_receip
             messagebox.showinfo("Success","Cash Receipt Generated Succesfully!")
             window(root,company_name,user_name)
 
-def generate_cash_payments(root,window,payments_temp,payment,pay_receip,pay_receip_temp,customers,client_temp,cash,cash_temp,tax,tax_temp,invoice_balance,heads,company_name,user_name,db):
+def generate_cash_payments(root,window,payments_temp,payment,pay_receip,pay_receip_temp,customers,client_temp,cash,cash_temp,tax,tax_temp,invoice_balance,heads,company_name,user_name,db,invoice_temp):
     
     for widget in root.winfo_children():
         widget.destroy()
@@ -440,6 +440,23 @@ def generate_cash_payments(root,window,payments_temp,payment,pay_receip,pay_rece
     exp_type_entry.config(width=19)
     exp_type_entry.grid(row=2,column=3,padx=5)
 
+    def amount_check(*args):
+        amnt = amount_entry.get()
+        invoice_no = invoice_var.get() or None
+        if invoice_no != None:
+            for i in db['purchase_invoice'].find():
+                if i.get('voucher_no') == invoice_no:
+                    if float(amnt) + i.get("amount_cleared") > i.get('total_amount',0):
+                        messagebox.showerror("Error","Amount cannot be greater than Invoice Amount")
+                        amount_entry.delete(0,tk.END)
+                        amount_entry.insert(0,i.get('total_amount',0)-i.get("amount_cleared",0))
+                    elif float(amnt) < 0:
+                        messagebox.showerror("Error","Amount cannot be negative")
+                        amount_entry.delete(0,tk.END)
+                        amount_entry.insert(0,i.get('total_amount',0)-i.get("amount_cleared",0))
+
+        calculate_total()
+
     tk.Label(entry_frame, text="Amount:", font=("helvetica",10)).grid(pady=10,row=3,column=0)
     amount_entry = tk.Entry(entry_frame, width=20)
     amount_entry.grid(row=3,column=1,padx=5)
@@ -453,6 +470,9 @@ def generate_cash_payments(root,window,payments_temp,payment,pay_receip,pay_rece
     tax_amount_entry = tk.Entry(entry_frame, width=20,textvariable=tax_amount_var)
     tax_amount_entry.grid(row=4,column=1,padx=5)
     
+    tax_p_entry.bind("<KeyRelease>", calculate_total)
+    amount_entry.bind("<KeyRelease>", amount_check)
+
     des_frame = tk.Frame(root)
     des_frame.pack(pady=5)
 
@@ -460,16 +480,13 @@ def generate_cash_payments(root,window,payments_temp,payment,pay_receip,pay_rece
     description_entry = tk.Text(des_frame,font=("helvetica",10),width=50,height=5)
     description_entry.grid(row=0,column=1)
 
-    tax_p_entry.bind("<KeyRelease>", calculate_total)
-    amount_entry.bind("<KeyRelease>", calculate_total)
-
     total_frame = tk.Frame()
     total_frame.pack()
     tk.Label(total_frame,text="Total Amount:",font=9).grid(row=0,column=0)
     total_var = tk.StringVar(value=0)
     tk.Label(total_frame,textvariable=total_var,font=9).grid(row=0,column=1,pady=10)
 
-    tk.Button(root,text="Generate" ,font=("helvetica",10),width=20,command=lambda:generate(root,window,payments_temp,payment,pay_receip,pay_receip_temp,customers,client_temp,cash,cash_temp,tax,tax_temp)).pack(pady=10)    
+    tk.Button(root,text="Generate" ,font=("helvetica",10),width=20,command=lambda:generate(root,window,payments_temp,payment,pay_receip,pay_receip_temp,customers,client_temp,cash,cash_temp,tax,tax_temp,invoice_temp)).pack(pady=10)    
     
     btn_frame = tk.Frame(root) 
     btn_frame.pack()
@@ -477,7 +494,7 @@ def generate_cash_payments(root,window,payments_temp,payment,pay_receip,pay_rece
     tk.Button(btn_frame,text="Back" ,font=("helvetica",10),width=10,command=lambda:window(root,company_name,user_name)).grid(row=0,column=0,padx=5)
     tk.Button(btn_frame,text="Exit" ,font=("helvetica",10),width=10,command=root.destroy).grid(row=0,column=1,padx=5)
 
-    def generate(root,window,payments_temp,payment,pay_receip,pay_receip_temp,customers,client_temp,cash,cash_temp,tax,tax_temp):
+    def generate(root,window,payments_temp,payment,pay_receip,pay_receip_temp,customers,client_temp,cash,cash_temp,tax,tax_temp,invoice_temp):
         
         date = date_entry.get()
         vouch_no = voucher
@@ -485,10 +502,10 @@ def generate_cash_payments(root,window,payments_temp,payment,pay_receip,pay_rece
         acc_recev = acc_recev_entry.get()
         exp_type = exp_type_option.get()
         description = description_entry.get("1.0", "end-1c")
-        amount = float(amount_entry.get())
-        tax_percent = float(tax_p_entry.get())
-        tax_amount = float(tax_amount_entry.get())
-        total_amount = float(total_var.get())
+        amount = amount_entry.get()
+        tax_percent = tax_p_entry.get()
+        tax_amount = tax_amount_entry.get()
+        total_amount = total_var.get()
         amountiw = num2words(total_amount).upper()
         invoice_no = invoice_var.get() or None
 
@@ -496,6 +513,12 @@ def generate_cash_payments(root,window,payments_temp,payment,pay_receip,pay_rece
             messagebox.showerror("Error","Please fill all the fields")
             return
         else:
+
+            amount = float(amount)
+            tax_percent = float(tax_percent)
+            tax_amount = float(tax_amount)
+            total_amount = float(total_amount)
+
             def records(temp,permanent,amounts,operation):
                 
                 no_entries = permanent.count_documents({})
@@ -603,9 +626,12 @@ def generate_cash_payments(root,window,payments_temp,payment,pay_receip,pay_rece
             if invoice_no != None:
                 for i in db['purchase_invoice'].find():
                     if i.get('voucher_no') == invoice_no:
-                        db['purchase_invoice'].update_one({"voucher_no": invoice_no}, {"$set": {"amount_cleared": i.get("amount_cleared",0) + total_amount}})
-                        if i.get("amount_cleared",0)  == i.get("total_amount",0):
-                            db['purchase_invoice'].update_one({"voucher_no": invoice_no}, {"$set": {"status":"Paid"}})
+                        invoice_temp[len(invoice_temp)+1] = i
+                for j in invoice_temp.values():
+                    if j.get('voucher_no') == invoice_no:
+                        j["amount_cleared"] = j.get("amount_cleared",0) + total_amount
+                        if j.get("amount_cleared",0)  == j.get("total_amount",0):
+                            j["status"] = "Paid"
 
             messagebox.showinfo("Success","Cash Payment Generated Succesfully!")
             window(root,company_name,user_name)
