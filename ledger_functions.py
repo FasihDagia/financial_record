@@ -17,8 +17,8 @@ def sale_show_account(acc_name,customers,table_ledger):
                 entry.get('invoice_no', '0'),
                 entry.get('head_type','Nill'),
                 entry.get('Description', ''),
-                entry.get('amount', ''),
                 entry.get('', '0'),
+                entry.get('amount', ''),
                 entry.get('balance',''),        
                 ))
         else:
@@ -28,8 +28,8 @@ def sale_show_account(acc_name,customers,table_ledger):
                 entry.get('invoice_no', '0'),
                 entry.get('head_type','Nill'),
                 entry.get('Description', ''),
-                entry.get('', '0'),
                 entry.get('amount', ''),
+                entry.get('', '0'),
                 entry.get('balance',''),        
                 ))
         j += 1
@@ -50,8 +50,8 @@ def purchase_show_account(acc_name,customers,table_ledger):
                 entry.get('voucher_no', '0'),
                 entry.get('head_type',''),
                 entry.get('Description', ''),
-                entry.get('', '0'),
                 entry.get('amount', ''),
+                entry.get('', '0'),
                 entry.get('balance',''),        
                 ))
         else:
@@ -61,8 +61,8 @@ def purchase_show_account(acc_name,customers,table_ledger):
                 entry.get('voucher_no', '0'),
                 entry.get('head_type','Nill'),
                 entry.get('Description', ''),
-                entry.get('amount', ''),
                 entry.get('', '0'),
+                entry.get('amount', ''),
                 entry.get('balance',''),        
                 ))
         j += 1

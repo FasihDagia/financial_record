@@ -1,12 +1,13 @@
 import tkinter as tk
 from tkinter import *
 from tkinter import ttk
-from tkcalendar import DateEntry
+from ttkwidgets import Calendar
+from ttkwidgets.autocomplete import AutocompleteCombobox
+import tkcalendar as tkc
 import pymongo as pm
 
 from temp_data_store import *
 from database_connect import *
-from classes import *
 from login_register import user_login,create_company,toggle_password
 from profile_functions import show_company_profile
 from functions import generate_contract,print_contracts,generate_invoice,save,load_transactions,table,back,return_invoice,print_invoice,table_contract,load_contracts,save_contract
@@ -1112,7 +1113,6 @@ def sale_ledger_window(root,company_name,user_name):
     center_window(root, 1200, 600)
 
     style = ttk.Style()
-    style.theme_use('clam')
     style.configure("Treeview.Heading", font=("Helvetica", 10, "bold"))  
     style.configure("Treeview", font=("Helvetica", 8))  
     
@@ -1129,26 +1129,18 @@ def sale_ledger_window(root,company_name,user_name):
 
     tk.Label(entry_frame,text="Select Account:",font=("Helvetica-bold",15)).grid(row=0,column=0,columnspan=2,pady=10)
     selected_account = tk.StringVar(value="Select Account")
-    combo = AutocompleteCombobox(root,textvariable=selected_account, width=20, font=("Helvetica", 10))
-    combo.set_completion_list(account_name)
-    combo.grid(row=1,column=0,columnspan=2,pady=5)
+    combo = AutocompleteCombobox(entry_frame, textvariable=selected_account, width=20, font=("Helvetica", 10))
+    combo.set_completion_list(account_name)  
+    combo.grid(row=1, column=0, columnspan=2, pady=5)
 
-    tk.Label(entry_frame,text="Date Range:",font=("Helvetica-bold",15)).grid(row=0,column=2,columnspan=4,pady=10)
-    tk.Label(entry_frame,text="From:",font=("Helvetica-bold",15)).grid(row=1,column=2,pady=10)
-    from_entry =  DateEntry(entry_frame, 
-                            width=12, 
-                            background='white', 
-                            borderwidth=2, 
-                            date_pattern='yyyy-mm-dd')
-    from_entry.grid(row=1, column=3, pady=5)
+    tk.Label(entry_frame,text="Date Range:",font=("Helvetica-bold",15)).grid(row=0,column=2,columnspan=4,pady=10,padx=10)
+    tk.Label(entry_frame, text="From:", font=("Helvetica", 12)).grid(row=1, column=2, padx=5, pady=10)
+    from_entry = tkc.DateEntry(entry_frame, width=12, background='grey', borderwidth=2, date_pattern='yyyy-mm-dd')
+    from_entry.grid(row=1, column=3, padx=5, pady=5)
 
-    tk.Label(entry_frame,text="To:",font=("Helvetica-bold",15)).grid(row=1,column=4,pady=10)
-    from_entry =  DateEntry(entry_frame, 
-                            width=12, 
-                            background='white', 
-                            borderwidth=2, 
-                            date_pattern='yyyy-mm-dd')
-    from_entry.grid(row=1, column=5, pady=5)
+    tk.Label(entry_frame, text="To:", font=("Helvetica", 12)).grid(row=1, column=4, padx=5, pady=10)
+    to_entry = tkc.DateEntry(entry_frame, width=12, background='white', borderwidth=2, date_pattern='yyyy-mm-dd')
+    to_entry.grid(row=1, column=5, padx=5, pady=5)
     
     btn_frame = tk.Frame(root)
     btn_frame.pack(pady=10)
@@ -1157,7 +1149,7 @@ def sale_ledger_window(root,company_name,user_name):
     tk.Button(btn_frame, text="Back", width=20, command=lambda:ledger_module_window(root,company_name,user_name)).grid(row=0, column=3,padx=5)
     tk.Button(btn_frame, text="Exit", width=20, command=root.destroy).grid(row=0, column=4,padx=5)
 
-    table_ledger = ttk.Treeview(root, columns=("S.NO","Date","Invoice No","Head Type","Description","Credit","Debit","Balance"), show="headings",height=25)
+    table_ledger = ttk.Treeview(root, columns=("S.NO","Date","Invoice No","Head Type","Description","Debit","Credit","Balance"), show="headings",height=25)
     table_ledger.pack(fill=tk.BOTH, pady=20)
 
     table_ledger.heading("S.NO", text="S.NO")
@@ -1170,10 +1162,10 @@ def sale_ledger_window(root,company_name,user_name):
     table_ledger.column("Head Type", anchor="center", width=100)
     table_ledger.heading("Description", text="Description")
     table_ledger.column("Description", anchor="center", width=300)
-    table_ledger.heading("Credit", text="Credit")
-    table_ledger.column("Credit", anchor="center", width=75)
     table_ledger.heading("Debit", text="Debit")
     table_ledger.column("Debit", anchor="center", width=75)
+    table_ledger.heading("Credit", text="Credit")
+    table_ledger.column("Credit", anchor="center", width=75)
     table_ledger.heading("Balance", text="Balance")
     table_ledger.column("Balance", anchor="center", width=75)
 
@@ -1192,12 +1184,25 @@ def purchase_ledger_window(root,company_name,user_name):
 
     tk.Label(root,text=f"Purchase Ledger",font=("Helvetica-bold",22)).pack(pady=10)
 
-    tk.Label(root,text="Select Account:",font=("Helvetica-bold",15)).pack(pady=10)
+    entry_frame = tk.Frame(root)
+    entry_frame.pack(pady=10)
+
+    tk.Label(entry_frame,text="Select Account:",font=("Helvetica-bold",15)).grid(row=0,column=0,columnspan=2,pady=10)
     selected_account = tk.StringVar(value="Select Account")
-    combo = AutocompleteCombobox(root,textvariable=selected_account, width=20, font=("Helvetica", 10))
-    combo.set_completion_list(account_name)
-    combo.pack(pady=5)
+    combo = AutocompleteCombobox(entry_frame, textvariable=selected_account, width=20, font=("Helvetica", 10))
+    combo.set_completion_list(account_name)  
+    combo.grid(row=1, column=0, columnspan=2, pady=5)
+
+    tk.Label(entry_frame,text="Date Range:",font=("Helvetica-bold",15)).grid(row=0,column=2,columnspan=4,pady=10,padx=10)
+    tk.Label(entry_frame, text="From:", font=("Helvetica", 12)).grid(row=1, column=2, padx=5, pady=10)
+    from_entry = tkc.DateEntry(entry_frame, width=12, background='grey', borderwidth=2, date_pattern='yyyy-mm-dd')
+    from_entry.grid(row=1, column=3, padx=5, pady=5)
+
+    tk.Label(entry_frame, text="To:", font=("Helvetica", 12)).grid(row=1, column=4, padx=5, pady=10)
+    to_entry = tkc.DateEntry(entry_frame, width=12, background='white', borderwidth=2, date_pattern='yyyy-mm-dd')
+    to_entry.grid(row=1, column=5, padx=5, pady=5)
     
+
     style = ttk.Style()
     style.configure("Treeview.Heading", font=("Helvetica", 10, "bold"))  
     style.configure("Treeview", font=("Helvetica", 8))  
@@ -1209,7 +1214,7 @@ def purchase_ledger_window(root,company_name,user_name):
     tk.Button(btn_frame, text="Back", width=20, command=lambda:ledger_module_window(root,company_name,user_name)).grid(row=0, column=3,padx=5)
     tk.Button(btn_frame, text="Exit", width=20, command=root.destroy).grid(row=0, column=4,padx=5)
 
-    table_ledger = ttk.Treeview(root, columns=("S.NO","Date","Voucher No","Head Type","Description","Credit","Debit","Balance"), show="headings",height=25)
+    table_ledger = ttk.Treeview(root, columns=("S.NO","Date","Voucher No","Head Type","Description","Debit","Credit","Balance"), show="headings",height=25)
     table_ledger.pack(fill=tk.BOTH, pady=20)
 
     table_ledger.heading("S.NO", text="S.NO")
@@ -1222,9 +1227,9 @@ def purchase_ledger_window(root,company_name,user_name):
     table_ledger.column("Head Type", anchor="center", width=100)
     table_ledger.heading("Description", text="Description")
     table_ledger.column("Description", anchor="center", width=300)
-    table_ledger.heading("Credit", text="Credit")
-    table_ledger.column("Credit", anchor="center", width=75)
     table_ledger.heading("Debit", text="Debit")
     table_ledger.column("Debit", anchor="center", width=75)
+    table_ledger.heading("Credit", text="Credit")
+    table_ledger.column("Credit", anchor="center", width=75)
     table_ledger.heading("Balance", text="Balance")
     table_ledger.column("Balance", anchor="center", width=75)
