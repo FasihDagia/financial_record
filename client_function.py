@@ -97,9 +97,9 @@ def add_client(root,window,customers,company_name,user_name):
     phone_entry =tk.Entry(input_frame,width=20)
     phone_entry.grid(row=1,column=3,pady=10)
 
-    tk.Label(input_frame,text="Address:",font=("Helvetica",10)).grid(row=3,column=0,pady=10)
+    tk.Label(input_frame,text="Address:",font=("Helvetica",10)).grid(row=2,column=0,pady=10)
     address_entry = tk.Text(input_frame,font=("Helvetica",10),width=50,height=5)  
-    address_entry.grid(row=3,column=1,columnspan=3,padx=10,pady=5)
+    address_entry.grid(row=2,column=1,columnspan=3,padx=10,pady=5)
 
     tk.Button(root,text="Add",width=20,font=("Helvetica",9),command=lambda:add(window,customers)).pack(pady=10)
 
@@ -143,7 +143,7 @@ def remove_client(root,window,customers,company_name,user_name):
     for widget in root.winfo_children():
         widget.destroy()
 
-    center_window(root, 250, 325)
+    center_window(root, 450, 380)
 
     root.title("Add Client")
 
@@ -155,52 +155,65 @@ def remove_client(root,window,customers,company_name,user_name):
     def get_party_info(*args):
         party = customers["customer_info"]
 
-        party_name = party_name_option.get()
-        party_details = party.find_one({"opp_acc":party_name})
+        cli_id = cli_id_var.get()
+        party_details = party.find_one({"cl_id":cli_id})
 
+        party_name = party_details.get("opp_acc",'')
+        party_name_default.set(party_name)
         email = party_details.get("party_email",'')
         email_default.set(email)
         phone = party_details.get("party_phone",'')
         phone_default.set(phone)
         address = party_details.get("party_address",'')
-        address_default.set(address)
+        address_entry.delete("1.0", tk.END)  
+        address_entry.insert("1.0",address)
 
-    tk.Label(input_frame,text="Name:",font=("Helvetica",10)).grid(row=0,column=0,pady=10)
-    party_name_options = []
-    for i in customers['customer_info'].find():
-            party_name_options.append(i.get('account_receivable',''))  
-    party_name_options.sort()      
-    party_name_option = tk.StringVar(value="Name")
-    party_name_entry = OptionMenu(input_frame, party_name_option , *party_name_options)
-    party_name_entry.grid(row=0,column=1,pady=5,padx=5)
+    tk.Label(input_frame,text = "Client ID:",font=("Helvetica",10)).grid(row=0,column=0,padx=5,pady=10)
+    client_id_options =[]
+    for cli in customers["customer_info"].find():
+        client_id_options.append(cli.get('cl_id',''))    
+    if len(client_id_options) ==0:
+        client_id_options.append("No clients to show")
+
+    cli_id_var = tk.StringVar(value="Clients")
+    cli_id_entry = tk.OptionMenu(input_frame, cli_id_var, *client_id_options)
+    cli_id_entry.grid(row=0,column=1,pady=10)
+
+    tk.Label(input_frame,text="Name:",font=("Helvetica",10)).grid(row=0,column=2,pady=10)
+    party_name_default = tk.StringVar(None)
+    party_name_entry = tk.Entry(input_frame,width=20,textvariable=party_name_default)
+    party_name_entry.grid(row=0,column=3,pady=5,padx=5)
 
     tk.Label(input_frame,text="Email:",font=("Helvetica",10)).grid(row=1,column=0,pady=10)
     email_default = tk.StringVar(None)
     email_entry =tk.Entry(input_frame,width=20,textvariable=email_default)
     email_entry.grid(row=1,column=1,pady=10)
 
-    tk.Label(input_frame,text="Phone:",font=("Helvetica",10)).grid(row=2,column=0,pady=10)
+    tk.Label(input_frame,text="Phone:",font=("Helvetica",10)).grid(row=1,column=2,pady=10)
     phone_default = tk.StringVar(None)
     phone_entry =tk.Entry(input_frame,width=20,textvariable=phone_default)
-    phone_entry.grid(row=2,column=1,pady=10)
+    phone_entry.grid(row=1,column=3,pady=10)
 
-    tk.Label(input_frame,text="Address:",font=("Helvetica",10)).grid(row=3,column=0,pady=10)
+    tk.Label(input_frame,text="Address:",font=("Helvetica",10)).grid(row=2,column=0,pady=10)
     address_default = tk.StringVar(None)
-    address_entry = tk.Entry(input_frame,width=20,textvariable=address_default)
-    address_entry.grid(row=3,column=1,pady=10)
+    address_entry = tk.Text(input_frame,font=("Helvetica",10),width=50,height=5)  
+    address_entry.insert("1.0", address_default.get())
+    address_entry.grid(row=2,column=1,columnspan=3,padx=10,pady=5)
 
-    party_name_option.trace_add("write", get_party_info)
+    cli_id_var.trace_add("write", get_party_info)
     
     def remove_default_text(event):
     
-        if reason_entry.get() == "Optional":
-            reason_entry.delete(0, tk.END)  
-            reason_entry.config(fg="black") 
+        current_text = reason_entry.get("1.0", tk.END).strip()
+        if current_text == "Optional":
+            reason_entry.delete("1.0", tk.END)  # Remove all text
+            reason_entry.config(fg="black")  
     
     tk.Label(input_frame,text="Reason:",font=("Helvetica",10)).grid(row=4,column=0,pady=10)
     reason_default = tk.StringVar(value="Optional")
-    reason_entry = tk.Entry(input_frame,width=20,textvariable=reason_default,fg='grey')
-    reason_entry.grid(row=4,column=1,pady=10)
+    reason_entry = tk.Text(input_frame,font=("Helvetica",10),width=50,height=3)  
+    reason_entry.insert("1.0", reason_default.get())
+    reason_entry.grid(row=4,column=1,columnspan=3,padx=10,pady=5)
 
     reason_entry.bind("<KeyPress>", remove_default_text)
     
@@ -214,18 +227,19 @@ def remove_client(root,window,customers,company_name,user_name):
     def remove(window,customers):
         
         clients_info = customers["customer_info"]
-        name = party_name_option.get()
+        cl_id = cli_id_var.get()
+        name = party_name_entry.get()
         email = email_default.get()
         phone = phone_default.get()
-        address = address_default.get()
-        reason = reason_entry.get()
+        address = address_entry.get("1.0", tk.END).strip()
+        reason = reason_entry.get("1.0", tk.END).strip()
 
         if not name or not email or not phone or not address:
             messagebox.showerror("Feilds","Feilds Can't be Empty!")
             return
         else:
-            customers[name].insert_one({'opp_acc':name,'party_email':email,'party_phone':phone,'party_address':address,'business_releation':'ended','reason':reason})
-            clients_info.delete_one({'opp_acc':name})
+            customers[name].insert_one({'cl_id':cl_id,'opp_acc':name,'party_email':email,'party_phone':phone,'party_address':address,'business_releation':'ended','reason':reason})
+            clients_info.delete_one({'cl_id':cl_id})
 
             messagebox.showinfo("Removed","CLient Removed!")
             window(root,company_name,user_name)
