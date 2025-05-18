@@ -8,14 +8,21 @@ def sale_show_account(acc_name,customers,table_ledger,from_entry,to_entry):
     to_date = to_entry.get()
     account = customers[f"sale_invoice_{account_name}"]
 
+    if from_date == "" or to_date == "":
+        filt = {}
+    else:
+        filt = {"date": {
+                    "$gte": from_date,
+                    "$lte": to_date}}
+
     for entry in table_ledger.get_children():
         table_ledger.delete(entry)
 
-    entries = account.find({"date": {
-                "$gte": from_date,
-                "$lte": to_date}})
-    
-    if entries == None:
+
+    entries = account.find(filt)    
+    count = account.count_documents(filt)
+
+    if count == 0:
         messagebox.showinfo("No Entries", "No entries found for the selected date range.")
         return
 
@@ -52,31 +59,46 @@ def purchase_show_account(acc_name,customers,table_ledger,from_entry,to_entry):
     to_date = to_entry.get()
     account = customers[f"purchase_invoice_{account_name}"]
 
+    if from_date == "" or to_date == "":
+        filt = {}
+    else:
+        filt = {"date": {
+                    "$gte": from_date,
+                    "$lte": to_date}}
+
     for entry in table_ledger.get_children():
         table_ledger.delete(entry)
 
-    j = 1
-    for entry in account.find():
-        if entry.get("invoice_type") != None:    
-            table_ledger.insert("", tk.END, values=(
-                j,
-                entry.get('date', ''),
-                entry.get('voucher_no', '0'),
-                entry.get('head_type',''),
-                entry.get('Description', ''),
-                entry.get('amount', ''),
-                entry.get('', '0'),
-                entry.get('balance',''),        
-                ))
-        else:
-            table_ledger.insert("", tk.END, values=(
-                j,
-                entry.get('date', ''),
-                entry.get('voucher_no', '0'),
-                entry.get('head_type','Nill'),
-                entry.get('Description', ''),
-                entry.get('', '0'),
-                entry.get('amount', ''),
-                entry.get('balance',''),        
-                ))
-        j += 1
+    entries = account.find(filt)
+    count = account.count_documents(filt)
+
+    if count == 0:
+        messagebox.showinfo("No Entries", "No entries found for the selected date range.")
+        return
+
+    else:
+        j = 1
+        for entry in entries:
+            if entry.get("invoice_type") != None:    
+                table_ledger.insert("", tk.END, values=(
+                    j,
+                    entry.get('date', ''),
+                    entry.get('voucher_no', '0'),
+                    entry.get('head_type',''),
+                    entry.get('Description', ''),
+                    entry.get('amount', ''),
+                    entry.get('', '0'),
+                    entry.get('balance',''),        
+                    ))
+            else:
+                table_ledger.insert("", tk.END, values=(
+                    j,
+                    entry.get('date', ''),
+                    entry.get('voucher_no', '0'),
+                    entry.get('head_type','Nill'),
+                    entry.get('Description', ''),
+                    entry.get('', '0'),
+                    entry.get('amount', ''),
+                    entry.get('balance',''),        
+                    ))
+            j += 1

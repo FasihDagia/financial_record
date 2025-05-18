@@ -1136,10 +1136,12 @@ def sale_ledger_window(root,company_name,user_name):
     tk.Label(entry_frame,text="Date Range:",font=("Helvetica-bold",15)).grid(row=0,column=2,columnspan=4,pady=10,padx=10)
     tk.Label(entry_frame, text="From:", font=("Helvetica", 12)).grid(row=1, column=2, padx=5, pady=10)
     from_entry = tkc.DateEntry(entry_frame, width=12, background='grey', borderwidth=2, date_pattern='yyyy-mm-dd')
+    from_entry.delete(0, 'end')
     from_entry.grid(row=1, column=3, padx=5, pady=5)
 
     tk.Label(entry_frame, text="To:", font=("Helvetica", 12)).grid(row=1, column=4, padx=5, pady=10)
     to_entry = tkc.DateEntry(entry_frame, width=12, background='white', borderwidth=2, date_pattern='yyyy-mm-dd')
+    to_entry.delete(0, 'end')
     to_entry.grid(row=1, column=5, padx=5, pady=5)
     
     btn_frame = tk.Frame(root)
@@ -1196,10 +1198,12 @@ def purchase_ledger_window(root,company_name,user_name):
     tk.Label(entry_frame,text="Date Range:",font=("Helvetica-bold",15)).grid(row=0,column=2,columnspan=4,pady=10,padx=10)
     tk.Label(entry_frame, text="From:", font=("Helvetica", 12)).grid(row=1, column=2, padx=5, pady=10)
     from_entry = tkc.DateEntry(entry_frame, width=12, background='grey', borderwidth=2, date_pattern='yyyy-mm-dd')
+    from_entry.delete(0, 'end')
     from_entry.grid(row=1, column=3, padx=5, pady=5)
 
     tk.Label(entry_frame, text="To:", font=("Helvetica", 12)).grid(row=1, column=4, padx=5, pady=10)
     to_entry = tkc.DateEntry(entry_frame, width=12, background='white', borderwidth=2, date_pattern='yyyy-mm-dd')
+    to_entry.delete(0, 'end')
     to_entry.grid(row=1, column=5, padx=5, pady=5)
     
 
