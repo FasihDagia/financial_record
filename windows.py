@@ -60,9 +60,7 @@ def login_window(root,company_name):
     
     login = tk.Toplevel(root)
     
-    login.geometry("450x275")
-    login.minsize(350,275)
-    login.maxsize(450,500)
+    center_window(login, 450, 275)
 
     login.title(f"Login/{company_name}")
 
@@ -112,7 +110,7 @@ def main_menu_window(root,company_name,user_name):
         "Receipt Module": employee.get("receipt_module", 0),
         "Inventory Module": employee.get("inventory_module", 0),
         "Client Module": employee.get("client_module", 0),
-        "Ledger Module": employee.get("ledger_module", 0),
+        "Reporting Module": employee.get("reporting_module", 0),
         "Company Profile": employee.get("company_profile_module", 0),
     }
 
@@ -126,7 +124,7 @@ def main_menu_window(root,company_name,user_name):
         "Receipt Module": lambda: receipt_module_window(root,company_name,user_name),
         "Inventory Module": lambda: inventory_module_window(root,company_name,user_name),
         "Client Module": lambda: client_module_window(root,company_name,user_name),
-        "Ledger Module": lambda: ledger_module_window(root,company_name,user_name),
+        "Reporting Module": lambda: ledger_module_window(root,company_name,user_name),
         "Company Profile": lambda: show_company_profile(root, client, main_menu_window, company_name, user_name),
     }
 
@@ -309,9 +307,9 @@ def ledger_module_window(root,company_name,user_name):
 
     center_window(root, 450, 225)
 
-    root.title("Ledger Module")
+    root.title("Reporting Module")
 
-    tk.Label(root,text="Ledger Module",font=("Helvetica",20)).pack(padx=50,pady=5)
+    tk.Label(root,text="Reporting Module",font=("Helvetica",20)).pack(padx=50,pady=5)
 
     btn_frame = Frame()
     btn_frame.pack(fill=X, padx=33, pady=10)
