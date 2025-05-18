@@ -16,14 +16,14 @@ def client_check(table_client,customers):
     clients_names = customers["customer_info"].find()
     client_name = []
     for i in customers['customer_info'].find():
-            client_name.append(i.get('party_name','')) 
+            client_name.append(i.get('opp_acc','')) 
 
     clients = {}
     
     for client in client_name:
         no_contracts = customers[client].count_documents({})
         if no_contracts == 1:
-            client_info = customers['customer_info'].find_one({'party_name':client})
+            client_info = customers['customer_info'].find_one({'opp_acc':client})
             clients[len(clients)+1] = client_info
         else:
             last_contract = customers[client].find_one({"s_no":no_contracts-1})
@@ -32,6 +32,7 @@ def client_check(table_client,customers):
     for contract in clients.values():
         table_client.insert("", tk.END, values=(
             i,
+            contract.get('cl_id',''),
             contract.get('opp_acc', ''),
             contract.get('party_address', ''),
             contract.get('party_phone', ''),
@@ -57,6 +58,7 @@ def existing_clients(table_client, customers):
     for contract in clients.values():
         table_client.insert("", tk.END, values=(
             i,
+            contract.get('cl_id',''),
             contract.get('opp_acc', ''),
             contract.get('party_address', ''),
             contract.get('party_phone', ''),
@@ -69,7 +71,7 @@ def add_client(root,window,customers,company_name,user_name):
     for widget in root.winfo_children():
         widget.destroy()
 
-    center_window(root, 250, 300)
+    center_window(root, 450, 320)
 
     root.title("Add Client")
 
@@ -78,21 +80,26 @@ def add_client(root,window,customers,company_name,user_name):
     input_frame = tk.Frame(root)
     input_frame.pack()
 
-    tk.Label(input_frame,text="Name:",font=("Helvetica",10)).grid(row=0,column=0,pady=10)
+    tk.Label(input_frame,text="Client ID:",font=("Helvetica",10)).grid(row=0,column=0,pady=10)
+    no_clients = customers["customer_info"].count_documents({}) +1
+    cl_id_entry = f"CLI{str(no_clients).zfill(4)}"
+    tk.Label(input_frame,text=cl_id_entry,font=("Helvetica",10,"bold"),width=15).grid(row=0,column=1,padx=5,pady=5)
+
+    tk.Label(input_frame,text="Name:",font=("Helvetica",10)).grid(row=0,column=2,pady=5)
     name_entry = tk.Entry(input_frame,width=20)
-    name_entry.grid(row=0,column=1,pady=10)
+    name_entry.grid(row=0,column=3,pady=5)
 
     tk.Label(input_frame,text="Email:",font=("Helvetica",10)).grid(row=1,column=0,pady=10)
     email_entry =tk.Entry(input_frame,width=20)
     email_entry.grid(row=1,column=1,pady=10)
 
-    tk.Label(input_frame,text="Phone:",font=("Helvetica",10)).grid(row=2,column=0,pady=10)
+    tk.Label(input_frame,text="Phone:",font=("Helvetica",10)).grid(row=1,column=2,pady=10)
     phone_entry =tk.Entry(input_frame,width=20)
-    phone_entry.grid(row=2,column=1,pady=10)
+    phone_entry.grid(row=1,column=3,pady=10)
 
     tk.Label(input_frame,text="Address:",font=("Helvetica",10)).grid(row=3,column=0,pady=10)
-    address_entry =tk.Entry(input_frame,width=20)
-    address_entry.grid(row=3,column=1,pady=10)
+    address_entry = tk.Text(input_frame,font=("Helvetica",10),width=50,height=5)  
+    address_entry.grid(row=3,column=1,columnspan=3,padx=10,pady=5)
 
     tk.Button(root,text="Add",width=20,font=("Helvetica",9),command=lambda:add(window,customers)).pack(pady=10)
 
@@ -104,24 +111,26 @@ def add_client(root,window,customers,company_name,user_name):
     def add(window,customers):
         
         clients_info = customers["customer_info"]
+        cl_id = cl_id_entry
         name = name_entry.get().upper()
         email = email_entry.get()
         phone = phone_entry.get()
-        address = address_entry.get()
+        address = address_entry.get("1.0", tk.END).strip()
+
 
         if not name or not email or not phone or not address:
             messagebox.showerror("Feilds","Feilds Can't be Empty!")
             return
         else:
-            exist = clients_info.find_one({'account_receivable':name})
+            exist = clients_info.find_one({'opp_acc':name})
             if exist == None:
-                details = {'opp_acc':name,'party_email':email,'party_phone':phone,'party_address':address}
+                details = {"cl_id":cl_id,'opp_acc':name,'party_email':email,'party_phone':phone,'party_address':address}
                 clients_info.insert_one(details)
 
                 if name in customers.list_collection_names():
                     customers[name].delete_one({'business_releation':'ended'})
                 
-                customers[name].insert_one({'opp_acc':name,'party_email':email,'party_phone':phone,'party_address':address})
+                customers[name].insert_one({"cl_id":cl_id,'opp_acc':name,'party_email':email,'party_phone':phone,'party_address':address})
 
                 messagebox.showinfo("Added","Client Added!")
                 window(root,company_name,user_name)

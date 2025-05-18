@@ -343,7 +343,7 @@ def sale_contract_window(root,company_name,user_name):
 
     tk.Button(button_frame,text='Generate Contract', width=15,command=lambda:generate_contract(root,sale_contracts,account,'Sale',sale_contract_window,inventory,customers,company_name,user_name,com_profile)).grid(row=0, column=1,padx=5)
     tk.Button(button_frame, text= "Print Contract", width=15, command=lambda:print_contracts(root,sale_contracts,"SALE")).grid(row=0, column=2,padx=5)
-    tk.Button(button_frame, text="Save", width=15, command=lambda:save_contract(sale_contracts,account,existing_contracts)).grid(row=0, column=3,padx=5)
+    tk.Button(button_frame, text="Save", width=15, command=lambda:save_contract(sale_contracts,account,existing_contracts,customers)).grid(row=0, column=3,padx=5)
     tk.Button(button_frame, text="Back", width=15, command=lambda:back(root,sale_module_window,sale_contracts,inventory_sale,existing_contracts,company_name,user_name)).grid(row=0, column=4,padx=5)
     tk.Button(button_frame, text="Exit", width=15, command=root.destroy).grid(row=0, column=5,padx=5)
 
@@ -501,7 +501,7 @@ def purchase_contract_window(root,company_name,user_name):
 
     tk.Button(button_frame,text='Generate Contract', width=15,command=lambda:generate_contract(root,purchase_contracts,account,'Purchacse',purchase_contract_window,inventory,customers,company_name,user_name,com_profile)).grid(row=0, column=1,padx=5)
     tk.Button(button_frame, text= "Print Contract", width=15, command=lambda:print_contracts(root,purchase_contracts,"PURCHASE")).grid(row=0, column=2,padx=5)
-    tk.Button(button_frame, text="Save", width=15, command=lambda:save_contract(purchase_contracts,account,existing_contracts)).grid(row=0, column=3,padx=5)
+    tk.Button(button_frame, text="Save", width=15, command=lambda:save_contract(purchase_contracts,account,existing_contracts,customers)).grid(row=0, column=3,padx=5)
     tk.Button(button_frame, text="Back", width=15, command=lambda:back(root,purchase_module_window,purchase_contracts,inventory_sale,existing_contracts,company_name,user_name)).grid(row=0, column=4,padx=5)
     tk.Button(button_frame, text="Exit", width=15, command=root.destroy).grid(row=0, column=5,padx=5)
 
@@ -773,11 +773,13 @@ def client_window(root,company_name,user_name):
     tk.Button(btn_frame, text="Back", width=20, command=lambda:client_module_window(root,company_name,user_name)).grid(row=0, column=3,padx=5)
     tk.Button(btn_frame, text="Exit", width=20, command=root.destroy).grid(row=0, column=4,padx=5)
 
-    table_client = ttk.Treeview(root, columns=("S.NO","Name","Address","Phone NO","Email","Last Contract","Last Contract Progress"), show="headings")
+    table_client = ttk.Treeview(root, columns=("S.NO","Client ID","Name","Address","Phone NO","Email","Last Contract","Last Contract Progress"), show="headings")
     table_client.pack(fill=tk.BOTH, pady=20)
 
     table_client.heading("S.NO", text="S.NO")
     table_client.column("S.NO", anchor="center", width=10)
+    table_client.heading("Client ID", text="Client ID")
+    table_client.column("Client ID", anchor="center", width=10)
     table_client.heading("Name", text="Name")
     table_client.column("Name", anchor="center", width=100)
     table_client.heading("Address" ,text="Address")
@@ -817,11 +819,13 @@ def add_client_window(root,company_name,user_name):
 
     tk.Label(root,text="Existing Clients",font=("Helvetica-Bold",20)).pack(pady=15)
 
-    table_client = ttk.Treeview(root, columns=("S.NO","Name","Address","Phone NO","Email"), show="headings")
+    table_client = ttk.Treeview(root, columns=("S.NO","Client ID","Name","Address","Phone NO","Email"), show="headings")
     table_client.pack(fill=tk.BOTH, pady=20)
 
     table_client.heading("S.NO", text="S.NO")
     table_client.column("S.NO", anchor="center", width=10)
+    table_client.heading("Client ID", text="Client ID")
+    table_client.column("Client ID", anchor="center", width=10)
     table_client.heading("Name", text="Name")
     table_client.column("Name", anchor="center", width=100)
     table_client.heading("Address" ,text="Address")
@@ -857,11 +861,13 @@ def remove_client_window(root,company_name,user_name):
 
     tk.Label(root,text="Existing Clients",font=("Helvetica-Bold",20)).pack(pady=15)
 
-    table_client = ttk.Treeview(root, columns=("S.NO","Name","Address","Phone NO","Email"), show="headings")
+    table_client = ttk.Treeview(root, columns=("S.NO","Client ID","Name","Address","Phone NO","Email"), show="headings")
     table_client.pack(fill=tk.BOTH, pady=20)
 
     table_client.heading("S.NO", text="S.NO")
     table_client.column("S.NO", anchor="center", width=10)
+    table_client.heading("Client ID", text="Client ID")
+    table_client.column("Client ID", anchor="center", width=10)
     table_client.heading("Name", text="Name")
     table_client.column("Name", anchor="center", width=100)
     table_client.heading("Address" ,text="Address")

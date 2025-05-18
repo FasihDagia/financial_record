@@ -1664,7 +1664,7 @@ def save(transactions,account,inventorys,existing_Contracts,contracts,inventory,
     else:
         messagebox.showerror("Error","No Invoices to save!")
 
-def save_contract(contracts,account,existing_contracts):
+def save_contract(contracts,account,existing_contracts,customers):
 
     if len(contracts) != 0:
         confirm = messagebox.askyesno("Confirm", f"Once the Contracts are saved you wont be able to cahnge them\nAre you sure you want to save?")
@@ -1672,6 +1672,8 @@ def save_contract(contracts,account,existing_contracts):
         
             for contract in contracts.values():
                 account.insert_one(contract)
+                name = contract.get('opp_acc','')
+                customers[name].insert_one(contract)
         
             contracts.clear()
             existing_contracts.clear()
