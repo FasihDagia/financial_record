@@ -90,9 +90,10 @@ def purchase_show_account(acc_name,customers,table_ledger,from_entry,to_entry,ba
         messagebox.showinfo("No Entries", "No entries found for the selected date range.")
         return
     else:
-        if from_date != "":
-            range_start = account.find_one({"date":from_date})
-            sno = range_start.get("s_no")
+        if from_date != "" and count !=0:       
+            range_start = account.find(filt).sort("date", 1).limit(1)
+            range_first = next(range_start,None)
+            sno = range_first.get("s_no")
             for_bal = account.find_one({"s_no":sno-1})
             if for_bal != None:
                 balance = for_bal.get("balance")
