@@ -1147,9 +1147,17 @@ def sale_ledger_window(root,company_name,user_name):
     btn_frame = tk.Frame(root)
     btn_frame.pack(pady=10)
 
-    tk.Button(btn_frame, text="Show Account", width=20, command=lambda:sale_show_account(selected_account,customers,table_ledger,from_entry,to_entry)).grid(row=0,column=2,pady=10)
+    tk.Button(btn_frame, text="Show Account", width=20, command=lambda:sale_show_account(selected_account,customers,table_ledger,from_entry,to_entry,bal_label,bal_amount)).grid(row=0,column=2,pady=10)
     tk.Button(btn_frame, text="Back", width=20, command=lambda:ledger_module_window(root,company_name,user_name)).grid(row=0, column=3,padx=5)
     tk.Button(btn_frame, text="Exit", width=20, command=root.destroy).grid(row=0, column=4,padx=5)
+
+    bal_frame = tk.Frame(root)
+    bal_frame.pack(pady=10)
+
+    bal_label = tk.Label(bal_frame,text="",font=("Helvetica-bold",12))
+    bal_label.grid(row=0,column=0)
+    bal_amount = tk.Label(bal_frame,text="",font=("Helvetica-bold",12))
+    bal_amount.grid(row=0,column=1)
 
     table_ledger = ttk.Treeview(root, columns=("S.NO","Date","Invoice No","Head Type","Description","Debit","Credit","Balance"), show="headings",height=25)
     table_ledger.pack(fill=tk.BOTH, pady=20)

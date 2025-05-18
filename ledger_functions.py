@@ -2,7 +2,7 @@ import tkinter as tk
 from tkinter import *
 from tkinter import messagebox
 
-def sale_show_account(acc_name,customers,table_ledger,from_entry,to_entry):
+def sale_show_account(acc_name,customers,table_ledger,from_entry,to_entry,bal_label,bal_amount):
     account_name = acc_name.get()
     from_date = from_entry.get()
     to_date = to_entry.get()
@@ -25,8 +25,21 @@ def sale_show_account(acc_name,customers,table_ledger,from_entry,to_entry):
     if count == 0:
         messagebox.showinfo("No Entries", "No entries found for the selected date range.")
         return
-
     else:
+        if from_date != "":
+            range_start = account.find_one({"date":from_date})
+            sno = range_start.get("s_no")
+            for_bal = account.find_one({"s_no":sno-1})
+            if for_bal != None:
+                balance = for_bal.get("balance")
+            else:
+                balance = 0
+        else:
+            balance = 0
+        opening_balance =  f"{balance:.2f}"
+        bal_label.config(text="Opening Balance:",pady=10,padx=10)
+        bal_amount.config(text=opening_balance,pady=10,padx=10)
+        
         j = 1
         for entry in entries:
             if entry.get("invoice_type") != None:    
@@ -59,20 +72,6 @@ def purchase_show_account(acc_name,customers,table_ledger,from_entry,to_entry,ba
     to_date = to_entry.get()
     account = customers[f"purchase_invoice_{account_name}"]
 
-    if from_date != "":
-        range_start = account.find_one({"date":from_date})
-        sno = range_start.get("s_no")
-        for_bal = account.find_one({"s_no":sno-1})
-        if for_bal != None:
-            balance = for_bal.get("balance")
-        else:
-            balance = 0
-    else:
-        balance = 0
-
-    opening_balance =  f"{balance:.2f}"
-    bal_label.config(text="Opening Balance:",pady=10,padx=10)
-    bal_amount.config(text=opening_balance,pady=10,padx=10)
 
     if from_date == "" or to_date == "":
         filt = {}
@@ -90,8 +89,21 @@ def purchase_show_account(acc_name,customers,table_ledger,from_entry,to_entry,ba
     if count == 0:
         messagebox.showinfo("No Entries", "No entries found for the selected date range.")
         return
-
     else:
+        if from_date != "":
+            range_start = account.find_one({"date":from_date})
+            sno = range_start.get("s_no")
+            for_bal = account.find_one({"s_no":sno-1})
+            if for_bal != None:
+                balance = for_bal.get("balance")
+            else:
+                balance = 0
+        else:
+            balance = 0
+
+        opening_balance =  f"{balance:.2f}"
+        bal_label.config(text="Opening Balance:",pady=10,padx=10)
+        bal_amount.config(text=opening_balance,pady=10,padx=10)
         j = 1
         for entry in entries:
             if entry.get("invoice_type") != None:    
