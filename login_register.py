@@ -286,7 +286,7 @@ def create_company(root,client,window):
 
             company_details.insert_one({"company_name": com_name, "phone_no": com_phone, "telephone_no": com_telephone, "email": com_email, "address": com_address, "ntn_no": ntn, "coc_certificate_no": coc_cno, "income_tax_certificate_no": it_cno})
             details.insert_one({"company_name": com_name, "phone_no": com_phone, "telephone_no": com_telephone, "email": com_email, "address": com_address, "ntn_no": ntn, "coc_certificate_no": coc_cno, "income_tax_certificate_no": it_cno})
-            employees.insert_one({"company_name": com_name,"emp_id":"EMP00001","name": emp_name, "email": emp_email, "phone_no": emp_phone, "address": emp_address, "username": emp_username, "password": emp_password, "sale_module":1, "purchase_module":1, "payment_module":1, "receipt_module":1, "client_module":1, "inventory_module":1, "company_profile_module":1,"reporting_module":1})
+            employees.insert_one({"company_name": com_name,"emp_id":"EMP00001","name": emp_name, "email": emp_email, "phone_no": emp_phone, "address": emp_address, "username": emp_username, "password": emp_password, "sale_module":1, "purchase_module":1, "payment_module":1, "receipt_module":1, "client_module":1, "inventory_module":1, "company_profile_module":1,"reporting_module":1,"financial_module":1,"bank_module":1,"tax_module":1,"employee_module":1,"expense_module":1})
             bank_accounts.insert_one({"company_name": com_name,"bank_name": bank_name, "branch_name": br_name, "account_title": ac_title, "account_no": ac_no, "iban_no": iban})
             tax.insert_one({"company_name": com_name,"gst_percent": gst_p, "advance_tax_percent": ad_tax,"further_tax_percent": fut_p})
 

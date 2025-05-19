@@ -274,7 +274,7 @@ def delete_employee(root,employees,com_name,client,user_name,window_main,window_
     for widget in root.winfo_children():
         widget.destroy()
 
-    center_window(root, 550, 600)
+    center_window(root, 550, 620)
 
     root.title(f"Edit Employee/{com_name}")
 
@@ -311,6 +311,7 @@ def delete_employee(root,employees,com_name,client,user_name,window_main,window_
             rec_mod_var.set(employee_info.get("receipt_module", 0))
             cli_mod_var.set(employee_info.get("client_module", 0))
             inv_mod_var.set(employee_info.get("inventory_module", 0))
+            fin_mod_var.set(employee_info.get("financial_module", 0))
             rep_mod_var.set(employee_info.get("reporting_module", 0))
             comp_mod_var.set(employee_info.get("company_profile_module", 0))
 
@@ -359,7 +360,7 @@ def delete_employee(root,employees,com_name,client,user_name,window_main,window_
     access_frame = tk.Frame(root)
     access_frame.pack(pady=10,padx=10)
 
-    tk.Label(access_frame,text = "Access",font=("Helvetica",14,"bold")).grid(row=0,column=1,columnspan=2,padx=5,pady=10)
+    tk.Label(access_frame,text = "Access",font=("Helvetica",14,"bold")).grid(row=0,columnspan=3,padx=5,pady=10)
 
     sal_mod_var = tk.IntVar()
     sal_mod_check = tk.Checkbutton(access_frame, text="Sale Module", variable=sal_mod_var,font=("Helvetica",10))
@@ -375,23 +376,27 @@ def delete_employee(root,employees,com_name,client,user_name,window_main,window_
 
     rec_mod_var = tk.IntVar()
     rec_mod_check = tk.Checkbutton(access_frame, text="Receipt Module", variable=rec_mod_var,font=("Helvetica",10))
-    rec_mod_check.grid(row=1,column=3,pady=10,padx=5)
+    rec_mod_check.grid(row=2,column=0,pady=10,padx=5)
 
     cli_mod_var = tk.IntVar()
     cli_mod_check = tk.Checkbutton(access_frame, text="Client Module", variable=cli_mod_var,font=("Helvetica",10))
-    cli_mod_check.grid(row=2,column=0,pady=10,padx=5)
+    cli_mod_check.grid(row=2,column=1,pady=10,padx=5)
 
     inv_mod_var = tk.IntVar()
     inv_mod_check = tk.Checkbutton(access_frame, text="inventory Module", variable=inv_mod_var,font=("Helvetica",10))
-    inv_mod_check.grid(row=2,column=1,pady=10,padx=5)
+    inv_mod_check.grid(row=2,column=2,pady=10,padx=5)
+
+    fin_mod_var = tk.IntVar()
+    fin_mod_check = tk.Checkbutton(access_frame, text="Financial Module", variable=fin_mod_var,font=("Helvetica",10))
+    fin_mod_check.grid(row=3,column=0,pady=10,padx=5)
 
     rep_mod_var = tk.IntVar()
     rep_mod_check = tk.Checkbutton(access_frame, text="Reporting Module", variable=rep_mod_var,font=("Helvetica",10))
-    rep_mod_check.grid(row=2,column=2,pady=10,padx=5)
+    rep_mod_check.grid(row=3,column=1,pady=10,padx=5)
 
     comp_mod_var = tk.IntVar()
     comp_mod_check = tk.Checkbutton(access_frame, text="Company Profile", variable=comp_mod_var,font=("Helvetica",10))
-    comp_mod_check.grid(row=2,column=3,pady=10,padx=5)
+    comp_mod_check.grid(row=3,column=2,pady=10,padx=5)
 
     emp_id_var.trace_add("write", get_employee_info)
 
@@ -426,7 +431,7 @@ def edit_employee(root,employees,com_name,client,window_show,user_name,window_ma
     for widget in root.winfo_children():
         widget.destroy()
 
-    center_window(root, 550, 600)
+    center_window(root, 550, 620)
 
     root.title(f"Edit Employee/{com_name}")
 
@@ -463,6 +468,7 @@ def edit_employee(root,employees,com_name,client,window_show,user_name,window_ma
             rec_mod_var.set(employee_info.get("receipt_module", 0))
             cli_mod_var.set(employee_info.get("client_module", 0))
             inv_mod_var.set(employee_info.get("inventory_module", 0))
+            fin_mod_var.set(employee_info.get("financial_module", 0))
             rep_mod_var.set(employee_info.get("reporting_module", 0))
             comp_mod_var.set(employee_info.get("company_profile_module", 0))
 
@@ -511,7 +517,7 @@ def edit_employee(root,employees,com_name,client,window_show,user_name,window_ma
     access_frame = tk.Frame(root)
     access_frame.pack(pady=10,padx=10)
 
-    tk.Label(access_frame,text = "Access",font=("Helvetica",14,"bold")).grid(row=0,column=1,columnspan=2,padx=5,pady=10)
+    tk.Label(access_frame,text = "Access",font=("Helvetica",14,"bold")).grid(row=0,columnspan=3,padx=5,pady=10)
 
     sal_mod_var = tk.IntVar()
     sal_mod_check = tk.Checkbutton(access_frame, text="Sale Module", variable=sal_mod_var,font=("Helvetica",10))
@@ -527,23 +533,27 @@ def edit_employee(root,employees,com_name,client,window_show,user_name,window_ma
 
     rec_mod_var = tk.IntVar()
     rec_mod_check = tk.Checkbutton(access_frame, text="Receipt Module", variable=rec_mod_var,font=("Helvetica",10))
-    rec_mod_check.grid(row=1,column=3,pady=10,padx=5)
+    rec_mod_check.grid(row=2,column=0,pady=10,padx=5)
 
     cli_mod_var = tk.IntVar()
     cli_mod_check = tk.Checkbutton(access_frame, text="Client Module", variable=cli_mod_var,font=("Helvetica",10))
-    cli_mod_check.grid(row=2,column=0,pady=10,padx=5)
+    cli_mod_check.grid(row=2,column=1,pady=10,padx=5)
 
     inv_mod_var = tk.IntVar()
     inv_mod_check = tk.Checkbutton(access_frame, text="inventory Module", variable=inv_mod_var,font=("Helvetica",10))
-    inv_mod_check.grid(row=2,column=1,pady=10,padx=5)
+    inv_mod_check.grid(row=2,column=2,pady=10,padx=5)
+
+    fin_mod_var = tk.IntVar()
+    fin_mod_check = tk.Checkbutton(access_frame, text="Financial Module", variable=fin_mod_var,font=("Helvetica",10))
+    fin_mod_check.grid(row=3,column=0,pady=10,padx=5)
 
     rep_mod_var = tk.IntVar()
     rep_mod_check = tk.Checkbutton(access_frame, text="Reporting Module", variable=rep_mod_var,font=("Helvetica",10))
-    rep_mod_check.grid(row=2,column=2,pady=10,padx=5)
+    rep_mod_check.grid(row=3,column=1,pady=10,padx=5)
 
     comp_mod_var = tk.IntVar()
     comp_mod_check = tk.Checkbutton(access_frame, text="Company Profile", variable=comp_mod_var,font=("Helvetica",10))
-    comp_mod_check.grid(row=2,column=3,pady=10,padx=5)
+    comp_mod_check.grid(row=3,column=2,pady=10,padx=5)
 
     emp_id_var.trace_add("write", get_employee_info)
 
@@ -553,7 +563,7 @@ def edit_employee(root,employees,com_name,client,window_show,user_name,window_ma
     btn_frame = tk.Frame(root)
     btn_frame.pack()
     tk.Button(btn_frame,text = "Back",font=("Helvetica",10),width=10,command=lambda:show_employees_edit(root,employees,com_name,client,user_name,window_main)).grid(row=0,column=0,padx=5)
-    tk.Button(btn_frame,text = "Exit",font=("Helvetica",10),width=10,command=root.quit).grid(row=0,column=1,padx=5)
+    tk.Button(btn_frame,text = "Exit",font=("Helvetica",10),width=10,command=root.destroy).grid(row=0,column=1,padx=5)
 
     def edit(root,employees,com_name,window_show,user_name):
         global warning
@@ -574,6 +584,7 @@ def edit_employee(root,employees,com_name,client,window_show,user_name,window_ma
         rec_mod = rec_mod_var.get()
         cli_mod = cli_mod_var.get()
         inv_mod = inv_mod_var.get()
+        fin_mod = fin_mod_var.get()
         rep_mod = rep_mod_var.get()
         comp_mod = comp_mod_var.get()
 
@@ -584,7 +595,7 @@ def edit_employee(root,employees,com_name,client,window_show,user_name,window_ma
             add_btn.pack(pady=10)
             return
 
-        employees.update_one({"emp_id":emp_id}, {"$set": {"name":emp_name, "email":emp_email, "phone_no":emp_phone, "address":emp_address, "username":emp_username, "password":emp_password, "sale_module":sal_mod, "purchase_module":pur_mod, "payment_module":pay_mod, "receipt_module":rec_mod, "client_module":cli_mod, "inventory_module":inv_mod, "company_profile_module":comp_mod, "reporting_module":rep_mod}})
+        employees.update_one({"emp_id":emp_id}, {"$set": {"name":emp_name, "email":emp_email, "phone_no":emp_phone, "address":emp_address, "username":emp_username, "password":emp_password, "sale_module":sal_mod, "purchase_module":pur_mod, "payment_module":pay_mod, "receipt_module":rec_mod, "client_module":cli_mod, "inventory_module":inv_mod, "company_profile_module":comp_mod, "reporting_module":rep_mod, "financial_module":fin_mod}})
         
         messagebox.showinfo("Success", "Employee Edited Successfully!")
         show_employees_edit(root, employees, com_name, client,  user_name, window_main)
@@ -594,7 +605,7 @@ def add_employee(root,employees,com_name,client,window_show,user_name,window_mai
     for widget in root.winfo_children():
         widget.destroy()
     
-    center_window(root, 550, 600)
+    center_window(root, 550, 620)
     
     root.title(f"Add Employee/{com_name}")
     
@@ -636,7 +647,7 @@ def add_employee(root,employees,com_name,client,window_show,user_name,window_mai
     access_frame = tk.Frame(root)
     access_frame.pack(pady=10,padx=10)
 
-    tk.Label(access_frame,text = "Access",font=("Helvetica",14,"bold")).grid(row=0,column=1,columnspan=2,padx=5,pady=10)
+    tk.Label(access_frame,text = "Access",font=("Helvetica",14,"bold")).grid(row=0,columnspan=3,padx=5,pady=10)
 
     sal_mod_var = tk.IntVar()
     sal_mod_check = tk.Checkbutton(access_frame, text="Sale Module", variable=sal_mod_var,font=("Helvetica",10))
@@ -652,23 +663,27 @@ def add_employee(root,employees,com_name,client,window_show,user_name,window_mai
 
     rec_mod_var = tk.IntVar()
     rec_mod_check = tk.Checkbutton(access_frame, text="Receipt Module", variable=rec_mod_var,font=("Helvetica",10))
-    rec_mod_check.grid(row=1,column=3,pady=10,padx=5)
+    rec_mod_check.grid(row=2,column=0,pady=10,padx=5)
 
     cli_mod_var = tk.IntVar()
     cli_mod_check = tk.Checkbutton(access_frame, text="Client Module", variable=cli_mod_var,font=("Helvetica",10))
-    cli_mod_check.grid(row=2,column=0,pady=10,padx=5)
+    cli_mod_check.grid(row=2,column=1,pady=10,padx=5)
 
     inv_mod_var = tk.IntVar()
     inv_mod_check = tk.Checkbutton(access_frame, text="inventory Module", variable=inv_mod_var,font=("Helvetica",10))
-    inv_mod_check.grid(row=2,column=1,pady=10,padx=5)
+    inv_mod_check.grid(row=2,column=2,pady=10,padx=5)
+
+    fin_mod_var = tk.IntVar()
+    fin_mod_check = tk.Checkbutton(access_frame, text="Financial Module", variable=fin_mod_var,font=("Helvetica",10))
+    fin_mod_check.grid(row=3,column=0,pady=10,padx=5)
 
     rep_mod_var = tk.IntVar()
     rep_mod_check = tk.Checkbutton(access_frame, text="Reporting Module", variable=rep_mod_var,font=("Helvetica",10))
-    rep_mod_check.grid(row=2,column=2,pady=10,padx=5)
+    rep_mod_check.grid(row=3,column=1,pady=10,padx=5)
 
     comp_mod_var = tk.IntVar()
     comp_mod_check = tk.Checkbutton(access_frame, text="Company Profile", variable=comp_mod_var,font=("Helvetica",10))
-    comp_mod_check.grid(row=2,column=3,pady=10,padx=5)
+    comp_mod_check.grid(row=3,column=2,pady=10,padx=5)
 
     add_btn = tk.Button(root,text = "Add Employee",font=("Helvetica",10),command=lambda: add_emp(root,employees,com_name,window_show,user_name))
     add_btn.pack(pady=10)
@@ -676,7 +691,7 @@ def add_employee(root,employees,com_name,client,window_show,user_name,window_mai
     btn_frame = tk.Frame(root)
     btn_frame.pack()
     tk.Button(btn_frame,text = "Back",font=("Helvetica",10),width=10,command=lambda:show_employees_edit(root,employees,com_name,client,user_name,window_main)).grid(row=0,column=0,padx=5)
-    tk.Button(btn_frame,text = "Exit",font=("Helvetica",10),width=10,command=root.quit).grid(row=0,column=1,padx=5)
+    tk.Button(btn_frame,text = "Exit",font=("Helvetica",10),width=10,command=root.destroy).grid(row=0,column=1,padx=5)
 
     def add_emp(root,employees,com_name,window_show,user_name):
         global warning
@@ -697,6 +712,7 @@ def add_employee(root,employees,com_name,client,window_show,user_name,window_mai
         rec_mod = rec_mod_var.get()
         cli_mod = cli_mod_var.get()
         inv_mod = inv_mod_var.get()
+        fin_mod = fin_mod_var.get()
         rep_mod = rep_mod_var.get()
         comp_mod = comp_mod_var.get()
 
@@ -707,7 +723,7 @@ def add_employee(root,employees,com_name,client,window_show,user_name,window_mai
             warning.pack(pady=5)
             return
 
-        employees.insert_one({"company_name": com_name,"emp_id":emp_id,"name":emp_name, "email":emp_email, "phone_no":emp_phone, "address":emp_address, "username":emp_username, "password":emp_password, "sale_module":sal_mod, "purchase_module":pur_mod, "payment_module":pay_mod, "receipt_module":rec_mod, "client_module":cli_mod, "inventory_module":inv_mod, "company_profile_module":comp_mod, "reporting_module":rep_mod})
+        employees.insert_one({"company_name": com_name,"emp_id":emp_id,"name":emp_name, "email":emp_email, "phone_no":emp_phone, "address":emp_address, "username":emp_username, "password":emp_password, "sale_module":sal_mod, "purchase_module":pur_mod, "payment_module":pay_mod, "receipt_module":rec_mod, "client_module":cli_mod, "inventory_module":inv_mod, "company_profile_module":comp_mod, "reporting_module":rep_mod, "financial_module":fin_mod})
         messagebox.showinfo("Success", "Employee Added Successfully!")
         show_employees_edit(root, employees, com_name, client, user_name, window_main)
 

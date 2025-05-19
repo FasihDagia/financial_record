@@ -26,7 +26,7 @@ def center_window(root, width, height):
     root.minsize(width, height)
     root.maxsize(width, height)
 
-def home_page(root):
+def home_page(root): 
     for widget in root.winfo_children():
         widget.destroy()
     
@@ -90,10 +90,10 @@ def login_window(root,company_name):
 
 def main_menu_window(root,company_name,user_name):
 
+    center_window(root, 450, 350)
+
     for widget in root.winfo_children():
         widget.destroy()
-
-    center_window(root, 450, 325)
 
     root.title(f"Main Menu/{company_name}/{user_name}")   
 
@@ -110,6 +110,7 @@ def main_menu_window(root,company_name,user_name):
         "Receipt Module": employee.get("receipt_module", 0),
         "Inventory Module": employee.get("inventory_module", 0),
         "Client Module": employee.get("client_module", 0),
+        "Financial Module": employee.get("financial_module", 0),
         "Reporting Module": employee.get("reporting_module", 0),
         "Company Profile": employee.get("company_profile_module", 0),
     }
@@ -124,6 +125,7 @@ def main_menu_window(root,company_name,user_name):
         "Receipt Module": lambda: receipt_module_window(root,company_name,user_name),
         "Inventory Module": lambda: inventory_module_window(root,company_name,user_name),
         "Client Module": lambda: client_module_window(root,company_name,user_name),
+        "Financial Module": lambda: financial_module_window(root,company_name,user_name),
         "Reporting Module": lambda: ledger_module_window(root,company_name,user_name),
         "Company Profile": lambda: show_company_profile(root, client, main_menu_window, company_name, user_name),
     }
@@ -144,6 +146,7 @@ def main_menu_window(root,company_name,user_name):
 
     tk.Button(btn_frame_2,text="Logout", font=("Helvetica",10),width=10, command=lambda:home_page(root)).grid(row=0,column=0,padx=5)
     tk.Button(btn_frame_2,text="Exit", font=("Helvetica",10),width=10, command=root.destroy).grid(row=0,column=1,padx=5)
+
 
 def sale_module_window(root,company_name,user_name):
     
@@ -316,6 +319,29 @@ def ledger_module_window(root,company_name,user_name):
 
     tk.Button(btn_frame,text="Sale Ledger", font=("Helvetica",10),width=20,command=lambda:sale_ledger_window(root,company_name,user_name)).grid(padx=10,pady=10,row=0,column=0)
     tk.Button(btn_frame,text="Purchase Ledger", font=("Helvetica",10),width=20,command=lambda:purchase_ledger_window(root,company_name,user_name)).grid(padx=10,pady=10,row=0,column=1)
+    tk.Button(btn_frame,text="Back", font=("Helvetica",10),width=20,command=lambda:main_menu_window(root,company_name,user_name)).grid(padx=10,pady=10,row=2,column=0)
+    tk.Button(btn_frame, text="Exit",font=("Helvetica",10), width=20, command=root.destroy).grid(padx=10,pady=5,row=2,column=1)
+
+def financial_module_window(root,company_name,user_name):
+    clear_temp(sale_contracts, purchase_contracts, sale_transaction, purchase_transaction, inventory_sale,
+               existing_contracts, payments_temp, receipt_temp, pay_receip_temp, bank_temp, cash_temp,
+               client_temp, bank_ind_temp, tax_temp, pay_receip_balance, invoice_balance, sld_stock,
+               cost_goods_temp,invoice_temp)
+
+    for widget in root.winfo_children():
+        widget.destroy()
+
+    center_window(root, 450, 225)
+
+    root.title("Financial Module")
+
+    tk.Label(root,text="Financial Module",font=("Helvetica",20)).pack(padx=50,pady=5)
+
+    btn_frame = Frame()
+    btn_frame.pack(fill=X, padx=33, pady=10)
+
+    # tk.Button(btn_frame,text="Sale Ledger", font=("Helvetica",10),width=20,command=lambda:sale_ledger_window(root,company_name,user_name)).grid(padx=10,pady=10,row=0,column=0)
+    # tk.Button(btn_frame,text="Purchase Ledger", font=("Helvetica",10),width=20,command=lambda:purchase_ledger_window(root,company_name,user_name)).grid(padx=10,pady=10,row=0,column=1)
     tk.Button(btn_frame,text="Back", font=("Helvetica",10),width=20,command=lambda:main_menu_window(root,company_name,user_name)).grid(padx=10,pady=10,row=2,column=0)
     tk.Button(btn_frame, text="Exit",font=("Helvetica",10), width=20, command=root.destroy).grid(padx=10,pady=5,row=2,column=1)
 
