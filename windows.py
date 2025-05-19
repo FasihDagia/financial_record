@@ -1235,12 +1235,22 @@ def purchase_ledger_window(root,company_name,user_name):
 
     entry_frame = tk.Frame(root)
     entry_frame.pack(pady=10)
-
+    
     tk.Label(entry_frame,text="Select Account:",font=("Helvetica-bold",15)).grid(row=0,column=0,columnspan=2,pady=10)
+    cli_id = tk.StringVar(value="Client ID")
+    cli_id_options = []
+    for name in customers["customer_info"].find():
+        cli_id_options.append(name.get('cl_id'))
+    if len(cli_id_options)==0:
+        cli_id_options.append("No Client ID")
+    cli_id_entry = tk.OptionMenu(entry_frame,cli_id,*cli_id_options)
+    cli_id_entry.config(width=10,font=("Helvetica",10))
+    cli_id_entry.grid(row=1,column=0,pady=5,padx=5)
+
     selected_account = tk.StringVar(value="Select Account")
     combo = AutocompleteCombobox(entry_frame, textvariable=selected_account, width=20, font=("Helvetica", 10))
     combo.set_completion_list(account_name)  
-    combo.grid(row=1, column=0, columnspan=2, pady=5)
+    combo.grid(row=1, column=1, pady=5)
 
     tk.Label(entry_frame,text="Date Range:",font=("Helvetica-bold",15)).grid(row=0,column=2,columnspan=4,pady=10,padx=10)
     tk.Label(entry_frame, text="From:", font=("Helvetica", 12)).grid(row=1, column=2, padx=5, pady=10)
