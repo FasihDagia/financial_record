@@ -339,7 +339,7 @@ def financial_module_window(root,company_name,user_name):
     btn_frame = Frame()
     btn_frame.pack(fill=X, padx=33, pady=10)
 
-    # tk.Button(btn_frame,text="Sale Ledger", font=("Helvetica",10),width=20,command=lambda:sale_ledger_window(root,company_name,user_name)).grid(padx=10,pady=10,row=0,column=0)
+    tk.Button(btn_frame,text="Adjustments", font=("Helvetica",10),width=20,command=lambda:adjustment_window(root,company_name,user_name)).grid(padx=10,pady=10,row=0,column=0)
     # tk.Button(btn_frame,text="Purchase Ledger", font=("Helvetica",10),width=20,command=lambda:purchase_ledger_window(root,company_name,user_name)).grid(padx=10,pady=10,row=0,column=1)
     tk.Button(btn_frame,text="Back", font=("Helvetica",10),width=20,command=lambda:main_menu_window(root,company_name,user_name)).grid(padx=10,pady=10,row=2,column=0)
     tk.Button(btn_frame, text="Exit",font=("Helvetica",10), width=20, command=root.destroy).grid(padx=10,pady=5,row=2,column=1)
@@ -1321,3 +1321,41 @@ def purchase_ledger_window(root,company_name,user_name):
     table_ledger.column("Credit", anchor="center", width=75)
     table_ledger.heading("Balance", text="Balance")
     table_ledger.column("Balance", anchor="center", width=75)
+
+def adjustment_window(root,company_name,user_name):
+
+    for widget in root.winfo_children():
+        widget.destroy()
+
+    center_window(root, 900, 500)
+
+    root.title("Adjustment")
+
+    tk.Label(root,text=f"Adjustments",font=("Helvetica-bold",22)).pack(pady=10)
+
+    style = ttk.Style()   
+    style.configure("Treeview.Heading", font=("Helvetica", 10, "bold"))  
+    style.configure("Treeview", font=("Helvetica", 8))  
+
+    btn_frame = tk.Frame(root)
+    btn_frame.pack()
+
+    tk.Button(btn_frame, text="Generate Adjustment", width=20).grid(row=0,column=2,pady=10)
+    tk.Button(btn_frame, text="Back", width=20, command=lambda:financial_module_window(root,company_name,user_name)).grid(row=0, column=3,padx=5)
+    tk.Button(btn_frame, text="Exit", width=20, command=root.destroy).grid(row=0, column=4,padx=5)
+
+    table_ledger = ttk.Treeview(root, columns=("S.NO","Date","Debit Account","Credit Account","Description","Amount"), show="headings",height=25)
+    table_ledger.pack(fill=tk.BOTH, pady=20,padx=10)
+
+    table_ledger.heading("S.NO", text="S.NO")
+    table_ledger.column("S.NO", anchor="center", width=50)
+    table_ledger.heading("Date", text="Date")
+    table_ledger.column("Date", anchor="center", width=75)
+    table_ledger.heading("Debit Account", text="Debit Account")
+    table_ledger.column("Debit Account", anchor="center", width=100)
+    table_ledger.heading("Credit Account", text="Credit Account")
+    table_ledger.column("Credit Account", anchor="center", width=100)
+    table_ledger.heading("Description", text="Description")
+    table_ledger.column("Description", anchor="center", width=300)
+    table_ledger.heading("Amount", text="Amount")
+    table_ledger.column("Amount", anchor="center", width=75)
