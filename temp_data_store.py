@@ -17,11 +17,12 @@ invoice_balance = {}
 sld_stock = {}
 cost_goods_temp = {}
 invoice_temp = {}
+adjustment_temp = {}
 
 def clear_temp(sale_contracts, purchase_contracts, sale_transaction, purchase_transaction, inventory_sale,
                existing_contracts, payments_temp, receipt_temp, pay_receip_temp, bank_temp, cash_temp,
                client_temp, bank_ind_temp, tax_temp, pay_receip_balance, invoice_balance, sld_stock,
-               cost_of_goods, invoice_temp):
+               cost_of_goods, invoice_temp, adjustment_temp):
 
     sale_contracts.clear()
     purchase_contracts.clear()
@@ -42,3 +43,4 @@ def clear_temp(sale_contracts, purchase_contracts, sale_transaction, purchase_tr
     sld_stock.clear()
     cost_of_goods.clear()
     invoice_temp.clear()
+    adjustment_temp.clear()
