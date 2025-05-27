@@ -1242,7 +1242,7 @@ def purchase_ledger_window(root,company_name,user_name):
     account_name = []
     for name in customers["customer_info"].find():
         account_name.append(name.get('opp_acc'))
-        cli_id_options.append(name.get('cl_id'))    
+        cli_id_options.append(name.get('cl_id'))   
 
     tk.Label(root,text=f"Purchase Ledger",font=("Helvetica-bold",22)).pack(pady=10)
 
@@ -1326,6 +1326,7 @@ def purchase_ledger_window(root,company_name,user_name):
 def adjustment_window(root,company_name,user_name):
 
     adjustments = db['adjustment']
+    heads = client[f'company_profile_{company_name.lower().replace(" ", "_")}']['heads']
 
     for widget in root.winfo_children():
         widget.destroy()
@@ -1343,7 +1344,7 @@ def adjustment_window(root,company_name,user_name):
     btn_frame = tk.Frame(root)
     btn_frame.pack()
 
-    tk.Button(btn_frame, text="Generate Adjustment", width=20,command=lambda:create_adjustment_window(root,adjustments,adjustment_temp)).grid(row=0,column=2,pady=10)
+    tk.Button(btn_frame, text="Generate Adjustment", width=20,command=lambda:create_adjustment_window(root,adjustments,adjustment_temp,heads,adjustment_window,company_name,user_name,customers)).grid(row=0,column=2,pady=10)
     tk.Button(btn_frame, text="Back", width=20, command=lambda:financial_module_window(root,company_name,user_name)).grid(row=0, column=3,padx=5)
     tk.Button(btn_frame, text="Exit", width=20, command=root.destroy).grid(row=0, column=4,padx=5)
 
