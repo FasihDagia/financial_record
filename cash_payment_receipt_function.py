@@ -331,6 +331,48 @@ def generate_cash_receipt(root,window,receipt_temp,receipt,pay_receip,pay_receip
             
             #for tax record
             records(tax_temp,tax,tax_amount,"add")
+
+            #for head types
+            no_entries_3 = head_collection[exp_type].count_documents()
+            last_entry_3 = head_collection[exp_type].find_one(sort=[("_id", -1)])
+            if len(head_temp)!= 0:
+                balance3 = 0
+                for i in head_temp.values():
+                    if i.get("head_type") == exp_type:
+                        balance3 = i.get("balance")
+                if balance3 == 0:
+                    balance3 = last_entry_3.get("balance",0)
+
+            elif len(head_temp) == 0:
+                if no_entries_3 == 0:
+                    balance3 = 0
+                else:
+                    balance3 = last_entry_3.get("balance",0)
+
+            if len(head_temp) == 0:
+                sno3 = no_entries_3 + 1
+            else:
+                j = 0
+                sno3 = no_entries_3 + 1
+                for i in head_temp.values():
+                    if i.get("account","") == account:
+                        j +=1
+                sno3 += j
+            balance3 += total_amount
+            head_temp[len(head_temp)+1] ={
+                "s_no":sno3,
+                "date":date,
+                "voucher_no":vouch_no,
+                "head_type":exp_type,
+                "account":account,
+                "description":description,
+                "amount":amount,
+                "amountiw":amountiw,
+                "total_amount":total_amount,
+                "balance":balance3
+            }        
+
+
             
             if invoice_no != None:
                 for i in db['sale_invoice'].find():
