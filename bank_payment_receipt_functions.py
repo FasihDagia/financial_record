@@ -13,7 +13,7 @@ def center_window(root, width, height):
     root.minsize(width, height)
     root.maxsize(width, height)
 
-def generate_bank_payments(root,window,payments_temp,payment,pay_receip,pay_receip_temp,customers,client_temp,bank,bank_temp,indvidual_bank,bank_ind_temp,tax,tax_temp,invoice_balance,heads,banks,company_name,user_name,db,invoice_temp):
+def generate_bank_payments(root,window,payments_temp,payment,pay_receip,pay_receip_temp,customers,client_temp,bank,bank_temp,indvidual_bank,bank_ind_temp,tax,tax_temp,invoice_balance,heads,banks,company_name,user_name,db,invoice_temp,head_collection,head_temp):
     
     for widget in root.winfo_children():
         widget.destroy()
@@ -195,7 +195,7 @@ def generate_bank_payments(root,window,payments_temp,payment,pay_receip,pay_rece
     total_var = tk.StringVar(value=0)
     tk.Label(total_frame,textvariable=total_var,font=9).grid(row=0,column=1,pady=10)
 
-    tk.Button(root,text="Generate" ,font=("helvetica",10),width=20,command=lambda:generate(root,window,payments_temp,payment,pay_receip,pay_receip_temp,customers,client_temp,bank,bank_temp,indvidual_bank,bank_ind_temp,tax,tax_temp,invoice_temp)).pack(pady=10)    
+    tk.Button(root,text="Generate" ,font=("helvetica",10),width=20,command=lambda:generate(root,window,payments_temp,payment,pay_receip,pay_receip_temp,customers,client_temp,bank,bank_temp,indvidual_bank,bank_ind_temp,tax,tax_temp,invoice_temp,head_collection,head_temp)).pack(pady=10)    
     
     btn_frame = tk.Frame(root) 
     btn_frame.pack()
@@ -203,20 +203,25 @@ def generate_bank_payments(root,window,payments_temp,payment,pay_receip,pay_rece
     tk.Button(btn_frame,text="Back" ,font=("helvetica",10),width=10,command=lambda:window(root,company_name,user_name)).grid(row=0,column=0,padx=5)
     tk.Button(btn_frame,text="Exit" ,font=("helvetica",10),width=10,command=root.destroy).grid(row=0,column=1,padx=5)
 
-    def generate(root,window,payments_temp,payment,pay_receip,pay_receip_temp,customers,client_temp,bank,bank_temp,indvidual_bank,bank_ind_temp,tax,tax_temp,invoice_temp):
+    def generate(root,window,payments_temp,payment,pay_receip,pay_receip_temp,customers,client_temp,bank,bank_temp,indvidual_bank,bank_ind_temp,tax,tax_temp,invoice_temp,head_collection,head_temp):
         
-        date = date_entry.get()
-        vouch_no = voucher
-        account = bank_option.get()
-        acc_recev = acc_recev_entry.get()
-        exp_type = exp_type_option.get()
-        description = description_entry.get("1.0", "end-1c")
-        amount = amount_entry.get()
-        tax_percent = tax_p_entry.get()
-        tax_amount = tax_amount_entry.get()
-        total_amount = total_var.get()
-        cheque_no = cheque_entry.get() or None
-        invoice_no = invoice_var.get() or None
+        try:
+            date = date_entry.get()
+            vouch_no = voucher
+            account = bank_option.get()
+            acc_recev = acc_recev_entry.get()
+            exp_type = exp_type_option.get()
+            description = description_entry.get("1.0", "end-1c")
+            amount = amount_entry.get()
+            tax_percent = tax_p_entry.get()
+            tax_amount = tax_amount_entry.get()
+            total_amount = total_var.get()
+            cheque_no = cheque_entry.get() or None
+            invoice_no = invoice_var.get() or None
+        except ValueError:
+            messagebox.showerror("Error","An unknown Error occured!")
+            return
+
         amountiw = num2words(total_amount).upper()
         
         if not date or not vouch_no or not account or not acc_recev or not exp_type or not description  or not amount or not tax_percent or not tax_amount or not total_amount:
@@ -302,7 +307,7 @@ def generate_bank_payments(root,window,payments_temp,payment,pay_receip,pay_rece
                     for i in temp.values():
                         if i.get("opp_acc","") == acc_recev:
                             j +=1
-                            sno2 += j
+                    sno2 += j
 
                 balance2 -= amounts
                 temp[len(temp)+1] ={
@@ -377,6 +382,48 @@ def generate_bank_payments(root,window,payments_temp,payment,pay_receip,pay_rece
 
             #for tax record
             records(tax_temp,tax,tax_amount,"add")
+
+            #for head types
+            no_entries_3 = head_collection[exp_type].count_documents()
+            last_entry_3 = head_collection[exp_type].find_one(sort=[("_id", -1)])
+            if len(head_temp)!= 0:
+                balance3 = 0
+                for i in head_temp.values():
+                    if i.get("head_type") == exp_type:
+                        balance3 = i.get("balance")
+                if balance3 == 0:
+                    balance3 = last_entry_3.get("balance",0)
+
+            elif len(head_temp) == 0:
+                if no_entries_3 == 0:
+                    balance3 = 0
+                else:
+                    balance3 = last_entry_3.get("balance",0)
+
+            if len(head_temp) == 0:
+                sno3 = no_entries_3 + 1
+            else:
+                j = 0
+                sno3 = no_entries_3 + 1
+                for i in bank_ind_temp.values():
+                    if i.get("account","") == account:
+                        j +=1
+                sno3 += j
+            balance3 -= total_amount
+            head_temp[len(head_temp)+1] ={
+                "s_no":sno3,
+                "date":date,
+                "voucher_no":vouch_no,
+                "head_type":exp_type,
+                "account":account,
+                "cheque_no":cheque_no,
+                "opp_acc":acc_recev,
+                "description":description,
+                "amount":amount,
+                "amountiw":amountiw,
+                "total_amount":total_amount,
+                "balance":balance3
+            }        
 
             if invoice_no != None:
                 for i in db['purchase_invoice'].find():
