@@ -747,7 +747,7 @@ def generate_cash_payments(root,window,payments_temp,payment,pay_receip,pay_rece
             messagebox.showinfo("Success","Cash Payment Generated Succesfully!")
             window(root,company_name,user_name)
 
-def save_cash_payments_receipt(payments_temp,payment,pay_receip,pay_receip_temp,type,customers,client_temp,cash,cash_temp,tax,tax_temp,db,invoice_temp,invoice_balance):
+def save_cash_payments_receipt(payments_temp,payment,pay_receip,pay_receip_temp,type,customers,client_temp,cash,cash_temp,tax,tax_temp,db,invoice_temp,invoice_balance,head_collection,head_temp):
     
     if len(payments_temp) != 0 and len(pay_receip_temp) != 0:
         confirm = messagebox.askyesno("Confirm", f"Once the Particulars are saved you wont be able to cahnge them\nAre you sure you want to save?")
@@ -789,6 +789,11 @@ def save_cash_payments_receipt(payments_temp,payment,pay_receip,pay_receip_temp,
                     for i in db['sale_invoice'].find():
                         if pay.get('invoice_no') == i.get("invoice_no"):
                             db['sale_invoice'].update_one({"invoice_no": pay.get("invoice_no")}, {"$set": {"amount_cleared": pay.get("amount_cleared",0),"status":pay.get("status","")}})
+            
+            for ind_head_update in head_temp.values():
+                hd_name = ind_head_update.get("head_name")
+                ind_head = head_collection[hd_name]
+                ind_head.insert_one(ind_head_update)
 
             pay_receip_temp.clear()
             payments_temp.clear()
@@ -797,6 +802,7 @@ def save_cash_payments_receipt(payments_temp,payment,pay_receip,pay_receip_temp,
             tax_temp.clear()
             invoice_temp.clear()
             invoice_balance.clear()
+            head_temp.clear()
 
             if type == "pay":
                 messagebox.showinfo("Success","Payments saved succesfully!")
