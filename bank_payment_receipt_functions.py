@@ -879,7 +879,7 @@ def load_payments_receipt(table_entry,payments_temp):
         ))
         i+=1
 
-def save_bank_payment_receipt(payments_temp,payment,pay_receip,pay_receip_temp,type,customers,client_temp,bank,bank_temp,indvidual_bank,bank_ind_temp,tax,tax_temp,invoice_balance,invoice_temp,db):
+def save_bank_payment_receipt(payments_temp,payment,pay_receip,pay_receip_temp,type,customers,client_temp,bank,bank_temp,indvidual_bank,bank_ind_temp,tax,tax_temp,invoice_balance,invoice_temp,db,head_collection,head_temp):
     
     if len(payments_temp) != 0 and len(pay_receip_temp) != 0:
         confirm = messagebox.askyesno("Confirm", f"Once the Particulars are saved you wont be able to cahnge them\nAre you sure you want to save?")
@@ -925,6 +925,12 @@ def save_bank_payment_receipt(payments_temp,payment,pay_receip,pay_receip_temp,t
                 ind_bank = indvidual_bank[b_name]
                 ind_bank.insert_one(ind_bank_update)
 
+            for ind_head_update in head_temp.values():
+                hd_name = ind_head_update.get("head_name")
+                ind_head = head_collection[hd_name]
+                ind_head.insert_one(ind_head_update)
+
+
             pay_receip_temp.clear()
             payments_temp.clear()
             bank_temp.clear()
@@ -933,6 +939,7 @@ def save_bank_payment_receipt(payments_temp,payment,pay_receip,pay_receip_temp,t
             tax_temp.clear()
             invoice_balance.clear()
             invoice_temp.clear()
+            head_temp.clear()
 
             if type == "pay":
                 messagebox.showinfo("Success","Payments saved succesfully!")
