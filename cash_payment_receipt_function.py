@@ -333,7 +333,7 @@ def generate_cash_receipt(root,window,receipt_temp,receipt,pay_receip,pay_receip
             records(tax_temp,tax,tax_amount,"add")
 
             #for head types
-            no_entries_3 = head_collection[exp_type].count_documents()
+            no_entries_3 = head_collection[exp_type].count_documents({})
             last_entry_3 = head_collection[exp_type].find_one(sort=[("_id", -1)])
             if len(head_temp)!= 0:
                 balance3 = 0
@@ -693,7 +693,7 @@ def generate_cash_payments(root,window,payments_temp,payment,pay_receip,pay_rece
             records(tax_temp,tax,tax_amount,"add")
 
             #for head types
-            no_entries_3 = head_collection[exp_type].count_documents()
+            no_entries_3 = head_collection[exp_type].count_documents({})
             last_entry_3 = head_collection[exp_type].find_one(sort=[("_id", -1)])
             if len(head_temp)!= 0:
                 balance3 = 0
@@ -791,7 +791,7 @@ def save_cash_payments_receipt(payments_temp,payment,pay_receip,pay_receip_temp,
                             db['sale_invoice'].update_one({"invoice_no": pay.get("invoice_no")}, {"$set": {"amount_cleared": pay.get("amount_cleared",0),"status":pay.get("status","")}})
             
             for ind_head_update in head_temp.values():
-                hd_name = ind_head_update.get("head_name")
+                hd_name = ind_head_update.get("head_type")
                 ind_head = head_collection[hd_name]
                 ind_head.insert_one(ind_head_update)
 
