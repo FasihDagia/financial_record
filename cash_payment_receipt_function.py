@@ -23,7 +23,7 @@ def go_back(root,window,payments,pay_receip_temp,company_name,user_name):
             pay_receip_temp.clear()
             window(root,company_name,user_name)
 
-def generate_cash_receipt(root,window,receipt_temp,receipt,pay_receip,pay_receip_temp,customers,client_temp,cash,cash_temp,tax,tax_temp,invoice_balance,heads,company_name,user_name,db,invoice_temp):
+def generate_cash_receipt(root,window,receipt_temp,receipt,pay_receip,pay_receip_temp,customers,client_temp,cash,cash_temp,tax,tax_temp,invoice_balance,heads,company_name,user_name,db,invoice_temp,head_collection,head_temp):
     
     for widget in root.winfo_children():
         widget.destroy()
@@ -194,7 +194,7 @@ def generate_cash_receipt(root,window,receipt_temp,receipt,pay_receip,pay_receip
     total_var = tk.StringVar(value=0)
     tk.Label(total_frame,textvariable=total_var,font=9).grid(row=0,column=1,pady=10)
 
-    tk.Button(root,text="Generate" ,font=("helvetica",10),width=20,command=lambda:generate(root,window,receipt_temp,receipt,pay_receip,pay_receip_temp,customers,client_temp,cash,cash_temp,tax,tax_temp,invoice_temp)).pack(pady=10)    
+    tk.Button(root,text="Generate" ,font=("helvetica",10),width=20,command=lambda:generate(root,window,receipt_temp,receipt,pay_receip,pay_receip_temp,customers,client_temp,cash,cash_temp,tax,tax_temp,invoice_temp,head_collection,head_temp)).pack(pady=10)    
     
     btn_frame = tk.Frame(root) 
     btn_frame.pack()
@@ -202,7 +202,7 @@ def generate_cash_receipt(root,window,receipt_temp,receipt,pay_receip,pay_receip
     tk.Button(btn_frame,text="Back" ,font=("helvetica",10),width=10,command=lambda:window(root,company_name,user_name)).grid(row=0,column=0,padx=5)
     tk.Button(btn_frame,text="Exit" ,font=("helvetica",10),width=10,command=root.destroy).grid(row=0,column=1,padx=5)
 
-    def generate(root,window,receipt_temp,receipt,pay_receip,pay_receip_temp,customers,client_temp,cash,cash_temp,tax,tax_temp,invoice_temp):
+    def generate(root,window,receipt_temp,receipt,pay_receip,pay_receip_temp,customers,client_temp,cash,cash_temp,tax,tax_temp,invoice_temp,head_collection,head_temp):
         
         date = date_entry.get()
         vouch_no = voucher
@@ -345,7 +345,7 @@ def generate_cash_receipt(root,window,receipt_temp,receipt,pay_receip,pay_receip
             messagebox.showinfo("Success","Cash Receipt Generated Succesfully!")
             window(root,company_name,user_name)
 
-def generate_cash_payments(root,window,payments_temp,payment,pay_receip,pay_receip_temp,customers,client_temp,cash,cash_temp,tax,tax_temp,invoice_balance,heads,company_name,user_name,db,invoice_temp):
+def generate_cash_payments(root,window,payments_temp,payment,pay_receip,pay_receip_temp,customers,client_temp,cash,cash_temp,tax,tax_temp,invoice_balance,heads,company_name,user_name,db,invoice_temp,head_collection,head_temp):
     
     for widget in root.winfo_children():
         widget.destroy()
@@ -513,7 +513,7 @@ def generate_cash_payments(root,window,payments_temp,payment,pay_receip,pay_rece
     total_var = tk.StringVar(value=0)
     tk.Label(total_frame,textvariable=total_var,font=9).grid(row=0,column=1,pady=10)
 
-    tk.Button(root,text="Generate" ,font=("helvetica",10),width=20,command=lambda:generate(root,window,payments_temp,payment,pay_receip,pay_receip_temp,customers,client_temp,cash,cash_temp,tax,tax_temp,invoice_temp)).pack(pady=10)    
+    tk.Button(root,text="Generate" ,font=("helvetica",10),width=20,command=lambda:generate(root,window,payments_temp,payment,pay_receip,pay_receip_temp,customers,client_temp,cash,cash_temp,tax,tax_temp,invoice_temp,head_collection,head_temp)).pack(pady=10)    
     
     btn_frame = tk.Frame(root) 
     btn_frame.pack()
@@ -521,7 +521,7 @@ def generate_cash_payments(root,window,payments_temp,payment,pay_receip,pay_rece
     tk.Button(btn_frame,text="Back" ,font=("helvetica",10),width=10,command=lambda:window(root,company_name,user_name)).grid(row=0,column=0,padx=5)
     tk.Button(btn_frame,text="Exit" ,font=("helvetica",10),width=10,command=root.destroy).grid(row=0,column=1,padx=5)
 
-    def generate(root,window,payments_temp,payment,pay_receip,pay_receip_temp,customers,client_temp,cash,cash_temp,tax,tax_temp,invoice_temp):
+    def generate(root,window,payments_temp,payment,pay_receip,pay_receip_temp,customers,client_temp,cash,cash_temp,tax,tax_temp,invoice_temp,head_collection,head_temp):
         
         date = date_entry.get()
         vouch_no = voucher
@@ -649,6 +649,48 @@ def generate_cash_payments(root,window,payments_temp,payment,pay_receip,pay_rece
 
             #for tax record
             records(tax_temp,tax,tax_amount,"add")
+
+            #for head types
+            no_entries_3 = head_collection[exp_type].count_documents()
+            last_entry_3 = head_collection[exp_type].find_one(sort=[("_id", -1)])
+            if len(head_temp)!= 0:
+                balance3 = 0
+                for i in head_temp.values():
+                    if i.get("head_type") == exp_type:
+                        balance3 = i.get("balance")
+                if balance3 == 0:
+                    balance3 = last_entry_3.get("balance",0)
+
+            elif len(head_temp) == 0:
+                if no_entries_3 == 0:
+                    balance3 = 0
+                else:
+                    balance3 = last_entry_3.get("balance",0)
+
+            if len(head_temp) == 0:
+                sno3 = no_entries_3 + 1
+            else:
+                j = 0
+                sno3 = no_entries_3 + 1
+                for i in head_temp.values():
+                    if i.get("account","") == account:
+                        j +=1
+                sno3 += j
+            balance3 -= total_amount
+            head_temp[len(head_temp)+1] ={
+                "s_no":sno3,
+                "date":date,
+                "voucher_no":vouch_no,
+                "head_type":exp_type,
+                "account":account,
+                "opp_acc":acc_recev,
+                "description":description,
+                "amount":amount,
+                "amountiw":amountiw,
+                "total_amount":total_amount,
+                "balance":balance3
+            }        
+
 
             if invoice_no != None:
                 for i in db['purchase_invoice'].find():

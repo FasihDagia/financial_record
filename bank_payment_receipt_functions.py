@@ -405,7 +405,7 @@ def generate_bank_payments(root,window,payments_temp,payment,pay_receip,pay_rece
             else:
                 j = 0
                 sno3 = no_entries_3 + 1
-                for i in bank_ind_temp.values():
+                for i in head_temp.values():
                     if i.get("account","") == account:
                         j +=1
                 sno3 += j
@@ -823,7 +823,7 @@ def generate_bank_receipt(root,window,receipt_temp,receipt,pay_receip,pay_receip
             else:
                 j = 0
                 sno3 = no_entries_3 + 1
-                for i in bank_ind_temp.values():
+                for i in head_temp.values():
                     if i.get("account","") == account:
                         j +=1
                 sno3 += j
