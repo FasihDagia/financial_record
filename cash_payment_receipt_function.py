@@ -333,8 +333,8 @@ def generate_cash_receipt(root,window,receipt_temp,receipt,pay_receip,pay_receip
             records(tax_temp,tax,tax_amount,"add")
 
             #for head types
-            no_entries_3 = head_collection[exp_type].count_documents({})
-            last_entry_3 = head_collection[exp_type].find_one(sort=[("_id", -1)])
+            no_entries_3 = head_collection[f"{exp_type}_receipt"].count_documents({})
+            last_entry_3 = head_collection[f"{exp_type}_receipt"].find_one(sort=[("_id", -1)])
             if len(head_temp)!= 0:
                 balance3 = 0
                 for i in head_temp.values():
@@ -693,8 +693,8 @@ def generate_cash_payments(root,window,payments_temp,payment,pay_receip,pay_rece
             records(tax_temp,tax,tax_amount,"add")
 
             #for head types
-            no_entries_3 = head_collection[exp_type].count_documents({})
-            last_entry_3 = head_collection[exp_type].find_one(sort=[("_id", -1)])
+            no_entries_3 = head_collection[f"{exp_type}_payment"].count_documents({})
+            last_entry_3 = head_collection[f"{exp_type}_payment"].find_one(sort=[("_id", -1)])
             if len(head_temp)!= 0:
                 balance3 = 0
                 for i in head_temp.values():
@@ -718,7 +718,7 @@ def generate_cash_payments(root,window,payments_temp,payment,pay_receip,pay_rece
                     if i.get("account","") == account:
                         j +=1
                 sno3 += j
-            balance3 -= total_amount
+            balance3 += total_amount
             head_temp[len(head_temp)+1] ={
                 "s_no":sno3,
                 "date":date,
@@ -792,7 +792,10 @@ def save_cash_payments_receipt(payments_temp,payment,pay_receip,pay_receip_temp,
             
             for ind_head_update in head_temp.values():
                 hd_name = ind_head_update.get("head_type")
-                ind_head = head_collection[hd_name]
+                if type == "pay":
+                    ind_head = head_collection[f"{hd_name}_payment"]
+                elif type == "recep":
+                    ind_head = head_collection[f"{hd_name}_receipt"]
                 ind_head.insert_one(ind_head_update)
 
             pay_receip_temp.clear()

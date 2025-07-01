@@ -384,8 +384,8 @@ def generate_bank_payments(root,window,payments_temp,payment,pay_receip,pay_rece
             records(tax_temp,tax,tax_amount,"add")
 
             #for head types
-            no_entries_3 = head_collection[exp_type].count_documents({})
-            last_entry_3 = head_collection[exp_type].find_one(sort=[("_id", -1)])
+            no_entries_3 = head_collection[f"{exp_type}_payment"].count_documents({})
+            last_entry_3 = head_collection[f"{exp_type}_payment"].find_one(sort=[("_id", -1)])
             if len(head_temp)!= 0:
                 balance3 = 0
                 for i in head_temp.values():
@@ -409,7 +409,7 @@ def generate_bank_payments(root,window,payments_temp,payment,pay_receip,pay_rece
                     if i.get("account","") == account:
                         j +=1
                 sno3 += j
-            balance3 -= total_amount
+            balance3 += total_amount
             head_temp[len(head_temp)+1] ={
                 "s_no":sno3,
                 "date":date,
