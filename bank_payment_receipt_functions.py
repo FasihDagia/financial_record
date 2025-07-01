@@ -927,7 +927,10 @@ def save_bank_payment_receipt(payments_temp,payment,pay_receip,pay_receip_temp,t
 
             for ind_head_update in head_temp.values():
                 hd_name = ind_head_update.get("head_type")
-                ind_head = head_collection[hd_name]
+                if type == "pay":
+                    ind_head = head_collection[f"{hd_name}_payment"]
+                elif type == "recep":
+                    ind_head = head_collection[f"{hd_name}_receipt"]
                 ind_head.insert_one(ind_head_update)
 
 
