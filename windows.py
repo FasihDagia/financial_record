@@ -1,7 +1,6 @@
 import tkinter as tk
 from tkinter import *
 from tkinter import ttk
-from ttkwidgets import Calendar
 from ttkwidgets.autocomplete import AutocompleteCombobox
 import tkcalendar as tkc
 import pymongo as pm
