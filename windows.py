@@ -1332,7 +1332,7 @@ def adjustment_window(root,company_name,user_name):
 
     center_window(root, 900, 500)
 
-    root.title("Adjustment")
+    root.title(f"{company_name}/Adjustment")
 
     tk.Label(root,text=f"Adjustments",font=("Helvetica-bold",22)).pack(pady=10)
 
