@@ -49,29 +49,29 @@ def create_adjustment_window(root,adjustments,adjustment_temp,heads,window,compa
     year = current_date.year
     voucher = f"JV{str(voucher_no).zfill(5)}/{year}"
     ttk.Label(entry_frame,text=voucher,font=("Helvetica", 12)).grid(row=0,column=3)
-
-    def db_cr_acc_name(*args):
-        if db_exp_type_option.get() == "Payment" or db_exp_type_option.get() == "Receipt":
+    
+    def db_acc_name(*args):
+        if db_exp_type_option.get() in ["Payment", "Receipt"]:
             center_window(root, 650, 430)
             db_acc_label.grid(pady=10,row=2,column=0)
             db_combo.grid(row=2, column=1, pady=5)
-        elif db_exp_type_option.get() != "Payment" or db_exp_type_option.get() != "Receipt":
+        elif db_exp_type_option.get() not in ["Payment", "Receipt"]:
             db_acc_label.grid_remove()
             db_combo.grid_remove()
             if not cr_acc_label.winfo_ismapped() and not cr_combo.winfo_ismapped():
                 center_window(root, 650, 380)
 
-
-        if cr_exp_type_option.get() == "Payment" or cr_exp_type_option.get() == "Receipt":
+    def cr_acc_name(*args):
+        if cr_exp_type_option.get() in ["Payment", "Receipt"]:
             center_window(root, 650, 430)
             cr_acc_label.grid(pady=10,row=2,column=2)
             cr_combo.grid(row=2, column=3, pady=5)
-        elif cr_exp_type_option.get() != "Payment" or cr_exp_type_option.get() != "Receipt":
+        elif cr_exp_type_option.get() not in ["Payment", "Receipt"]:
             cr_acc_label.grid_remove()
             cr_combo.grid_remove()
-            if not db_acc_label.winfo_ismapped()  and not db_combo.winfo_ismapped():
+            if not db_acc_label.winfo_ismapped() and not db_combo.winfo_ismapped():
                 center_window(root, 650, 380)
-    
+
     exp_type_options = ["Head Types","Payment","Receipt","Tax"]
     for i in heads.find():
         exp_type_options.append(i.get('hd_name',''))
@@ -88,8 +88,8 @@ def create_adjustment_window(root,adjustments,adjustment_temp,heads,window,compa
     exp_type_entry.config(width=19,style="Unit.TMenubutton")
     exp_type_entry.grid(row=1,column=3,padx=5)
 
-    db_exp_type_option.trace_add("write",db_cr_acc_name)
-    cr_exp_type_option.trace_add("write",db_cr_acc_name)
+    db_exp_type_option.trace_add("write",db_acc_name)
+    cr_exp_type_option.trace_add("write",cr_acc_name)
 
     account_name = []
     for name in customers["customer_info"].find():
