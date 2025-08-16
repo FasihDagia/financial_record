@@ -242,9 +242,12 @@ def create_company(root,client,window):
         ntn = ntn_entry.get()
         coc_cno = coc_cno_entry.get()
         it_cno = it_cno_entry.get()
-        gst_p = gst_p_entry.get()
-        ad_tax = ad_tax_entry.get()
-        fut_p = fut_p_entry.get()
+        gst_p = float(gst_p_entry.get())
+        ad_tax = float(ad_tax_entry.get())
+        if fut_p_entry.get() == "Optional":
+            fut_p = 0.0
+        else:
+            fut_p = float(fut_p_entry.get())
         bank_name = bank_name_entry.get()
         br_name = br_name_entry.get()
         ac_title = ac_title_entry.get()

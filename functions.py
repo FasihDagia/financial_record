@@ -195,6 +195,8 @@ def generate_contract(root,sale_contract,account,contract_type,window,inventory,
     party_name_options = []
     for i in customers['customer_info'].find():
             party_name_options.append(i.get('opp_acc',''))  
+    if len(party_name_options) == 0:
+        party_name_options.append("No Party to show")  
     party_name_options.sort()      
     party_name_option = tk.StringVar(value="Name")
     party_name_entry = OptionMenu(party_info, party_name_option , *party_name_options)
@@ -321,8 +323,8 @@ def generate_contract(root,sale_contract,account,contract_type,window,inventory,
     amount_entry = tk.Entry(contract_info, width=width,textvariable=amount_var)
     amount_entry.grid(row=2, column=1,padx=5)
 
-    rate_entry.bind("<KeyRelease>",calculate_total)
-    quant_entry.bind("<KeyRelease>",calculate_total,check_quantity)
+    rate_entry.bind("<KeyRelease>",lambda e: calculate_total())
+    quant_entry.bind("<KeyRelease>",lambda e:calculate_total(),check_quantity())
 
     tk.Label(contract_info, text="GST(%):").grid(row=2, column=2,padx=5)
     tax_percent = tax.find_one({"company_name":company_name})

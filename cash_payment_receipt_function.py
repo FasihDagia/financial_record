@@ -23,7 +23,7 @@ def go_back(root,window,payments,pay_receip_temp,company_name,user_name):
             pay_receip_temp.clear()
             window(root,company_name,user_name)
 
-def records(temp,permanent,amounts,operation,date,vouch_no,invoice_no,exp_type,account,acc_pay,description,amount,amountiw,tax_percent,tax_amount,total_amount):
+def records(temp,permanent,amounts,operation,date,vouch_no,invoice_no,exp_type,account,acc_pay,description,amount,amountiw,tax_percent,tax_amount):
                 
     no_entries = permanent.count_documents({})
     if len(temp)==0:
@@ -58,11 +58,11 @@ def records(temp,permanent,amounts,operation,date,vouch_no,invoice_no,exp_type,a
         "amountiw":amountiw,
         "tax_percent":tax_percent,
         "tax_amount":tax_amount,
-        "total_amount":total_amount,
+        "total_amount":amounts,
         "balance":balance
                 }
 
-def head_record(temp,permanent,total_amount,exp_type,date,vouch_no,account,description,amount,amountiw):
+def head_record(temp,permanent,total_amount,exp_type,date,vouch_no,account,description,amount,amountiw,operation):
     no_entries_3 = permanent[f"{exp_type}_receipt"].count_documents({})
     last_entry_3 = permanent[f"{exp_type}_receipt"].find_one(sort=[("_id", -1)])
     if len(temp)!= 0:
@@ -89,7 +89,10 @@ def head_record(temp,permanent,total_amount,exp_type,date,vouch_no,account,descr
                 j +=1
         sno3 += j
 
-    balance3 += total_amount
+    if operation == "+":
+        balance3 += total_amount
+    elif operation == "-":
+        balance3 -= total_amount
 
     temp[len(temp)+1] ={
         "s_no":sno3,
@@ -104,7 +107,7 @@ def head_record(temp,permanent,total_amount,exp_type,date,vouch_no,account,descr
         "balance":balance3
         }        
 
-def client_record(temp,permanent,amounts,acc_pay,vouch_inv,date,vouch_no,invoice_no,exp_type,account,description,amount,amountiw,tax_percent,tax_amount,total_amount):    
+def client_record(temp,permanent,amounts,acc_pay,vouch_inv,date,vouch_no,invoice_no,exp_type,account,description,amount,amountiw,tax_percent,tax_amount,operation):    
 
     no_entries_2 = permanent[f"{vouch_inv}_{acc_pay}"].count_documents({})
     last_entry_2 = permanent[f"{vouch_inv}_{acc_pay}"].find_one(sort=[("_id", -1)])
@@ -133,7 +136,10 @@ def client_record(temp,permanent,amounts,acc_pay,vouch_inv,date,vouch_no,invoice
                 j +=1
                 sno2 += j
 
-    balance2 += amounts
+    if operation == "+":
+        balance2 += amounts
+    elif operation =="-":
+        balance2 -= amounts
     temp[len(temp)+1] ={
         "s_no":sno2,
         "date":date,
@@ -147,7 +153,7 @@ def client_record(temp,permanent,amounts,acc_pay,vouch_inv,date,vouch_no,invoice
         "amountiw":amountiw,
         "tax_percent":tax_percent,
         "tax_amount":tax_amount,
-        "total_amount":total_amount,
+        "total_amount":amounts,
         "balance":balance2
         }
                 
@@ -358,24 +364,24 @@ def generate_cash_receipt(root,window,receipt_temp,receipt,pay_receip,pay_receip
             total_amount = float(total_amount)
             
             #for all receipt record
-            records(receipt_temp,receipt,total_amount,"add",date,vouch_no,invoice_no,exp_type,account,acc_pay,description,amount,amountiw,tax_percent,tax_amount,total_amount)
+            records(receipt_temp,receipt,total_amount,"add",date,vouch_no,invoice_no,exp_type,account,acc_pay,description,amount,amountiw,tax_percent,tax_amount)
         
             #for overall bank and cash record
-            records(pay_receip_temp,pay_receip,total_amount,"add",date,vouch_no,invoice_no,exp_type,account,acc_pay,description,amount,amountiw,tax_percent,tax_amount,total_amount)
+            records(pay_receip_temp,pay_receip,total_amount,"add",date,vouch_no,invoice_no,exp_type,account,acc_pay,description,amount,amountiw,tax_percent,tax_amount)
 
             #for client record
-            client_record(client_temp,customers,total_amount,acc_pay,"receipt",date,vouch_no,invoice_no,exp_type,account,description,amount,amountiw,tax_percent,tax_amount,total_amount)
+            client_record(client_temp,customers,total_amount,acc_pay,"receipt",date,vouch_no,invoice_no,exp_type,account,description,amount,amountiw,tax_percent,tax_amount,"+")
 
-            client_record(invoice_balance,customers,total_amount,acc_pay,"sale_invoice",date,vouch_no,invoice_no,exp_type,account,description,amount,amountiw,tax_percent,tax_amount,total_amount)
+            client_record(invoice_balance,customers,total_amount,acc_pay,"sale_invoice",date,vouch_no,invoice_no,exp_type,account,description,amount,amountiw,tax_percent,tax_amount,"+")
 
             #for all cash records
-            records(cash_temp,cash,total_amount,"add",date,vouch_no,invoice_no,exp_type,account,acc_pay,description,amount,amountiw,tax_percent,tax_amount,total_amount)
+            records(cash_temp,cash,total_amount,"add",date,vouch_no,invoice_no,exp_type,account,acc_pay,description,amount,amountiw,tax_percent,tax_amount)
             
             #for tax record
-            records(tax_temp,tax,tax_amount,"add",date,vouch_no,invoice_no,exp_type,account,acc_pay,description,amount,amountiw,tax_percent,tax_amount,total_amount)
+            records(tax_temp,tax,tax_amount,"add",date,vouch_no,invoice_no,exp_type,account,acc_pay,description,amount,amountiw,tax_percent,tax_amount)
 
             #for head types  
-            head_record(head_temp,head_collection,total_amount,exp_type,date,vouch_no,account,description,amount,amountiw)
+            head_record(head_temp,head_collection,total_amount,exp_type,date,vouch_no,account,description,amount,amountiw,"+")
             
             if invoice_no != None:
                 for i in db['sale_invoice'].find():
@@ -592,24 +598,24 @@ def generate_cash_payments(root,window,payments_temp,payment,pay_receip,pay_rece
             total_amount = float(total_amount)
 
             #for all bank and cash payments record
-            records(payments_temp,payment,total_amount,"add")
+            records(payments_temp,payment,total_amount,"add",date,vouch_no,invoice_no,exp_type,account,acc_recev,description,amount,amountiw,tax_percent,tax_amount)
 
             #for overall bank and cash record
-            records(pay_receip_temp,pay_receip,total_amount,"sub")
+            records(pay_receip_temp,pay_receip,total_amount,"sub",date,vouch_no,invoice_no,exp_type,account,acc_recev,description,amount,amountiw,tax_percent,tax_amount)
 
             #for client record
-            client_record(client_temp,customers,total_amount,acc_recev,"payment")
+            client_record(client_temp,customers,total_amount,acc_recev,"payment",date,vouch_no,invoice_no,exp_type,account,description,amount,amountiw,tax_percent,tax_amount,"-")
 
-            client_record(invoice_balance,customers,total_amount,acc_recev,"purchase_invoice")
+            client_record(invoice_balance,customers,total_amount,acc_recev,"purchase_invoice",date,vouch_no,invoice_no,exp_type,account,description,amount,amountiw,tax_percent,tax_amount,"-")
 
             #for all cash records
-            records(cash_temp,cash,total_amount,"sub")
+            records(cash_temp,cash,total_amount,"sub",date,vouch_no,invoice_no,exp_type,account,acc_recev,description,amount,amountiw,tax_percent,tax_amount)
 
             #for tax record
-            records(tax_temp,tax,tax_amount,"add")
+            records(tax_temp,tax,tax_amount,"add",date,vouch_no,invoice_no,exp_type,account,acc_recev,description,amount,amountiw,tax_percent,tax_amount)
 
             #for head types
-            head_record(head_temp,head_collection,total_amount,exp_type,date,vouch_no,account,description,amount,amountiw)
+            head_record(head_temp,head_collection,total_amount,exp_type,date,vouch_no,account,description,amount,amountiw,"-")
         
             if invoice_no != None:
                 for i in db['purchase_invoice'].find():

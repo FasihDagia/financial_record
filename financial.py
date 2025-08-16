@@ -14,7 +14,7 @@ def center_window(root, width, height):
     root.minsize(width, height)
     root.maxsize(width, height)
 
-def create_adjustment_window(root,adjustments,adjustment_temp,heads,window,company_name,user_name,customers):
+def create_adjustment_window(root,adjustments,adjustment_temp,heads,window,company_name,user_name,customers,tax):
 
     style = ttk.Style()
     style.configure("Module.TButton", font=("Helvetica", 11),borderwidth=4,padding=5)
@@ -124,5 +124,27 @@ def create_adjustment_window(root,adjustments,adjustment_temp,heads,window,compa
     ttk.Button(btn_frame,text="Back" ,style="Logout.TButton",cursor="hand2",width=10,command=lambda:window(root,company_name,user_name)).grid(row=0,column=0,padx=5)
     ttk.Button(btn_frame,text="Exit" ,style="Logout.TButton",cursor="hand2",width=10,command=root.destroy).grid(row=0,column=1,padx=5)
 
-    def generate():
-        pass
+    def generate(date_entry,voucher,db_exp_type_option,cr_exp_type_option,db_selected_account,cr_selected_account,amount_entry,description_entry,adjustment,adjustment_temp,customers,tax):
+        
+        try:
+            date = date_entry.get()
+            db_exp_type = db_exp_type_option.get()
+            cr_exp_type = cr_exp_type_option.get()
+            amount = float(amount_entry.get())
+            description = description_entry.get("1.0", "end-1c")
+
+            if db_exp_type in ["Payment" ,"Receipt"]:
+                db_acc_name = db_selected_account.get()
+            if cr_exp_type in ["Payment" ,"Receipt"]:
+                cr_acc_name = cr_selected_account.get()
+            
+            if not date or not db_exp_type or not cr_exp_type or not amount or not description:
+                messagebox.showerror("Missing Field","Please fill all fields")
+                return    
+            else:
+                pass
+
+        except ValueError:
+            messagebox.showerror("Incorrect Value","Please enter a correct amount")
+            return
+        
