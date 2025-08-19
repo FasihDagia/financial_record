@@ -137,9 +137,9 @@ def client_record(temp,permanent,amounts,acc_pay,vouch_inv,date,vouch_no,invoice
                 sno2 += j
 
     if operation == "+":
-        balance2 += amounts
+        balance2 += amount
     elif operation =="-":
-        balance2 -= amounts
+        balance2 -= amount
     temp[len(temp)+1] ={
         "s_no":sno2,
         "date":date,
@@ -164,9 +164,14 @@ def generate_cash_receipt(root,window,receipt_temp,receipt,pay_receip,pay_receip
 
     root.title("Generate Receipt")
 
+    style = ttk.Style()
+    style.configure("Module.TButton", font=("Helvetica", 11),borderwidth=4,padding=5)
+    style.configure("Logout.TButton", font=("Helvetica", 9),borderwidth=4,padding=2)
+    style.configure("Unit.TMenubutton",background="#ffffff",foreground="black", arrowcolor="black")
+
     center_window(root, 600, 550)
 
-    tk.Label(root,text="Generate Cash Receipt Voucher",font=("helvetica",18,"bold")).pack(pady=30)
+    ttk.Label(root,text="Generate Cash Receipt Voucher",font=("helvetica",18,"bold")).pack(pady=30)
 
     def calculate_total(*args):
 
@@ -186,12 +191,12 @@ def generate_cash_receipt(root,window,receipt_temp,receipt,pay_receip,pay_receip
     entry_frame = tk.Frame(root)
     entry_frame.pack()
 
-    tk.Label(entry_frame, text="Date:", font=("helvetica",10)).grid(pady=10,row=0,column=0)
-    date_default = tk.StringVar(value=datetime.now().date())
-    date_entry = tk.Entry(entry_frame, width=20, textvariable=date_default)
+    ttk.Label(entry_frame, text="Date:", font=("helvetica",11,"bold")).grid(sticky=tk.W,pady=10,row=0,column=0)
+    date_entry = ttk.Entry(entry_frame, width=20)
     date_entry.grid(row=0,column=1,padx=5)
+    date_entry.insert(0, str(datetime.now().date()))
 
-    tk.Label(entry_frame, text="Voucher No:", font=("helvetica",10)).grid(padx=5,pady=10,row=0,column=2)
+    ttk.Label(entry_frame, text="Voucher No:", font=("helvetica",11,"bold")).grid(sticky=tk.W,padx=5,pady=10,row=0,column=2)
     no_payments = receipt.count_documents({})
     if len(receipt_temp) == 0:
         voucher_no = no_payments+1
@@ -202,12 +207,12 @@ def generate_cash_receipt(root,window,receipt_temp,receipt,pay_receip,pay_receip
     year = current_date.year
     voucher = f"CR{str(voucher_no).zfill(5)}/{year}"
 
-    tk.Label(entry_frame,text=voucher,font=("Helvetica", 11)).grid(row=0,column=3)
+    ttk.Label(entry_frame,text=voucher,font=("helvetica", 11,"bold")).grid(row=0,column=3)
 
-    tk.Label(entry_frame,text="Account:",font=('helvetica',10)).grid(pady=10,row=1,column=0)
-    account_default = tk.StringVar(value="Cash in Hand")
-    account_entry = tk.Entry(entry_frame, width=20, textvariable=account_default)
+    ttk.Label(entry_frame,text="Account:",font=("helvetica", 11,"bold")).grid(sticky=tk.W,pady=10,row=1,column=0)
+    account_entry = ttk.Entry(entry_frame, width=20)
     account_entry.grid(row=1,column=1,padx=5)
+    account_entry.insert(0,"Cash in Hand")
 
     def on_invoice_select(*args):
         selected_invoice = invoice_var.get()
@@ -219,7 +224,7 @@ def generate_cash_receipt(root,window,receipt_temp,receipt,pay_receip,pay_receip
         else:
             acc_recev_entry.config(state='normal')
 
-    tk.Label(entry_frame,text="Invoice No:",font=('helvetica',9)).grid(pady=10,row=1,column=2)
+    ttk.Label(entry_frame,text="Invoice No:",font=("helvetica", 11,"bold")).grid(sticky=tk.W,pady=10,row=1,column=2)
     invoice_options = []
     for i in db['sale_invoice'].find():
             if i.get('status') == "pending":
@@ -231,7 +236,8 @@ def generate_cash_receipt(root,window,receipt_temp,receipt,pay_receip,pay_receip
         invoice_options.append("Invoice No")
     invoice_options.sort()
     invoice_var = tk.StringVar(value="Invoice No")
-    invoice_no_entry = tk.OptionMenu(entry_frame, invoice_var , *invoice_options)
+    invoice_no_entry = ttk.OptionMenu(entry_frame, invoice_var , *invoice_options)
+    invoice_no_entry.config(style="Unit.TMenubutton",width=19)
     invoice_no_entry.grid(row=1,column=3,padx=5)
     
     invoice_var.trace_add("write", on_invoice_select)
@@ -257,8 +263,7 @@ def generate_cash_receipt(root,window,receipt_temp,receipt,pay_receip,pay_receip
             invoice_options.sort()
             update_invoice_menu(invoice_options)
 
-
-    tk.Label(entry_frame,text="Account Payable:",font=('helvetica',10)).grid(pady=10,row=2,column=0)
+    ttk.Label(entry_frame,text="Account Payable:",font=("helvetica", 11,"bold")).grid(sticky=tk.W,pady=10,row=2,column=0)
     acc_recev_options = []
     for i in customers['customer_info'].find():
             acc_recev_options.append(i.get('opp_acc',''))  
@@ -271,15 +276,15 @@ def generate_cash_receipt(root,window,receipt_temp,receipt,pay_receip,pay_receip
     
     acc_recev_entry.bind("<<ComboboxSelected>>", on_acc_recev_select)
 
-    tk.Label(entry_frame, text="Head Type:", font=("helvetica",10)).grid(pady=10,row=2,column=2)
+    ttk.Label(entry_frame, text="Head Type:", font=("helvetica", 11,"bold")).grid(sticky=tk.W,pady=10,row=2,column=2)
     exp_type_options = []
     for i in heads.find():
         exp_type_options.append(i.get('hd_name',''))
     if len(exp_type_options) == 0:
         exp_type_options.append("No Heads to show")  
     exp_type_option = tk.StringVar(value="Head Types")
-    exp_type_entry = OptionMenu(entry_frame, exp_type_option , *exp_type_options)
-    exp_type_entry.config(width=19)
+    exp_type_entry = ttk.OptionMenu(entry_frame, exp_type_option , *exp_type_options)
+    exp_type_entry.config(width=19,style="Unit.TMenubutton")
     exp_type_entry.grid(row=2,column=3,padx=5)
 
     def amount_check(*args):
@@ -299,23 +304,23 @@ def generate_cash_receipt(root,window,receipt_temp,receipt,pay_receip,pay_receip
 
         calculate_total()
 
-    tk.Label(entry_frame, text="Amount:", font=("helvetica",10)).grid(pady=10,row=3,column=0)
-    amount_entry = tk.Entry(entry_frame, width=20)
+    ttk.Label(entry_frame, text="Amount:", font=("helvetica", 11,"bold")).grid(sticky=tk.W, pady=10,row=3,column=0)
+    amount_entry = ttk.Entry(entry_frame, width=20)
     amount_entry.grid(row=3,column=1,padx=5)
 
-    tk.Label(entry_frame,text="Tax Percent:",font=("helvetica",10)).grid(pady=10,row=3,column=2)
-    tax_p_entry= tk.Entry(entry_frame, width=20)
+    ttk.Label(entry_frame,text="Tax Percent:",font=("helvetica", 11,"bold")).grid(sticky=tk.W,pady=10,row=3,column=2)
+    tax_p_entry= ttk.Entry(entry_frame, width=20)
     tax_p_entry.grid(row=3,column=3,padx=5)
 
-    tk.Label(entry_frame, text="Tax Amount:", font=("helvetica",10)).grid(pady=10,row=4,column=0)
+    ttk.Label(entry_frame, text="Tax Amount:", font=("helvetica", 11,"bold")).grid(sticky=tk.W,pady=10,row=4,column=0)
     tax_amount_var = tk.StringVar(value=0.00)
-    tax_amount_entry = tk.Entry(entry_frame, width=20,textvariable=tax_amount_var)
+    tax_amount_entry = ttk.Entry(entry_frame, width=20,textvariable=tax_amount_var)
     tax_amount_entry.grid(row=4,column=1,padx=5)
     
     des_frame = tk.Frame(root)
     des_frame.pack(pady=5)
 
-    tk.Label(des_frame, text="Description:", font=("helvetica",10)).grid(padx=5,pady=10,row=0,column=0)
+    ttk.Label(des_frame, text="Description:", font=("helvetica", 11,"bold")).grid(sticky=tk.W,padx=5,pady=10,row=0,column=0)
     description_entry = tk.Text(des_frame,font=("helvetica",10),width=50,height=5)
     description_entry.grid(row=0,column=1)
 
@@ -324,17 +329,17 @@ def generate_cash_receipt(root,window,receipt_temp,receipt,pay_receip,pay_receip
 
     total_frame = tk.Frame()
     total_frame.pack()
-    tk.Label(total_frame,text="Total Amount:",font=9).grid(row=0,column=0)
+    ttk.Label(total_frame,text="Total Amount:",font=9).grid(sticky=tk.W,row=0,column=0)
     total_var = tk.StringVar(value=0)
-    tk.Label(total_frame,textvariable=total_var,font=9).grid(row=0,column=1,pady=10)
+    ttk.Label(total_frame,textvariable=total_var,font=9).grid(row=0,column=1,pady=10)
 
-    tk.Button(root,text="Generate" ,font=("helvetica",10),width=20,command=lambda:generate(root,window,receipt_temp,receipt,pay_receip,pay_receip_temp,customers,client_temp,cash,cash_temp,tax,tax_temp,invoice_temp,head_collection,head_temp)).pack(pady=10)    
+    ttk.Button(root,text="Generate" ,style="Module.TButton",cursor="hand2",width=20,command=lambda:generate(root,window,receipt_temp,receipt,pay_receip,pay_receip_temp,customers,client_temp,cash,cash_temp,tax,tax_temp,invoice_temp,head_collection,head_temp)).pack(pady=10)    
     
     btn_frame = tk.Frame(root) 
     btn_frame.pack()
 
-    tk.Button(btn_frame,text="Back" ,font=("helvetica",10),width=10,command=lambda:window(root,company_name,user_name)).grid(row=0,column=0,padx=5)
-    tk.Button(btn_frame,text="Exit" ,font=("helvetica",10),width=10,command=root.destroy).grid(row=0,column=1,padx=5)
+    ttk.Button(btn_frame,text="Back" ,style="Logout.TButton",cursor="hand2",width=10,command=lambda:window(root,company_name,user_name)).grid(row=0,column=0,padx=5)
+    ttk.Button(btn_frame,text="Exit" ,style="Logout.TButton",cursor="hand2",width=10,command=root.destroy).grid(row=0,column=1,padx=5)
 
     def generate(root,window,receipt_temp,receipt,pay_receip,pay_receip_temp,customers,client_temp,cash,cash_temp,tax,tax_temp,invoice_temp,head_collection,head_temp):
         
@@ -403,9 +408,14 @@ def generate_cash_payments(root,window,payments_temp,payment,pay_receip,pay_rece
 
     root.title("Generate Payment")
 
+    style = ttk.Style()
+    style.configure("Module.TButton", font=("Helvetica", 11),borderwidth=4,padding=5)
+    style.configure("Logout.TButton", font=("Helvetica", 9),borderwidth=4,padding=2)
+    style.configure("Unit.TMenubutton",background="#ffffff",foreground="black", arrowcolor="black")
+
     center_window(root, 600, 550)
 
-    tk.Label(root,text="Generate Cash Payment Voucher",font=("helvetica",18,"bold")).pack(pady=30)
+    ttk.Label(root,text="Generate Cash Payment Voucher",font=("helvetica",18,"bold")).pack(pady=30)
 
     def calculate_total(*args):
 
@@ -425,12 +435,12 @@ def generate_cash_payments(root,window,payments_temp,payment,pay_receip,pay_rece
     entry_frame = tk.Frame(root)
     entry_frame.pack()
 
-    tk.Label(entry_frame, text="Date:", font=("helvetica",10)).grid(pady=10,row=0,column=0)
-    date_default = tk.StringVar(value=datetime.now().date())
-    date_entry = tk.Entry(entry_frame, width=20, textvariable=date_default)
-    date_entry.grid(row=0,column=1,padx=5)
+    ttk.Label(entry_frame, text="Date:", font=("helvetica", 11, "bold")).grid(sticky=tk.W, pady=10, row=0, column=0)
+    date_entry = ttk.Entry(entry_frame, width=20)
+    date_entry.grid(row=0, column=1, padx=5)
+    date_entry.insert(0, str(datetime.now().date()))
 
-    tk.Label(entry_frame, text="Voucher No:", font=("helvetica",10)).grid(padx=5,pady=10,row=0,column=2)
+    ttk.Label(entry_frame, text="Voucher No:", font=("helvetica",11,"bold")).grid(padx=5,pady=10,row=0,column=2,sticky=tk.W)
     no_payments = payment.count_documents({})
     if len(payments_temp) == 0:
         voucher_no = no_payments+1
@@ -441,12 +451,12 @@ def generate_cash_payments(root,window,payments_temp,payment,pay_receip,pay_rece
     year = current_date.year
     voucher = f"CP{str(voucher_no).zfill(5)}/{year}"
 
-    tk.Label(entry_frame,text=voucher,font=("Helvetica", 11)).grid(row=0,column=3)
+    ttk.Label(entry_frame,text=voucher,font=("helvetica",11,"bold")).grid(row=0,column=3)
 
-    tk.Label(entry_frame,text="Account:",font=('helvetica',10)).grid(pady=10,row=1,column=0)
-    account_default = tk.StringVar(value="Cash in Hand")
-    account_entry = tk.Entry(entry_frame, width=20, textvariable=account_default)
+    ttk.Label(entry_frame,text="Account:",font=("helvetica",11,"bold")).grid(sticky=tk.W,pady=10,row=1,column=0)
+    account_entry = ttk.Entry(entry_frame, width=20)
     account_entry.grid(row=1,column=1,padx=5)
+    account_entry.insert(0,"Cash in Hand")
 
     def on_invoice_select(*args):
         selected_invoice = invoice_var.get()
@@ -458,7 +468,7 @@ def generate_cash_payments(root,window,payments_temp,payment,pay_receip,pay_rece
         else:
             acc_recev_entry.config(state='normal')
 
-    tk.Label(entry_frame,text="Invoice No:",font=('helvetica',9)).grid(pady=10,row=1,column=2)
+    ttk.Label(entry_frame,text="Invoice No:",font=("helvetica",11,"bold")).grid(pady=10,row=1,column=2,sticky=tk.W)
     invoice_options = []
     for i in db['purchase_invoice'].find():
             invoice_options.append(i.get('voucher_no',''))
@@ -468,7 +478,8 @@ def generate_cash_payments(root,window,payments_temp,payment,pay_receip,pay_rece
         invoice_options.append("Invoice No")
     invoice_options.sort()
     invoice_var = tk.StringVar(value="Invoice No")
-    invoice_no_entry = tk.OptionMenu(entry_frame, invoice_var , *invoice_options)
+    invoice_no_entry = ttk.OptionMenu(entry_frame, invoice_var , *invoice_options)
+    invoice_no_entry.config(style="Unit.TMenubutton",width=19)
     invoice_no_entry.grid(row=1,column=3,padx=5)
     
     invoice_var.trace_add("write", on_invoice_select)
@@ -494,7 +505,7 @@ def generate_cash_payments(root,window,payments_temp,payment,pay_receip,pay_rece
             invoice_options.sort()
             update_invoice_menu(invoice_options)
 
-    tk.Label(entry_frame,text="Account Receivable:",font=('helvetica',9)).grid(pady=10,row=2,column=0)
+    ttk.Label(entry_frame,text="Account Receivable:",font=("helvetica",11,"bold")).grid(pady=10,row=2,column=0,sticky=tk.W)
     acc_recev_options = []
     for i in customers['customer_info'].find():
             acc_recev_options.append(i.get('opp_acc',''))  
@@ -507,15 +518,15 @@ def generate_cash_payments(root,window,payments_temp,payment,pay_receip,pay_rece
     
     acc_recev_entry.bind("<<ComboboxSelected>>", on_acc_recev_select)
 
-    tk.Label(entry_frame, text="Head Type:", font=("helvetica",10)).grid(pady=10,row=2,column=2)
+    ttk.Label(entry_frame, text="Head Type:", font=("helvetica",11,"bold")).grid(pady=10,row=2,column=2,sticky=tk.W)
     exp_type_options = []
     for i in heads.find():
         exp_type_options.append(i.get('hd_name',''))
     if len(exp_type_options) == 0:
         exp_type_options.append("No Heads to show")  
     exp_type_option = tk.StringVar(value="Head Types")
-    exp_type_entry = OptionMenu(entry_frame, exp_type_option , *exp_type_options)
-    exp_type_entry.config(width=19)
+    exp_type_entry = ttk.OptionMenu(entry_frame, exp_type_option , *exp_type_options)
+    exp_type_entry.config(width=19,style="Unit.TMenubutton")
     exp_type_entry.grid(row=2,column=3,padx=5)
 
     def amount_check(*args):
@@ -535,17 +546,17 @@ def generate_cash_payments(root,window,payments_temp,payment,pay_receip,pay_rece
 
         calculate_total()
 
-    tk.Label(entry_frame, text="Amount:", font=("helvetica",10)).grid(pady=10,row=3,column=0)
-    amount_entry = tk.Entry(entry_frame, width=20)
+    ttk.Label(entry_frame, text="Amount:", font=("helvetica",11,"bold")).grid(pady=10,row=3,column=0,sticky=tk.W)
+    amount_entry = ttk.Entry(entry_frame, width=20)
     amount_entry.grid(row=3,column=1,padx=5)
 
-    tk.Label(entry_frame,text="Tax Percent:",font=("helvetica",10)).grid(pady=10,row=3,column=2)
-    tax_p_entry= tk.Entry(entry_frame, width=20)
+    ttk.Label(entry_frame,text="Tax Percent:",font=("helvetica",11,"bold")).grid(pady=10,row=3,column=2,sticky=tk.W)
+    tax_p_entry= ttk.Entry(entry_frame, width=20)
     tax_p_entry.grid(row=3,column=3,padx=5)
 
-    tk.Label(entry_frame, text="Tax Amount:", font=("helvetica",10)).grid(pady=10,row=4,column=0)
+    ttk.Label(entry_frame, text="Tax Amount:", font=("helvetica",11,"bold")).grid(pady=10,row=4,column=0,sticky=tk.W)
     tax_amount_var = tk.StringVar(value=0.00)
-    tax_amount_entry = tk.Entry(entry_frame, width=20,textvariable=tax_amount_var)
+    tax_amount_entry = ttk.Entry(entry_frame, width=20,textvariable=tax_amount_var)
     tax_amount_entry.grid(row=4,column=1,padx=5)
     
     tax_p_entry.bind("<KeyRelease>", calculate_total)
@@ -554,23 +565,23 @@ def generate_cash_payments(root,window,payments_temp,payment,pay_receip,pay_rece
     des_frame = tk.Frame(root)
     des_frame.pack(pady=5)
 
-    tk.Label(des_frame, text="Description:", font=("helvetica",10)).grid(padx=5,pady=10,row=0,column=0)
+    ttk.Label(des_frame, text="Description:", font=("helvetica",11,"bold")).grid(padx=5,pady=10,row=0,column=0,sticky=tk.W)
     description_entry = tk.Text(des_frame,font=("helvetica",10),width=50,height=5)
     description_entry.grid(row=0,column=1)
 
     total_frame = tk.Frame()
     total_frame.pack()
-    tk.Label(total_frame,text="Total Amount:",font=9).grid(row=0,column=0)
+    ttk.Label(total_frame,text="Total Amount:",font=("helvetica",14,"bold")).grid(row=0,column=0,sticky=tk.W)
     total_var = tk.StringVar(value=0)
     tk.Label(total_frame,textvariable=total_var,font=9).grid(row=0,column=1,pady=10)
 
-    tk.Button(root,text="Generate" ,font=("helvetica",10),width=20,command=lambda:generate(root,window,payments_temp,payment,pay_receip,pay_receip_temp,customers,client_temp,cash,cash_temp,tax,tax_temp,invoice_temp,head_collection,head_temp)).pack(pady=10)    
+    ttk.Button(root,text="Generate" ,style="Module.TButton",cursor="hand2",width=20,command=lambda:generate(root,window,payments_temp,payment,pay_receip,pay_receip_temp,customers,client_temp,cash,cash_temp,tax,tax_temp,invoice_temp,head_collection,head_temp)).pack(pady=10)    
     
     btn_frame = tk.Frame(root) 
     btn_frame.pack()
 
-    tk.Button(btn_frame,text="Back" ,font=("helvetica",10),width=10,command=lambda:window(root,company_name,user_name)).grid(row=0,column=0,padx=5)
-    tk.Button(btn_frame,text="Exit" ,font=("helvetica",10),width=10,command=root.destroy).grid(row=0,column=1,padx=5)
+    ttk.Button(btn_frame,text="Back" ,style="Logout.TButton",cursor="hand2",width=10,command=lambda:window(root,company_name,user_name)).grid(row=0,column=0,padx=5)
+    ttk.Button(btn_frame,text="Exit" ,style="Logout.TButton",cursor="hand2",width=10,command=root.destroy).grid(row=0,column=1,padx=5)
 
     def generate(root,window,payments_temp,payment,pay_receip,pay_receip_temp,customers,client_temp,cash,cash_temp,tax,tax_temp,invoice_temp,head_collection,head_temp):
         
