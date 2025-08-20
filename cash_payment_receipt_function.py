@@ -180,12 +180,12 @@ def generate_cash_receipt(root,window,receipt_temp,receipt,pay_receip,pay_receip
             tax_p = float(tax_p_entry.get())
 
             tax_amount = (tax_p/100)*amount
-            tax_amount_var.set(f"{tax_amount:.2f}")
+            tax_amount_entry.insert(0,f"{tax_amount:.2f}")
 
             total = amount - tax_amount
             total_var.set(f"{total:.2f}")
         except ValueError:
-            tax_amount_var.set(0.00)
+            tax_amount_entry.insert(0,0.00)
             total_var.set(0.00)
                 
     entry_frame = tk.Frame(root)
@@ -313,9 +313,9 @@ def generate_cash_receipt(root,window,receipt_temp,receipt,pay_receip,pay_receip
     tax_p_entry.grid(row=3,column=3,padx=5)
 
     ttk.Label(entry_frame, text="Tax Amount:", font=("helvetica", 11,"bold")).grid(sticky=tk.W,pady=10,row=4,column=0)
-    tax_amount_var = tk.StringVar(value=0.00)
-    tax_amount_entry = ttk.Entry(entry_frame, width=20,textvariable=tax_amount_var)
+    tax_amount_entry = ttk.Entry(entry_frame, width=20)
     tax_amount_entry.grid(row=4,column=1,padx=5)
+    tax_amount_entry.insert(0,0.00)
     
     des_frame = tk.Frame(root)
     des_frame.pack(pady=5)
@@ -424,12 +424,12 @@ def generate_cash_payments(root,window,payments_temp,payment,pay_receip,pay_rece
             tax_p = float(tax_p_entry.get())
 
             tax_amount = (tax_p/100)*amount
-            tax_amount_var.set(f"{tax_amount:.2f}")
+            tax_amount_entry.insert(0,f"{tax_amount:.2f}")
 
             total = amount - tax_amount
             total_var.set(f"{total:.2f}")
         except ValueError:
-            tax_amount_var.set(0.00)
+            tax_amount_entry.insert(0,0.00)
             total_var.set(0.00)
                 
     entry_frame = tk.Frame(root)
@@ -555,9 +555,9 @@ def generate_cash_payments(root,window,payments_temp,payment,pay_receip,pay_rece
     tax_p_entry.grid(row=3,column=3,padx=5)
 
     ttk.Label(entry_frame, text="Tax Amount:", font=("helvetica",11,"bold")).grid(pady=10,row=4,column=0,sticky=tk.W)
-    tax_amount_var = tk.StringVar(value=0.00)
-    tax_amount_entry = ttk.Entry(entry_frame, width=20,textvariable=tax_amount_var)
+    tax_amount_entry = ttk.Entry(entry_frame, width=20)
     tax_amount_entry.grid(row=4,column=1,padx=5)
+    tax_amount_entry.insert(0,0.00)
     
     tax_p_entry.bind("<KeyRelease>", calculate_total)
     amount_entry.bind("<KeyRelease>", amount_check)
@@ -572,7 +572,7 @@ def generate_cash_payments(root,window,payments_temp,payment,pay_receip,pay_rece
     total_frame = tk.Frame()
     total_frame.pack()
     ttk.Label(total_frame,text="Total Amount:",font=("helvetica",14,"bold")).grid(row=0,column=0,sticky=tk.W)
-    total_var = tk.StringVar(value=0)
+    total_var = tk.StringVar(value=0.00)
     tk.Label(total_frame,textvariable=total_var,font=9).grid(row=0,column=1,pady=10)
 
     ttk.Button(root,text="Generate" ,style="Module.TButton",cursor="hand2",width=20,command=lambda:generate(root,window,payments_temp,payment,pay_receip,pay_receip_temp,customers,client_temp,cash,cash_temp,tax,tax_temp,invoice_temp,head_collection,head_temp)).pack(pady=10)    
