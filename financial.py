@@ -14,7 +14,7 @@ def center_window(root, width, height):
     root.minsize(width, height)
     root.maxsize(width, height)
 
-def create_adjustment_window(root,adjustments,adjustment_temp,heads,window,company_name,user_name,customers,tax):
+def create_adjustment_window(root,adjustments,adjustment_temp,heads,window,company_name,user_name,customers,payment,bank):
 
     style = ttk.Style()
     style.configure("Module.TButton", font=("Helvetica", 11),borderwidth=4,padding=5)
@@ -72,12 +72,14 @@ def create_adjustment_window(root,adjustments,adjustment_temp,heads,window,compa
             if not db_acc_label.winfo_ismapped() and not db_combo.winfo_ismapped():
                 center_window(root, 650, 380)
 
-    exp_type_options = ["Head Types","Payment","Receipt","Tax"]
+    exp_type_options = ["Head Types","Payment","Receipt","Tax Payment", "Tax Receipt"]
     for i in heads.find():
         exp_type_options.append(i.get('hd_name',''))
+    for i in bank.find():
+        exp_type_options.append(i.get('bank_name',''))
      
     ttk.Label(entry_frame, text="Debit Head Type:", font=("helvetica",10)).grid(pady=10,row=1,column=0)
-    db_exp_type_option = tk.StringVar(value="Head Types")
+    db_exp_type_option = tk.StringVar()
     exp_type_entry = ttk.OptionMenu(entry_frame, db_exp_type_option , *exp_type_options)
     exp_type_entry.config(width=19, style="Unit.TMenubutton")
     exp_type_entry.grid(row=1,column=1,padx=5)
