@@ -1026,7 +1026,7 @@ def bank_receipt_window(root,company_name,user_name):
     bank = payment[f'bank']
     tax = payment[f'tax_receipt']
     heads = client[f'company_profile_{company_name.lower().replace(" ", "_")}']['heads']
-    banks = client[f'company_profile_{company_name.lower().replace(" ", "_")}']['bank_accounts']
+    banks = client['banks']
 
     for widget in root.winfo_children():
         widget.destroy()
@@ -1040,7 +1040,7 @@ def bank_receipt_window(root,company_name,user_name):
     btn_frame = tk.Frame()
     btn_frame.pack()
                                     
-    tk.Button(btn_frame,text="Generate Receipt", font=("Helvetica",10),width=15, command=lambda:generate_bank_receipt(root,bank_receipt_window,receipt_temp,account,pay_receip,pay_receip_temp,customers,client_temp,bank,bank_temp,banks,bank_ind_temp,tax,tax_temp,invoice_balance,heads,banks,company_name,user_name,db,invoice_temp,head_collection,head_temp)).grid(padx=5,row=0,column=0)
+    tk.Button(btn_frame,text="Generate Receipt", font=("Helvetica",10),width=15, command=lambda:generate_bank_receipt(root,bank_receipt_window,receipt_temp,account,pay_receip,pay_receip_temp,customers,client_temp,bank,bank_temp,banks,bank_ind_temp,tax,tax_temp,invoice_balance,heads,company_name,user_name,db,invoice_temp,head_collection,head_temp)).grid(padx=5,row=0,column=0)
     tk.Button(btn_frame,text="Save", font=("Helvetica",10),width=15,command=lambda:save_bank_payment_receipt(receipt_temp,account,pay_receip,pay_receip_temp,"recep",customers,client_temp,bank,bank_temp,banks,bank_ind_temp,tax,tax_temp,invoice_balance,invoice_temp,db,head_collection,head_temp)).grid(padx=5,row=0,column=1)
     tk.Button(btn_frame,text="Back", font=("Helvetica",10),width=10,command=lambda:go_back(root,payment_module_window,receipt_temp,pay_receip_temp,company_name,user_name)).grid(padx=5,row=0,column=2)
     tk.Button(btn_frame,text="Exit", font=("Helvetica",10),width=10,command=root.destroy).grid(padx=5,row=0,column=3)
