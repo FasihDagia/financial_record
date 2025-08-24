@@ -183,6 +183,10 @@ def create_company(root,client,window):
     tk.Label(bank_frame,text = "IBAN No:",font=("Helvetica",10)).grid(row=3,column=0,padx=5,pady=10)
     iban_entry = tk.Entry(bank_frame,font=("Helvetica",10))
     iban_entry.grid(row=3,column=1,pady=10)
+    
+    ttk.Label(bank_frame,text = "Opening Balance:",font=("Helvetica",10)).grid(row=3,column=2,padx=5,pady=10)
+    op_bal_entry = ttk.Entry(bank_frame,font=("Helvetica",10))
+    op_bal_entry.grid(row=3,column=3,pady=10)
 
     employee_frame = tk.Frame(scrollable_frame)
     employee_frame.pack(pady=10)
@@ -253,6 +257,7 @@ def create_company(root,client,window):
         ac_title = ac_title_entry.get()
         ac_no = ac_no_entry.get()
         iban = iban_entry.get()
+        op_bal = float(op_bal_entry.get())
 
         emp_name = emp_name_entry.get()
         emp_email = emp_email_entry.get()
@@ -291,6 +296,8 @@ def create_company(root,client,window):
             details.insert_one({"company_name": com_name, "phone_no": com_phone, "telephone_no": com_telephone, "email": com_email, "address": com_address, "ntn_no": ntn, "coc_certificate_no": coc_cno, "income_tax_certificate_no": it_cno})
             employees.insert_one({"company_name": com_name,"emp_id":"EMP00001","name": emp_name, "email": emp_email, "phone_no": emp_phone, "address": emp_address, "username": emp_username, "password": emp_password, "sale_module":1, "purchase_module":1, "payment_module":1, "receipt_module":1, "client_module":1, "inventory_module":1, "company_profile_module":1,"reporting_module":1,"financial_module":1,"bank_module":1,"tax_module":1,"employee_module":1,"expense_module":1})
             bank_accounts.insert_one({"company_name": com_name,"bank_name": bank_name, "branch_name": br_name, "account_title": ac_title, "account_no": ac_no, "iban_no": iban})
+            client["banks"]["bank_info"].insert_one({"company_name": com_name,"bank_name": bank_name, "branch_name": br_name, "account_title": ac_title, "account_no": ac_no, "iban_no": iban,"balance":op_bal})
+            client["banks"][bank_name].insert_one({"company_name": com_name,"bank_name": bank_name, "branch_name": br_name, "account_title": ac_title, "account_no": ac_no, "iban_no": iban,"balance":op_bal})
             tax.insert_one({"company_name": com_name,"gst_percent": gst_p, "advance_tax_percent": ad_tax,"further_tax_percent": fut_p})
 
             messagebox.showinfo("Success", "Company Profile Created Successfully!")

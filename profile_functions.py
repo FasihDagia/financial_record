@@ -48,6 +48,10 @@ def add_bank_account(root,bank_accounts,com_name,client,user_name,window_main):
     iban_entry = tk.Entry(bank_frame,font=("Helvetica",10))
     iban_entry.grid(row=3,column=1,pady=10)
 
+    ttk.Label(bank_frame,text = "Opening Balance:",font=("Helvetica",10)).grid(row=3,column=2,padx=5,pady=10)
+    op_bal_entry = ttk.Entry(bank_frame,font=("Helvetica",10))
+    op_bal_entry.grid(row=3,column=3,pady=10)
+
     add_btn = tk.Button(root,text = "Add Account",font=("Helvetica",10),command=lambda: add(root,bank_accounts,com_name,user_name))
     add_btn.pack(pady=10)
     
@@ -67,14 +71,17 @@ def add_bank_account(root,bank_accounts,com_name,client,user_name,window_main):
         ac_title = ac_title_entry.get().upper()
         ac_no = ac_no_entry.get()
         iban = iban_entry.get()
+        op_bal = float(op_bal_entry.get())
 
-        if not bank_name or not br_name or not ac_title or not ac_no or not iban:
+        if not bank_name or not br_name or not ac_title or not ac_no or not iban and not op_bal:
             warning = tk.Label(bank_frame, text="Please fill all required fields", fg="red")
             add_btn.pack_forget()
             warning.pack(pady=5)
             add_btn.pack(pady=10)
         else:
-            bank_accounts.insert_one({"company_name": com_name,"bank_name": bank_name, "branch_name": br_name, "account_title": ac_title, "account_no": ac_no, "iban_no": iban})
+            bank_accounts.insert_one({"company_name": com_name,"bank_name": bank_name, "branch_name": br_name, "account_title": ac_title, "account_no": ac_no, "iban_no": iban,"balance":op_bal})
+            client["banks"]["bank_info"].insert_one({"company_name": com_name,"bank_name": bank_name, "branch_name": br_name, "account_title": ac_title, "account_no": ac_no, "iban_no": iban,"balance":op_bal})
+            client["banks"][bank_name].insert_one({"company_name": com_name,"bank_name": bank_name, "branch_name": br_name, "account_title": ac_title, "account_no": ac_no, "iban_no": iban,"balance":op_bal})
             messagebox.showinfo("Success", "Bank Account Added Successfully!")
             show_bank_account_edit(root, bank_accounts, com_name, client, user_name, window_main)
 

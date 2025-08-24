@@ -126,7 +126,7 @@ def create_adjustment_window(root,adjustments,adjustment_temp,heads,window,compa
     ttk.Button(btn_frame,text="Back" ,style="Logout.TButton",cursor="hand2",width=10,command=lambda:window(root,company_name,user_name)).grid(row=0,column=0,padx=5)
     ttk.Button(btn_frame,text="Exit" ,style="Logout.TButton",cursor="hand2",width=10,command=root.destroy).grid(row=0,column=1,padx=5)
 
-    def generate(date_entry,voucher,db_exp_type_option,cr_exp_type_option,db_selected_account,cr_selected_account,amount_entry,description_entry,adjustment,adjustment_temp,customers,tax):
+    def generate(date_entry,voucher,db_exp_type_option,cr_exp_type_option,db_selected_account,cr_selected_account,amount_entry,description_entry,adjustment,adjustment_temp,customers,payment):
         
         try:
             date = date_entry.get()
@@ -144,7 +144,17 @@ def create_adjustment_window(root,adjustments,adjustment_temp,heads,window,compa
                 messagebox.showerror("Missing Field","Please fill all fields")
                 return    
             else:
-                pass
+                if db_exp_type == "Payment":
+                    inv_acc = customers[f"purchase_invoice_{db_acc_name}"]
+                    cli_acc = customers[f"payment_{db_acc_name}"]
+                elif db_exp_type == "Receipt":
+                    inv_acc = customers[f"sale_invoice_{db_acc_name}"]
+                    cli_acc = customers[f"receipt_{db_acc_name}"]
+                elif db_exp_type == "Tax Payment":
+                    tax = payment["tax_payment"]
+                elif db_exp_type == "Tax Receipt":
+                    tax = payment["tax_receipt"]
+                
 
         except ValueError:
             messagebox.showerror("Incorrect Value","Please enter a correct amount")
