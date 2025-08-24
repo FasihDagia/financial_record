@@ -75,7 +75,7 @@ def create_adjustment_window(root,adjustments,adjustment_temp,heads,window,compa
     exp_type_options = ["Head Types","Payment","Receipt","Tax Payment", "Tax Receipt"]
     for i in heads.find():
         exp_type_options.append(i.get('hd_name',''))
-    for i in bank.find():
+    for i in bank["bank_info"].find():
         exp_type_options.append(i.get('bank_name',''))
      
     ttk.Label(entry_frame, text="Debit Head Type:", font=("helvetica",10)).grid(pady=10,row=1,column=0)
@@ -126,7 +126,7 @@ def create_adjustment_window(root,adjustments,adjustment_temp,heads,window,compa
     ttk.Button(btn_frame,text="Back" ,style="Logout.TButton",cursor="hand2",width=10,command=lambda:window(root,company_name,user_name)).grid(row=0,column=0,padx=5)
     ttk.Button(btn_frame,text="Exit" ,style="Logout.TButton",cursor="hand2",width=10,command=root.destroy).grid(row=0,column=1,padx=5)
 
-    def generate(date_entry,voucher,db_exp_type_option,cr_exp_type_option,db_selected_account,cr_selected_account,amount_entry,description_entry,adjustment,adjustment_temp,customers,payment):
+    def generate(date_entry,voucher,db_exp_type_option,cr_exp_type_option,db_selected_account,cr_selected_account,amount_entry,description_entry,adjustment,adjustment_temp,customers,payment,bank):
         
         try:
             date = date_entry.get()

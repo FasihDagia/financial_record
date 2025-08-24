@@ -1326,7 +1326,7 @@ def adjustment_window(root,company_name,user_name):
 
     adjustments = db['adjustment']
     heads = client[f'company_profile_{company_name.lower().replace(" ", "_")}']['heads']
-    bank_acc = client[f'company_profile_{company_name.lower().replace(" ", "_")}']["bank_accounts"]
+    bank_acc = client["banks"]
 
     for widget in root.winfo_children():
         widget.destroy()
