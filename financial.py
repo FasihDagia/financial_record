@@ -144,6 +144,9 @@ def create_adjustment_window(root,adjustments,adjustment_temp,heads,window,compa
                 messagebox.showerror("Missing Field","Please fill all fields")
                 return    
             else:
+                bank_names = []
+                for i in bank["bank_info"].find():
+                    bank_names.append(i.get('bank_name',''))
                 if db_exp_type == "Payment":
                     inv_acc = customers[f"purchase_invoice_{db_acc_name}"]
                     cli_acc = customers[f"payment_{db_acc_name}"]
@@ -154,6 +157,8 @@ def create_adjustment_window(root,adjustments,adjustment_temp,heads,window,compa
                     tax = payment["tax_payment"]
                 elif db_exp_type == "Tax Receipt":
                     tax = payment["tax_receipt"]
+                elif db_exp_type in bank_names:
+                    bank_nam = bank[db_exp_type]
                 
 
         except ValueError:
