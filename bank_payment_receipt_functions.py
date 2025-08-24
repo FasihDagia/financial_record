@@ -199,7 +199,7 @@ def records(temp, permanent, amounts, operation, date, vouch_no, invoice_no, che
         "balance": balance
     }
 
-def generate_bank_payments(root,window,payments_temp,payment,pay_receip,pay_receip_temp,customers,client_temp,bank,bank_temp,indvidual_bank,bank_ind_temp,tax,tax_temp,invoice_balance,heads,banks,company_name,user_name,db,invoice_temp,head_collection,head_temp):
+def generate_bank_payments(root,window,payments_temp,payment,pay_receip,pay_receip_temp,customers,client_temp,bank,bank_temp,banks,bank_ind_temp,tax,tax_temp,invoice_balance,heads,company_name,user_name,db,invoice_temp,head_collection,head_temp):
     
     for widget in root.winfo_children():
         widget.destroy()
@@ -238,7 +238,7 @@ def generate_bank_payments(root,window,payments_temp,payment,pay_receip,pay_rece
 
     ttk.Label(entry_frame,text="Account:",font=("helvetica",11,"bold")).grid(pady=10,row=1,column=0,sticky=tk.W)
     bank_options = []
-    for i in banks.find({}):
+    for i in banks["bank_info"].find({}):
         bank_options.append(i.get('bank_name',''))
     if len(bank_options) == 0:
         bank_options.append("No Banks to show") 
@@ -327,6 +327,7 @@ def generate_bank_payments(root,window,payments_temp,payment,pay_receip,pay_rece
     exp_type_entry.grid(row=3,column=1,padx=5)
 
     def calculate_total(*args):
+        tax_amount_entry.delete(0,tk.END)
         try:
             amount = float(amount_entry.get())
             tax_p = float(tax_p_entry.get())
@@ -387,7 +388,7 @@ def generate_bank_payments(root,window,payments_temp,payment,pay_receip,pay_rece
     total_var = tk.StringVar(value=0)
     ttk.Label(total_frame,textvariable=total_var,font=("helvetica",14,"bold")).grid(row=0,column=1,pady=10)
 
-    ttk.Button(root,text="Generate" ,style="Module.TButton",cursor="hand2",width=20,command=lambda:generate(root,window,payments_temp,payment,pay_receip,pay_receip_temp,customers,client_temp,bank,bank_temp,indvidual_bank,bank_ind_temp,tax,tax_temp,invoice_temp,head_collection,head_temp)).pack(pady=10)    
+    ttk.Button(root,text="Generate" ,style="Module.TButton",cursor="hand2",width=20,command=lambda:generate(root,window,payments_temp,payment,pay_receip,pay_receip_temp,customers,client_temp,bank,bank_temp,banks,bank_ind_temp,tax,tax_temp,invoice_temp,head_collection,head_temp)).pack(pady=10)    
     
     btn_frame = tk.Frame(root) 
     btn_frame.pack()
@@ -585,6 +586,7 @@ def generate_bank_receipt(root,window,receipt_temp,receipt,pay_receip,pay_receip
     exp_type_entry.grid(row=3,column=1,padx=5)
 
     def calculate_total(*args):
+        tax_amount_entry.delete(0,tk.END)
         try:
             amount = float(amount_entry.get())
             tax_p = float(tax_p_entry.get())

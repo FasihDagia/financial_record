@@ -174,7 +174,7 @@ def generate_cash_receipt(root,window,receipt_temp,receipt,pay_receip,pay_receip
     ttk.Label(root,text="Generate Cash Receipt Voucher",font=("helvetica",18,"bold")).pack(pady=30)
 
     def calculate_total(*args):
-
+        tax_amount_entry.delete(0,tk.END)
         try:
             amount = float(amount_entry.get())
             tax_p = float(tax_p_entry.get())
@@ -418,7 +418,7 @@ def generate_cash_payments(root,window,payments_temp,payment,pay_receip,pay_rece
     ttk.Label(root,text="Generate Cash Payment Voucher",font=("helvetica",18,"bold")).pack(pady=30)
 
     def calculate_total(*args):
-
+        tax_amount_entry.delete(0,tk.END)
         try:
             amount = float(amount_entry.get())
             tax_p = float(tax_p_entry.get())
