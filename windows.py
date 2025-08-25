@@ -152,7 +152,7 @@ def sale_module_window(root,company_name,user_name):
     clear_temp(sale_contracts, purchase_contracts, sale_transaction, purchase_transaction, inventory_sale,
                existing_contracts, payments_temp, receipt_temp, pay_receip_temp, bank_temp, cash_temp,
                client_temp, bank_ind_temp, tax_temp, pay_receip_balance, invoice_balance, sld_stock,
-               cost_goods_temp,invoice_temp,adjustment_temp,head_temp)
+               cost_goods_temp,invoice_temp,adjustment_temp,head_temp,cr_temp,db_temp)
     for widget in root.winfo_children():
         widget.destroy()
 
@@ -176,7 +176,7 @@ def purchase_module_window(root,company_name,user_name):
     clear_temp(sale_contracts, purchase_contracts, sale_transaction, purchase_transaction, inventory_sale,
                existing_contracts, payments_temp, receipt_temp, pay_receip_temp, bank_temp, cash_temp,
                client_temp, bank_ind_temp, tax_temp, pay_receip_balance, invoice_balance, sld_stock,
-               cost_goods_temp,invoice_temp,adjustment_temp,head_temp)
+               cost_goods_temp,invoice_temp,adjustment_temp,head_temp,cr_temp,db_temp)
     for widget in root.winfo_children():
         widget.destroy()
 
@@ -201,7 +201,7 @@ def payment_module_window(root,company_name,user_name):
     clear_temp(sale_contracts, purchase_contracts, sale_transaction, purchase_transaction, inventory_sale,
                existing_contracts, payments_temp, receipt_temp, pay_receip_temp, bank_temp, cash_temp,
                client_temp, bank_ind_temp, tax_temp, pay_receip_balance, invoice_balance, sld_stock,
-               cost_goods_temp,invoice_temp,adjustment_temp,head_temp)
+               cost_goods_temp,invoice_temp,adjustment_temp,head_temp,cr_temp,db_temp)
     
     for widget in root.winfo_children():
         widget.destroy()
@@ -227,7 +227,7 @@ def receipt_module_window(root,company_name,user_name):
     clear_temp(sale_contracts, purchase_contracts, sale_transaction, purchase_transaction, inventory_sale,
                existing_contracts, payments_temp, receipt_temp, pay_receip_temp, bank_temp, cash_temp,
                client_temp, bank_ind_temp, tax_temp, pay_receip_balance, invoice_balance, sld_stock,
-               cost_goods_temp,invoice_temp,adjustment_temp,head_temp)
+               cost_goods_temp,invoice_temp,adjustment_temp,head_temp,cr_temp,db_temp)
     
     for widget in root.winfo_children():
         widget.destroy()
@@ -253,7 +253,7 @@ def inventory_module_window(root,company_name,user_name):
     clear_temp(sale_contracts, purchase_contracts, sale_transaction, purchase_transaction, inventory_sale,
                existing_contracts, payments_temp, receipt_temp, pay_receip_temp, bank_temp, cash_temp,
                client_temp, bank_ind_temp, tax_temp, pay_receip_balance, invoice_balance, sld_stock,
-               cost_goods_temp,invoice_temp,adjustment_temp,head_temp)
+               cost_goods_temp,invoice_temp,adjustment_temp,head_temp,cr_temp,db_temp)
 
     for widget in root.winfo_children():
         widget.destroy()
@@ -278,7 +278,7 @@ def client_module_window(root,company_name,user_name):
     clear_temp(sale_contracts, purchase_contracts, sale_transaction, purchase_transaction, inventory_sale,
                existing_contracts, payments_temp, receipt_temp, pay_receip_temp, bank_temp, cash_temp,
                client_temp, bank_ind_temp, tax_temp, pay_receip_balance, invoice_balance, sld_stock,
-               cost_goods_temp,invoice_temp,adjustment_temp,head_temp)
+               cost_goods_temp,invoice_temp,adjustment_temp,head_temp,cr_temp,db_temp)
 
     for widget in root.winfo_children():
         widget.destroy()
@@ -302,7 +302,7 @@ def ledger_module_window(root,company_name,user_name):
     clear_temp(sale_contracts, purchase_contracts, sale_transaction, purchase_transaction, inventory_sale,
                existing_contracts, payments_temp, receipt_temp, pay_receip_temp, bank_temp, cash_temp,
                client_temp, bank_ind_temp, tax_temp, pay_receip_balance, invoice_balance, sld_stock,
-               cost_goods_temp,invoice_temp,adjustment_temp,head_temp)
+               cost_goods_temp,invoice_temp,adjustment_temp,head_temp,cr_temp,db_temp)
 
     for widget in root.winfo_children():
         widget.destroy()
@@ -325,7 +325,7 @@ def financial_module_window(root,company_name,user_name):
     clear_temp(sale_contracts, purchase_contracts, sale_transaction, purchase_transaction, inventory_sale,
                existing_contracts, payments_temp, receipt_temp, pay_receip_temp, bank_temp, cash_temp,
                client_temp, bank_ind_temp, tax_temp, pay_receip_balance, invoice_balance, sld_stock,
-               cost_goods_temp,invoice_temp,adjustment_temp,head_temp)
+               cost_goods_temp,invoice_temp,adjustment_temp,head_temp,cr_temp,db_temp)
 
     for widget in root.winfo_children():
         widget.destroy()
@@ -1344,9 +1344,10 @@ def adjustment_window(root,company_name,user_name):
     btn_frame = tk.Frame(root)
     btn_frame.pack()
 
-    tk.Button(btn_frame, text="Generate Adjustment", width=20,command=lambda:create_adjustment_window(root,adjustments,adjustment_temp,heads,adjustment_window,company_name,user_name,customers,payment,bank_acc)).grid(row=0,column=2,pady=10)
-    tk.Button(btn_frame, text="Back", width=20, command=lambda:financial_module_window(root,company_name,user_name)).grid(row=0, column=3,padx=5)
-    tk.Button(btn_frame, text="Exit", width=20, command=root.destroy).grid(row=0, column=4,padx=5)
+    tk.Button(btn_frame, text="Generate Adjustment", width=20,command=lambda:create_adjustment_window(root,adjustments,adjustment_temp,heads,adjustment_window,company_name,user_name,customers,payment,bank_acc,db_temp,cr_temp)).grid(row=0,column=2,pady=10)
+    tk.Button(btn_frame, text="Save", width=20).grid(row=0,column=3,pady=10)
+    tk.Button(btn_frame, text="Back", width=20, command=lambda:financial_module_window(root,company_name,user_name)).grid(row=0, column=4,padx=5)
+    tk.Button(btn_frame, text="Exit", width=20, command=root.destroy).grid(row=0, column=5,padx=5)
 
     table_ledger = ttk.Treeview(root, columns=("S.NO","Date","Debit Account","Credit Account","Description","Amount"), show="headings",height=25)
     table_ledger.pack(fill=tk.BOTH, pady=20,padx=10)
