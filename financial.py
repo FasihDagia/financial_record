@@ -14,6 +14,41 @@ def center_window(root, width, height):
     root.minsize(width, height)
     root.maxsize(width, height)
 
+def adjust_payment_receipt(temp,permanent,amounts,acc_pay,date,vouch_no,head_type,remarks,operation):    
+
+    no_entries_2 = permanent.count_documents({})
+    last_entry_2 = permanent.find_one(sort=[("_id", -1)])
+    if len(temp) != 0:
+        balance2 = 0
+        for i in temp.values():
+            if i.get("head_type") == head_type:
+                if i.get("opp_acc","") == acc_pay:
+                    balance2 = i.get("balance",0)
+
+        if balance2 == 0:
+            balance2 = last_entry_2.get("balance",0)
+
+    elif len(temp) == 0:
+        if no_entries_2 == 0:
+            balance2 = 0
+        else:
+            balance2 = last_entry_2.get("balance",0)
+
+    if operation == "+":
+        balance2 += amounts
+    elif operation =="-":
+        balance2 -= amounts
+    temp[len(temp)+1] ={
+        "date":date,
+        "voucher_no":vouch_no,
+        "head_type":head_type,
+        "opp_acc":acc_pay,
+        "description":remarks,
+        "total_amount":amounts,
+        "balance":balance2
+        }
+                
+
 def create_adjustment_window(root,adjustments,adjustment_temp,heads,window,company_name,user_name,customers,payment,bank):
 
     style = ttk.Style()
@@ -147,18 +182,29 @@ def create_adjustment_window(root,adjustments,adjustment_temp,heads,window,compa
                 bank_names = []
                 for i in bank["bank_info"].find():
                     bank_names.append(i.get('bank_name',''))
+
                 if db_exp_type == "Payment":
                     inv_acc = customers[f"purchase_invoice_{db_acc_name}"]
                     cli_acc = customers[f"payment_{db_acc_name}"]
+                
+                    # adjust_payment_receipt(adjustment_temp,inv_acc,amount,db_acc_name,date,voucher,db_exp_type,description,"+")
+                    # adjust_payment_receipt(adjustment_temp,cli_acc,amount,db_acc_name,date,voucher,db_exp_type,description,"+")
+                
                 elif db_exp_type == "Receipt":
                     inv_acc = customers[f"sale_invoice_{db_acc_name}"]
                     cli_acc = customers[f"receipt_{db_acc_name}"]
+                
+                    # adjust_payment_receipt(adjustment_temp,inv_acc,amount,db_acc_name,date,voucher,db_exp_type,description,"+")
+                    # adjust_payment_receipt(adjustment_temp,cli_acc,amount,db_acc_name,date,voucher,db_exp_type,description,"+")
+                
                 elif db_exp_type == "Tax Payment":
                     tax = payment["tax_payment"]
                 elif db_exp_type == "Tax Receipt":
                     tax = payment["tax_receipt"]
                 elif db_exp_type in bank_names:
                     bank_nam = bank[db_exp_type]
+                else:
+                    hd_nam = heads[db_exp_type]
                 
 
         except ValueError:
