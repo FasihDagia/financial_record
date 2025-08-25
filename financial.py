@@ -209,7 +209,7 @@ def create_adjustment_window(root,adjustments,adjustment_temp,heads,window,compa
     description_entry = tk.Text(entry_frame,font=("helvetica",10),width=50,height=5)
     description_entry.grid(row=4,column=1,columnspan=3,padx=5,)
 
-    ttk.Button(root,text="Generate" ,style="Module.TButton",width=15,cursor="hand2",command=lambda:generate()).pack(pady=10)    
+    ttk.Button(root,text="Generate" ,style="Module.TButton",width=15,cursor="hand2",command=lambda:generate(date_entry,voucher,db_exp_type_option,cr_exp_type_option,db_selected_account,cr_selected_account,amount_entry,description_entry,adjustments,adjustment_temp,customers,payment,bank)).pack(pady=10)    
     
     btn_frame = tk.Frame(root) 
     btn_frame.pack()
