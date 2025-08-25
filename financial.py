@@ -187,8 +187,8 @@ def create_adjustment_window(root,adjustments,adjustment_temp,heads,window,compa
                     inv_acc = customers[f"purchase_invoice_{db_acc_name}"]
                     cli_acc = customers[f"payment_{db_acc_name}"]
                 
-                    # adjust_payment_receipt(adjustment_temp,inv_acc,amount,db_acc_name,date,voucher,db_exp_type,description,"+")
-                    # adjust_payment_receipt(adjustment_temp,cli_acc,amount,db_acc_name,date,voucher,db_exp_type,description,"+")
+                    adjust_payment_receipt(adjustment_temp,inv_acc,amount,db_acc_name,date,voucher,db_exp_type,description,"+")
+                    adjust_payment_receipt(adjustment_temp,cli_acc,amount,db_acc_name,date,voucher,db_exp_type,description,"+")
                 
                 elif db_exp_type == "Receipt":
                     inv_acc = customers[f"sale_invoice_{db_acc_name}"]
