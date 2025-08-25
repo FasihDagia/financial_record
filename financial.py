@@ -205,6 +205,29 @@ def create_adjustment_window(root,adjustments,adjustment_temp,heads,window,compa
                     bank_nam = bank[db_exp_type]
                 else:
                     hd_nam = heads[db_exp_type]
+
+                if cr_exp_type == "Payment":
+                    inv_acc = customers[f"purchase_invoice_{db_acc_name}"]
+                    cli_acc = customers[f"payment_{db_acc_name}"]
+                
+                    adjust_payment_receipt(adjustment_temp,inv_acc,amount,db_acc_name,date,voucher,db_exp_type,description,"-")
+                    adjust_payment_receipt(adjustment_temp,cli_acc,amount,db_acc_name,date,voucher,db_exp_type,description,"-")
+                
+                elif cr_exp_type == "Receipt":
+                    inv_acc = customers[f"sale_invoice_{db_acc_name}"]
+                    cli_acc = customers[f"receipt_{db_acc_name}"]
+                
+                    # adjust_payment_receipt(adjustment_temp,inv_acc,amount,db_acc_name,date,voucher,db_exp_type,description,"-")
+                    # adjust_payment_receipt(adjustment_temp,cli_acc,amount,db_acc_name,date,voucher,db_exp_type,description,"-")
+                
+                elif cr_exp_type == "Tax Payment":
+                    tax = payment["tax_payment"]
+                elif cr_exp_type == "Tax Receipt":
+                    tax = payment["tax_receipt"]
+                elif cr_exp_type in bank_names:
+                    bank_nam = bank[db_exp_type]
+                else:
+                    hd_nam = heads[db_exp_type]
                 
 
         except ValueError:
