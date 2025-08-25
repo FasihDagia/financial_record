@@ -359,3 +359,7 @@ def save_adj_vouch(adjustments,adjustment_temp,heads,customers,payment,bank,db_t
                     bank[adj_cr.get("head_type")].insert_one(adj_cr)
                 elif adj_cr.get("head_type") in head_names:
                     heads[adj_cr.get("head_type")].insert_one(adj_cr)
+
+        adjustment_temp.clear()
+        cr_temp.clear()
+        db_temp.clear()
