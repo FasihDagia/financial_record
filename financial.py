@@ -38,7 +38,20 @@ def adjust_payment_receipt(temp,permanent,amounts,acc_pay,date,vouch_no,head_typ
         balance2 += amounts
     elif operation =="-":
         balance2 -= amounts
+    
+    if len(temp) == 0:
+        sno2 = no_entries_2 + 1
+    else:
+        j = 0
+        sno2 = no_entries_2 + 1
+        for i in temp.values():
+            if i.get("head_type") == head_type:
+                if i.get("opp_acc","") == acc_pay:
+                    j +=1
+                    sno2 += j
+
     temp[len(temp)+1] ={
+        "s_no":sno2,
         "date":date,
         "voucher_no":vouch_no,
         "head_type":head_type,
