@@ -61,7 +61,50 @@ def adjust_payment_receipt(temp,permanent,amounts,acc_pay,date,vouch_no,head_typ
         "balance":balance2
         }
                 
+def adjust_heads(temp,permanent,amounts,date,vouch_no,head_type,remarks,operation):    
 
+    no_entries_2 = permanent.count_documents({})
+    last_entry_2 = permanent.find_one(sort=[("_id", -1)])
+    if len(temp) != 0:
+        balance2 = 0
+        for i in temp.values():
+            if i.get("head_type") == head_type:
+                balance2 = i.get("balance",0)
+
+        if balance2 == 0:
+            balance2 = last_entry_2.get("balance",0)
+
+    elif len(temp) == 0:
+        if no_entries_2 == 0:
+            balance2 = 0
+        else:
+            balance2 = last_entry_2.get("balance",0)
+
+    if operation == "+":
+        balance2 += amounts
+    elif operation =="-":
+        balance2 -= amounts
+    
+    if len(temp) == 0:
+        sno2 = no_entries_2 + 1
+    else:
+        j = 0
+        sno2 = no_entries_2 + 1
+        for i in temp.values():
+            if i.get("head_type") == head_type:
+                j +=1
+                sno2 += j
+
+    temp[len(temp)+1] ={
+        "s_no":sno2,
+        "date":date,
+        "voucher_no":vouch_no,
+        "head_type":head_type,
+        "description":remarks,
+        "total_amount":amounts,
+        "balance":balance2
+        }
+    
 def create_adjustment_window(root,adjustments,adjustment_temp,heads,window,company_name,user_name,customers,payment,bank):
 
     style = ttk.Style()
@@ -211,13 +254,24 @@ def create_adjustment_window(root,adjustments,adjustment_temp,heads,window,compa
                     adjust_payment_receipt(adjustment_temp,cli_acc,amount,db_acc_name,date,voucher,db_exp_type,description,"+")
                 
                 elif db_exp_type == "Tax Payment":
+                    
                     tax = payment["tax_payment"]
+                    adjust_heads(adjust_heads,tax,amount,date,voucher,db_exp_type,description,"+")
+
                 elif db_exp_type == "Tax Receipt":
+                    
                     tax = payment["tax_receipt"]
+                    adjust_heads(adjust_heads,tax,amount,date,voucher,db_exp_type,description,"+")
+
                 elif db_exp_type in bank_names:
+
                     bank_nam = bank[db_exp_type]
+                    adjust_heads(adjust_heads,bank_nam,amount,date,voucher,db_exp_type,description,"+")
+
                 else:
+
                     hd_nam = heads[db_exp_type]
+                    adjust_heads(adjust_heads,hd_nam,amount,date,voucher,db_exp_type,description,"+")
 
                 if cr_exp_type == "Payment":
                     inv_acc = customers[f"purchase_invoice_{db_acc_name}"]
@@ -234,13 +288,24 @@ def create_adjustment_window(root,adjustments,adjustment_temp,heads,window,compa
                     adjust_payment_receipt(adjustment_temp,cli_acc,amount,db_acc_name,date,voucher,db_exp_type,description,"-")
                 
                 elif cr_exp_type == "Tax Payment":
+
                     tax = payment["tax_payment"]
+                    adjust_heads(adjust_heads,tax,amount,date,voucher,db_exp_type,description,"-")
+
                 elif cr_exp_type == "Tax Receipt":
+
                     tax = payment["tax_receipt"]
+                    adjust_heads(adjust_heads,tax,amount,date,voucher,db_exp_type,description,"-")
+
                 elif cr_exp_type in bank_names:
+
                     bank_nam = bank[db_exp_type]
+                    adjust_heads(adjust_heads,bank_nam,amount,date,voucher,db_exp_type,description,"-")
+
                 else:
+
                     hd_nam = heads[db_exp_type]
+                    adjust_heads(adjust_heads,hd_nam,amount,date,voucher,db_exp_type,description,"-")
                 
 
         except ValueError:
