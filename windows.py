@@ -1325,7 +1325,6 @@ def purchase_ledger_window(root,company_name,user_name):
 def adjustment_window(root,company_name,user_name):
 
     adjustments = db['adjustments']
-    print("adjustments:", adjustments)
     heads = client[f'company_profile_{company_name.lower().replace(" ", "_")}']['heads']
     bank_acc = client["banks"]
 
