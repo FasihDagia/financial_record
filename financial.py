@@ -392,3 +392,14 @@ def save_adj_vouch(adjustments,adjustment_temp,heads,customers,payment,bank,db_t
         adjustment_temp.clear()
         cr_temp.clear()
         db_temp.clear()
+
+def go_back_finacial(root,window,company_name,user_name,adjustment_temp,cr_temp,db_temp):
+    if len(adjustment_temp) != 0 or len(cr_temp) != 0 or len(db_temp) != 0:
+        confirm = messagebox.askyesno("Confirm", f"Once you go back the Particulars will be lost\nAre you sure you want to go back?")
+        if confirm:
+            adjustment_temp.clear()
+            cr_temp.clear()
+            db_temp.clear()
+            window(root,company_name,user_name)
+    else:
+        window(root,company_name,user_name)
