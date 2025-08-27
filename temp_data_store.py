@@ -49,4 +49,4 @@ def clear_temp(sale_contracts, purchase_contracts, sale_transaction, purchase_tr
     adjustment_temp.clear()
     head_temp.clear()
     cr_temp.clear()
-    db_temp()
+    db_temp.clear()

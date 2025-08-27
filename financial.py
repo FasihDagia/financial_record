@@ -125,9 +125,9 @@ def create_adjustment_window(root,adjustments,adjustment_temp,heads,window,compa
     entry_frame.pack()
 
     ttk.Label(entry_frame, text="Date:", font=("helvetica",10)).grid(pady=10,row=0,column=0)
-    date_default = tk.StringVar(value=datetime.now().date())
-    date_entry = ttk.Entry(entry_frame, width=25, textvariable=date_default)
+    date_entry = ttk.Entry(entry_frame, width=25)
     date_entry.grid(row=0,column=1,padx=5)
+    date_entry.insert(0, datetime.now().date())
 
     ttk.Label(entry_frame, text="Voucher No:", font=("helvetica",11)).grid(padx=5,pady=10,row=0,column=2)
     no_adj = adjustments.count_documents({})
@@ -170,7 +170,7 @@ def create_adjustment_window(root,adjustments,adjustment_temp,heads,window,compa
         exp_type_options.append(i.get('bank_name',''))
      
     ttk.Label(entry_frame, text="Debit Head Type:", font=("helvetica",10)).grid(pady=10,row=1,column=0)
-    db_exp_type_option = tk.StringVar()
+    db_exp_type_option = tk.StringVar(value="Head Types")
     exp_type_entry = ttk.OptionMenu(entry_frame, db_exp_type_option , *exp_type_options)
     exp_type_entry.config(width=19, style="Unit.TMenubutton")
     exp_type_entry.grid(row=1,column=1,padx=5)
@@ -231,7 +231,7 @@ def create_adjustment_window(root,adjustments,adjustment_temp,heads,window,compa
             if cr_exp_type in ["Payment" ,"Receipt"]:
                 cr_acc_name = cr_selected_account.get()
             
-            if not date or not db_exp_type or not cr_exp_type or not amount or not description:
+            if not date or not amount or not description:
                 messagebox.showerror("Missing Field","Please fill all fields")
                 return    
             else:
@@ -242,73 +242,76 @@ def create_adjustment_window(root,adjustments,adjustment_temp,heads,window,compa
                 for i in heads.find():
                     head_names.append(i.get('hd_name',''))
 
-                if db_exp_type == "Payment":
+                if db_exp_type != "Head Types":
+
+                    if db_exp_type == "Payment":
+                        
+                        cli_acc = customers[f"payment_{db_acc_name}"]
+                        adjust_payment_receipt(db_temp,cli_acc,amount,db_acc_name,date,voucher,db_exp_type,description,"+")
                     
-                    cli_acc = customers[f"payment_{db_acc_name}"]
-                    adjust_payment_receipt(db_temp,cli_acc,amount,db_acc_name,date,voucher,db_exp_type,description,"+")
-                
-                elif db_exp_type == "Receipt":
+                    elif db_exp_type == "Receipt":
+                        
+                        cli_acc = customers[f"receipt_{db_acc_name}"]
+                        adjust_payment_receipt(db_temp,cli_acc,amount,db_acc_name,date,voucher,db_exp_type,description,"+")
                     
-                    cli_acc = customers[f"receipt_{db_acc_name}"]
-                    adjust_payment_receipt(db_temp,cli_acc,amount,db_acc_name,date,voucher,db_exp_type,description,"+")
-                
-                elif db_exp_type == "Tax Payment":
+                    elif db_exp_type == "Tax Payment":
+                        
+                        tax = payment["tax_payment"]
+                        adjust_heads(db_temp,tax,amount,date,voucher,db_exp_type,description,"+")
+
+                    elif db_exp_type == "Tax Receipt":
+                        
+                        tax = payment["tax_receipt"]
+                        adjust_heads(db_temp,tax,amount,date,voucher,db_exp_type,description,"+")
+
+                    elif db_exp_type in bank_names:
+
+                        bank_nam = bank[db_exp_type]
+                        adjust_heads(db_temp,bank_nam,amount,date,voucher,db_exp_type,description,"+")
+
+                    elif db_exp_type in head_names:
+
+                        hd_nam = heads[db_exp_type]
+                        adjust_heads(db_temp,hd_nam,amount,date,voucher,db_exp_type,description,"+")
+
+                if cr_exp_type != "Head Types":
+                    if cr_exp_type == "Payment":
+                        
+                        cli_acc = customers[f"payment_{cr_acc_name}"]
+                        adjust_payment_receipt(cr_temp,cli_acc,amount,db_acc_name,date,voucher,db_exp_type,description,"-")
                     
-                    tax = payment["tax_payment"]
-                    adjust_heads(db_temp,tax,amount,date,voucher,db_exp_type,description,"+")
-
-                elif db_exp_type == "Tax Receipt":
+                    elif cr_exp_type == "Receipt":
+                        
+                        cli_acc = customers[f"receipt_{cr_acc_name}"]
+                        adjust_payment_receipt(cr_temp,cli_acc,amount,db_acc_name,date,voucher,db_exp_type,description,"-")
                     
-                    tax = payment["tax_receipt"]
-                    adjust_heads(db_temp,tax,amount,date,voucher,db_exp_type,description,"+")
+                    elif cr_exp_type == "Tax Payment":
 
-                elif db_exp_type in bank_names:
+                        tax = payment["tax_payment"]
+                        adjust_heads(cr_temp,tax,amount,date,voucher,db_exp_type,description,"-")
 
-                    bank_nam = bank[db_exp_type]
-                    adjust_heads(db_temp,bank_nam,amount,date,voucher,db_exp_type,description,"+")
+                    elif cr_exp_type == "Tax Receipt":
 
-                elif db_exp_type in head_names:
+                        tax = payment["tax_receipt"]
+                        adjust_heads(cr_temp,tax,amount,date,voucher,db_exp_type,description,"-")
 
-                    hd_nam = heads[db_exp_type]
-                    adjust_heads(db_temp,hd_nam,amount,date,voucher,db_exp_type,description,"+")
+                    elif cr_exp_type in bank_names:
 
-                if cr_exp_type == "Payment":
+                        bank_nam = bank[db_exp_type]
+                        adjust_heads(cr_temp,bank_nam,amount,date,voucher,db_exp_type,description,"-")
+
+                    elif cr_exp_type in head_names:
+
+                        hd_nam = heads[db_exp_type]
+                        adjust_heads(cr_temp,hd_nam,amount,date,voucher,db_exp_type,description,"-")
                     
-                    cli_acc = customers[f"payment_{db_acc_name}"]
-                    adjust_payment_receipt(cr_temp,cli_acc,amount,db_acc_name,date,voucher,db_exp_type,description,"-")
-                
-                elif cr_exp_type == "Receipt":
-                    
-                    cli_acc = customers[f"receipt_{db_acc_name}"]
-                    adjust_payment_receipt(cr_temp,cli_acc,amount,db_acc_name,date,voucher,db_exp_type,description,"-")
-                
-                elif cr_exp_type == "Tax Payment":
-
-                    tax = payment["tax_payment"]
-                    adjust_heads(cr_temp,tax,amount,date,voucher,db_exp_type,description,"-")
-
-                elif cr_exp_type == "Tax Receipt":
-
-                    tax = payment["tax_receipt"]
-                    adjust_heads(cr_temp,tax,amount,date,voucher,db_exp_type,description,"-")
-
-                elif cr_exp_type in bank_names:
-
-                    bank_nam = bank[db_exp_type]
-                    adjust_heads(cr_temp,bank_nam,amount,date,voucher,db_exp_type,description,"-")
-
-                elif cr_exp_type in head_names:
-
-                    hd_nam = heads[db_exp_type]
-                    adjust_heads(cr_temp,hd_nam,amount,date,voucher,db_exp_type,description,"-")
-                
-                no_entries_adj = adjustment.count_document({})
+                no_entries_adj = adjustment.count_documents({})
                 if len(adjustment_temp) == 0:
                     sno = no_entries_adj + 1
                 elif len(adjustment_temp) != 0:
                     sno = len(adjustment_temp) + no_entries_adj + 1
 
-                adjustment_temp.insert_one({"s_no":sno,"date":date,"voucher_no":voucher, "db_head_type":db_exp_type,"cr_head_type":cr_exp_type,"amount":amount,"description":description})                
+                adjustment_temp[len(adjustment_temp)+1] = {"s_no":sno,"date":date,"voucher_no":voucher, "db_head_type":db_exp_type,"cr_head_type":cr_exp_type,"amount":amount,"description":description}               
 
         except ValueError:
             messagebox.showerror("Incorrect Value","Please enter a correct amount")
@@ -328,37 +331,39 @@ def save_adj_vouch(adjustments,adjustment_temp,heads,customers,payment,bank,db_t
             for adjustment in adjustment_temp.values():
                 adjustments.insert_one(adjustment)
                 
-            for adj_db in db_temp.values():
-                if adj_db.get("head_type") == "Payment":
-                    customers[f"purchase_invoice_{adj_db.get("opp_acc")}"].insert_one(adj_db)
-                    customers[f"payment_{adj_db.get("opp_acc")}"].insert_one(adj_db)
-                elif adj_db.get("head_type") == "Receipt":
-                    customers[f"sale_invoice_{adj_db.get("opp_acc")}"].insert_one(adj_db)
-                    customers[f"receipt_{adj_db.get("opp_acc")}"].insert_one(adj_db)
-                elif adj_db.get("head_type") == "Tax Payment":
-                    payment["tax_payment"].insert_one(adj_db)
-                elif adj_db.get("head_type") == "Tax Receipt":
-                    payment["tax_receipt"].insert_one(adj_db)
-                elif adj_db.get("head_type") in bank_names:
-                    bank[adj_db.get("head_type")].insert_one(adj_db)
-                elif adj_db.get("head_type") in head_names:
-                    heads[adj_db.get("head_type")].insert_one(adj_db)
+            if len(db_temp) != 0:    
+                for adj_db in db_temp.values():
+                    if adj_db.get("head_type") == "Payment":
+                        customers[f"purchase_invoice_{adj_db.get("opp_acc")}"].insert_one(adj_db)
+                        customers[f"payment_{adj_db.get("opp_acc")}"].insert_one(adj_db)
+                    elif adj_db.get("head_type") == "Receipt":
+                        customers[f"sale_invoice_{adj_db.get("opp_acc")}"].insert_one(adj_db)
+                        customers[f"receipt_{adj_db.get("opp_acc")}"].insert_one(adj_db)
+                    elif adj_db.get("head_type") == "Tax Payment":
+                        payment["tax_payment"].insert_one(adj_db)
+                    elif adj_db.get("head_type") == "Tax Receipt":
+                        payment["tax_receipt"].insert_one(adj_db)
+                    elif adj_db.get("head_type") in bank_names:
+                        bank[adj_db.get("head_type")].insert_one(adj_db)
+                    elif adj_db.get("head_type") in head_names:
+                        heads[adj_db.get("head_type")].insert_one(adj_db)
 
-            for adj_cr in cr_temp.values():
-                if adj_cr.get("head_type") == "Payment":
-                    customers[f"purchase_invoice_{adj_cr.get("opp_acc")}"].insert_one(adj_cr)
-                    customers[f"payment_{adj_cr.get("opp_acc")}"].insert_one(adj_cr)
-                elif adj_cr.get("head_type") == "Receipt":
-                    customers[f"sale_invoice_{adj_cr.get("opp_acc")}"].insert_one(adj_cr)
-                    customers[f"receipt_{adj_cr.get("opp_acc")}"].insert_one(adj_cr)
-                elif adj_cr.get("head_type") == "Tax Payment":
-                    payment["tax_payment"].insert_one(adj_cr)
-                elif adj_cr.get("head_type") == "Tax Receipt":
-                    payment["tax_receipt"].insert_one(adj_cr)
-                elif adj_cr.get("head_type") in bank_names:
-                    bank[adj_cr.get("head_type")].insert_one(adj_cr)
-                elif adj_cr.get("head_type") in head_names:
-                    heads[adj_cr.get("head_type")].insert_one(adj_cr)
+            if len(cr_temp) != 0:
+                for adj_cr in cr_temp.values():
+                    if adj_cr.get("head_type") == "Payment":
+                        customers[f"purchase_invoice_{adj_cr.get("opp_acc")}"].insert_one(adj_cr)
+                        customers[f"payment_{adj_cr.get("opp_acc")}"].insert_one(adj_cr)
+                    elif adj_cr.get("head_type") == "Receipt":
+                        customers[f"sale_invoice_{adj_cr.get("opp_acc")}"].insert_one(adj_cr)
+                        customers[f"receipt_{adj_cr.get("opp_acc")}"].insert_one(adj_cr)
+                    elif adj_cr.get("head_type") == "Tax Payment":
+                        payment["tax_payment"].insert_one(adj_cr)
+                    elif adj_cr.get("head_type") == "Tax Receipt":
+                        payment["tax_receipt"].insert_one(adj_cr)
+                    elif adj_cr.get("head_type") in bank_names:
+                        bank[adj_cr.get("head_type")].insert_one(adj_cr)
+                    elif adj_cr.get("head_type") in head_names:
+                        heads[adj_cr.get("head_type")].insert_one(adj_cr)
 
         adjustment_temp.clear()
         cr_temp.clear()
