@@ -15,7 +15,7 @@ from client_function import client_check,existing_clients,add_client,remove_clie
 from bank_payment_receipt_functions import generate_bank_payments,load_payments_receipt,save_bank_payment_receipt,generate_bank_receipt
 from cash_payment_receipt_function import generate_cash_receipt,generate_cash_payments,save_cash_payments_receipt,go_back
 from ledger_functions import sale_show_account,purchase_show_account
-from financial import create_adjustment_window, save_adj_vouch,go_back_finacial
+from financial import create_adjustment_window, save_adj_vouch,go_back_finacial,load_adjustments
 
 def center_window(root, width, height):
     screen_width = root.winfo_screenwidth()
@@ -1349,18 +1349,22 @@ def adjustment_window(root,company_name,user_name):
     tk.Button(btn_frame, text="Back", width=20, command=lambda:go_back_finacial(root,financial_module_window,company_name,user_name,adjustment_temp,cr_temp,db_temp)).grid(row=0, column=4,padx=5)
     tk.Button(btn_frame, text="Exit", width=20, command=root.destroy).grid(row=0, column=5,padx=5)
 
-    table_ledger = ttk.Treeview(root, columns=("S.NO","Date","Debit Account","Credit Account","Description","Amount"), show="headings",height=25)
+    table_ledger = ttk.Treeview(root, columns=("S.NO","Date","Voucher No","Debit Head","Credit Head","Description","Amount"), show="headings",height=25)
     table_ledger.pack(fill=tk.BOTH, pady=20,padx=10)
 
     table_ledger.heading("S.NO", text="S.NO")
     table_ledger.column("S.NO", anchor="center", width=50)
     table_ledger.heading("Date", text="Date")
     table_ledger.column("Date", anchor="center", width=75)
-    table_ledger.heading("Debit Account", text="Debit Account")
-    table_ledger.column("Debit Account", anchor="center", width=100)
-    table_ledger.heading("Credit Account", text="Credit Account")
-    table_ledger.column("Credit Account", anchor="center", width=100)
+    table_ledger.heading("Voucher No", text="Voucher No")
+    table_ledger.column("Voucher No", anchor="center", width=75)
+    table_ledger.heading("Debit Head", text="Debit Head")
+    table_ledger.column("Debit Head", anchor="center", width=100)
+    table_ledger.heading("Credit Head", text="Credit Head")
+    table_ledger.column("Credit Head", anchor="center", width=100)
     table_ledger.heading("Description", text="Description")
     table_ledger.column("Description", anchor="center", width=300)
     table_ledger.heading("Amount", text="Amount")
     table_ledger.column("Amount", anchor="center", width=75)
+
+    load_adjustments(adjustment_temp,table_ledger)

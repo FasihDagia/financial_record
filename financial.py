@@ -253,6 +253,11 @@ def create_adjustment_window(root,adjustments,adjustment_temp,heads,window,compa
             if cr_exp_type in ["Payment" ,"Receipt"]:
                 cr_acc_name = cr_selected_account.get()
             
+            if db_exp_type == "Head Types":
+                db_exp_type = None
+            if cr_exp_type == "Head Types":
+                cr_exp_type = None
+            
             if not date or not amount or not description:
                 messagebox.showerror("Missing Field","Please fill all fields")
                 return    
@@ -403,3 +408,18 @@ def go_back_finacial(root,window,company_name,user_name,adjustment_temp,cr_temp,
             window(root,company_name,user_name)
     else:
         window(root,company_name,user_name)
+
+def load_adjustments(adjustments_temp,table):
+    for row in table.get_children():
+        table.delete(row)
+    sno = 1
+    for adj in adjustments_temp.values():
+        table.insert("", "end", values=(
+            sno,
+            adj.get("date","Nill"),
+            adj.get("voucher_no","Nill"),
+            adj.get("db_head_type","Nill"),
+            adj.get("cr_head_type","Nill"),
+            adj.get("description","Nill"),
+            adj.get("amount","0.00")))
+        sno += 1
