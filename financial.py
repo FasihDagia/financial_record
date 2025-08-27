@@ -139,7 +139,8 @@ def create_adjustment_window(root,adjustments,adjustment_temp,heads,window,compa
     current_date = datetime.now()
     year = current_date.year
     voucher = f"JV{str(voucher_no).zfill(5)}/{year}"
-    ttk.Label(entry_frame,text=voucher,font=("Helvetica", 12)).grid(row=0,column=3)
+    vouch_no_label = ttk.Label(entry_frame,text=voucher,font=("Helvetica", 12))
+    vouch_no_label.grid(row=0,column=3)
     
     def db_acc_name(*args):
         if db_exp_type_option.get() in ["Payment", "Receipt"]:
@@ -219,6 +220,27 @@ def create_adjustment_window(root,adjustments,adjustment_temp,heads,window,compa
 
     def generate(date_entry,voucher,db_exp_type_option,cr_exp_type_option,db_selected_account,cr_selected_account,amount_entry,description_entry,adjustment,adjustment_temp,customers,payment,bank):
         
+        def reset_fields():
+            date_entry.delete(0, 'end')
+            date_entry.insert(0, datetime.now().date())
+            no_adj = adjustments.count_documents({})
+            if len(adjustment_temp) == 0:
+                voucher_no = no_adj+1
+            else:
+                voucher_no = len(adjustment_temp)+no_adj+1
+
+            current_date = datetime.now()
+            year = current_date.year
+            voucher = f"JV{str(voucher_no).zfill(5)}/{year}"
+            vouch_no_label.config(text=voucher)
+
+            db_exp_type_option.set("Head Types")
+            cr_exp_type_option.set("Head Types")
+            db_selected_account.set("Select Account")
+            cr_selected_account.set("Select Account")
+            amount_entry.delete(0, 'end')
+            description_entry.delete("1.0", "end-1c")
+
         try:
             date = date_entry.get()
             db_exp_type = db_exp_type_option.get()
@@ -312,6 +334,8 @@ def create_adjustment_window(root,adjustments,adjustment_temp,heads,window,compa
                     sno = len(adjustment_temp) + no_entries_adj + 1
 
                 adjustment_temp[len(adjustment_temp)+1] = {"s_no":sno,"date":date,"voucher_no":voucher, "db_head_type":db_exp_type,"cr_head_type":cr_exp_type,"amount":amount,"description":description}               
+                messagebox.showinfo("Success","Adjustment Generated Successfully")
+                reset_fields()
 
         except ValueError:
             messagebox.showerror("Incorrect Value","Please enter a correct amount")
