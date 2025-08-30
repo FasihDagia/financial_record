@@ -17,7 +17,7 @@ class bank_pay_rece:
         self.root.minsize(width, height)
         self.root.maxsize(width, height)
 
-    def ind_bank_record(temp,permanent,date,vouch_no,exp_type,account,cheque_no,acc_recev,description,amount,amountiw,tax_percent,tax_amount,total_amount,operation):
+    def ind_bank_record(self,temp,permanent,date,vouch_no,exp_type,account,cheque_no,acc_recev,description,amount,amountiw,tax_percent,tax_amount,total_amount,operation):
 
         no_entries_4 = permanent[account].count_documents({})
         last_entry_4 = permanent[account].find_one(sort=[("_id", -1)])
@@ -68,7 +68,7 @@ class bank_pay_rece:
             "balance":balance4
             }        
 
-    def client_record(temp, permanent, amounts, acc_recev, vouch_inv,date, vouch_no, invoice_no, exp_type, account, cheque_no, description, amountiw, tax_percent, tax_amount, total_amount,operation):
+    def client_record(self,temp, permanent, amounts, acc_recev, vouch_inv,date, vouch_no, invoice_no, exp_type, account, cheque_no, description, amountiw, tax_percent, tax_amount, total_amount,operation):
         no_entries_2 = permanent[f"{vouch_inv}_{acc_recev}"].count_documents({})
 
         if len(temp) != 0:
@@ -121,7 +121,7 @@ class bank_pay_rece:
             "balance": balance2
         }
 
-    def head_record(temp,permanent,total_amount,exp_type,date,vouch_no,account,description,amount,amountiw):
+    def head_record(self,temp,permanent,total_amount,exp_type,date,vouch_no,account,description,amount,amountiw):
         no_entries_3 = permanent[f"{exp_type}_receipt"].count_documents({})
         last_entry_3 = permanent[f"{exp_type}_receipt"].find_one(sort=[("_id", -1)])
         if len(temp)!= 0:
@@ -163,7 +163,7 @@ class bank_pay_rece:
             "balance":balance3
             }        
 
-    def records(temp, permanent, amounts, operation, date, vouch_no, invoice_no, cheque_no, exp_type, account, acc_recev, description, amount, amountiw, tax_percent, tax_amount, total_amount):
+    def records(self,temp, permanent, amounts, operation, date, vouch_no, invoice_no, cheque_no, exp_type, account, acc_recev, description, amount, amountiw, tax_percent, tax_amount, total_amount):
         no_entries = permanent.count_documents({})
 
         if len(temp) == 0:
@@ -719,7 +719,7 @@ class bank_pay_rece:
             messagebox.showinfo("Success","Bank Payment Generated Succesfully!")
             window(root,company_name,user_name)
 
-    def load_payments_receipt(table_entry,payments_temp):
+    def load_payments_receipt(self,table_entry,payments_temp):
         for row in table_entry.get_children():
             table_entry.delete(row)
 
@@ -741,7 +741,7 @@ class bank_pay_rece:
             ))
             i+=1
 
-    def save_bank_payment_receipt(payments_temp,payment,pay_receip,pay_receip_temp,type,customers,client_temp,bank,bank_temp,indvidual_bank,bank_ind_temp,tax,tax_temp,invoice_balance,invoice_temp,db,head_collection,head_temp):
+    def save_bank_payment_receipt(self,payments_temp,payment,pay_receip,pay_receip_temp,type,customers,client_temp,bank,bank_temp,indvidual_bank,bank_ind_temp,tax,tax_temp,invoice_balance,invoice_temp,db,head_collection,head_temp):
         
         if len(payments_temp) != 0 and len(pay_receip_temp) != 0:
             confirm = messagebox.askyesno("Confirm", f"Once the Particulars are saved you wont be able to cahnge them\nAre you sure you want to save?")

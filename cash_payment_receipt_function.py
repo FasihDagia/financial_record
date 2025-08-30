@@ -28,7 +28,7 @@ class cash_pay_rece:
                 pay_receip_temp.clear()
                 window(self.root,company_name,user_name)
 
-    def records(temp,permanent,amounts,operation,date,vouch_no,invoice_no,exp_type,account,acc_pay,description,amount,amountiw,tax_percent,tax_amount):
+    def records(self,temp,permanent,amounts,operation,date,vouch_no,invoice_no,exp_type,account,acc_pay,description,amount,amountiw,tax_percent,tax_amount):
                     
         no_entries = permanent.count_documents({})
         if len(temp)==0:
@@ -67,7 +67,7 @@ class cash_pay_rece:
             "balance":balance
                     }
 
-    def head_record(temp,permanent,total_amount,exp_type,date,vouch_no,account,description,amount,amountiw,operation):
+    def head_record(self,temp,permanent,total_amount,exp_type,date,vouch_no,account,description,amount,amountiw,operation):
         no_entries_3 = permanent[f"{exp_type}_receipt"].count_documents({})
         last_entry_3 = permanent[f"{exp_type}_receipt"].find_one(sort=[("_id", -1)])
         if len(temp)!= 0:
@@ -112,7 +112,7 @@ class cash_pay_rece:
             "balance":balance3
             }        
 
-    def client_record(temp,permanent,amounts,acc_pay,vouch_inv,date,vouch_no,invoice_no,exp_type,account,description,amount,amountiw,tax_percent,tax_amount,operation):    
+    def client_record(self,temp,permanent,amounts,acc_pay,vouch_inv,date,vouch_no,invoice_no,exp_type,account,description,amount,amountiw,tax_percent,tax_amount,operation):    
 
         no_entries_2 = permanent[f"{vouch_inv}_{acc_pay}"].count_documents({})
         last_entry_2 = permanent[f"{vouch_inv}_{acc_pay}"].find_one(sort=[("_id", -1)])
@@ -646,7 +646,7 @@ class cash_pay_rece:
                 messagebox.showinfo("Success","Cash Payment Generated Succesfully!")
                 window(root,company_name,user_name)
 
-    def save_cash_payments_receipt(payments_temp,payment,pay_receip,pay_receip_temp,type,customers,client_temp,cash,cash_temp,tax,tax_temp,db,invoice_temp,invoice_balance,head_collection,head_temp):
+    def save_cash_payments_receipt(self,payments_temp,payment,pay_receip,pay_receip_temp,type,customers,client_temp,cash,cash_temp,tax,tax_temp,db,invoice_temp,invoice_balance,head_collection,head_temp):
         
         if len(payments_temp) != 0 and len(pay_receip_temp) != 0:
             confirm = messagebox.askyesno("Confirm", f"Once the Particulars are saved you wont be able to cahnge them\nAre you sure you want to save?")
