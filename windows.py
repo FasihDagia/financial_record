@@ -33,8 +33,11 @@ def home_page(root):
     center_window(root, 450, 275)
 
     root.title("Financial Records")
+    style = ttk.Style()
+    style.configure("Module.TButton", font=("Helvetica", 11),borderwidth=4,padding=5)
+    style.configure("Logout.TButton", font=("Helvetica", 9),borderwidth=4,padding=2)
 
-    tk.Label(root,text="Financial Records",font=("Helvetica",20)).pack(padx=50,pady=5)
+    ttk.Label(root,text="Financial Records",font=("Helvetica",20)).pack(padx=50,pady=5)
     
     btn_frame = tk.Frame()
     btn_frame.pack(fill=Y, padx=33, pady=10)
@@ -44,60 +47,68 @@ def home_page(root):
     details = company['company_details'].find()
 
     if company['company_details'].count_documents({}) == 0:
-        tk.Button(root,text="Create Company",font=("Helvetica", 10),width=20,command=lambda:create_company(root,client,home_page)).pack(padx=10, pady=10)
+        ttk.Button(root,text="Create Company",style="Module.TButton",width=20,cursor="hand2",command=lambda:create_company(root,client,home_page)).pack(padx=10, pady=10)
     else:
         for companys in details:
             company_name = companys.get('company_name')
-            tk.Button(btn_frame,text=company_name,font=("Helvetica", 10),width=20,command=lambda name=company_name: login_window(root, name)).grid(padx=10, pady=10, row=row, column=column)
+            ttk.Button(btn_frame,text=company_name,cursor="hand2",style="Module.TButton",width=20,command=lambda name=company_name: login_window(root, name)).grid(padx=10, pady=10, row=row, column=column)
             column+=1
             if column % 2 == 0:
                 row+=1
-        tk.Button(root,text="Create Company",font=("Helvetica", 10),width=20,command=lambda:create_company(root,client,home_page)).pack(padx=10)    
+        ttk.Button(root,text="Create Company",cursor="hand2",style="Module.TButton",width=20,command=lambda:create_company(root,client,home_page)).pack(padx=10)    
 
-    tk.Button(root,text="Exit", font=("Helvetica",10),width=20, command=lambda:root.destroy()).pack(padx=10,pady=10)
+    ttk.Button(root,text="Exit", cursor="hand2",style="Logout.TButton",width=20, command=lambda:root.destroy()).pack(padx=10,pady=10)
 
 def login_window(root,company_name):
     
     login = tk.Toplevel(root)
     
+    style = ttk.Style()
+    style.configure("Module.TButton", font=("Helvetica", 11),borderwidth=4,padding=5)
+    style.configure("Logout.TButton", font=("Helvetica", 9),borderwidth=4,padding=2)
+
     center_window(login, 450, 275)
 
     login.title(f"Login/{company_name}")
 
-    tk.Label(login,text=f"Login",font=("Helvetica",20)).pack(padx=50,pady=5)
+    ttk.Label(login,text=f"Login",font=("Helvetica",20,"bold")).pack(padx=50,pady=5)
 
     entry_frame = tk.Frame(login)
     entry_frame.pack(pady=10)
 
-    tk.Label(entry_frame,text="Username:",font=("Helvetica",10)).grid(row=0,column=0,padx=10,pady=10)
-    username = tk.Entry(entry_frame,width=30,font=("Helvetica",10))
+    ttk.Label(entry_frame,text="Username:",font=("Helvetica",10,"bold")).grid(row=0,column=0,padx=10,pady=10)
+    username = ttk.Entry(entry_frame,width=30,font=("Helvetica",10))
     username.grid(row=0,column=1,padx=10,pady=10)
 
-    tk.Label(entry_frame,text="Password:",font=("Helvetica",10)).grid(row=1,column=0,padx=10,pady=10)
-    password = tk.Entry(entry_frame,width=30,show="*",font=("Helvetica",10,"bold"))
+    ttk.Label(entry_frame,text="Password:",font=("Helvetica",10,"bold")).grid(row=1,column=0,padx=10,pady=10)
+    password = ttk.Entry(entry_frame,width=30,show="*",font=("Helvetica",10,"bold"))
     password.grid(row=1,column=1,padx=10,pady=10)
 
     toggle_btn = tk.Button(entry_frame, text='show', command=lambda:toggle_password(toggle_btn,password), relief='flat', cursor='hand2',width=5)
     toggle_btn.grid(row=1,column=2,padx=2)
     
-    login_button = tk.Button(login,text="Login",font=("Helvetica",10),width=20,command=lambda:user_login(username,password,client,login,login_button,root,main_menu_window,company_name,bck_button))
+    login_button = ttk.Button(login,text="Login",style="Module.TButton",cursor="hand2",width=20,command=lambda:user_login(username,password,client,login,login_button,root,main_menu_window,company_name,bck_button))
     login_button.pack(padx=10,pady=10)
 
-    bck_button = tk.Button(login,text="Back",font=("Helvetica",10),width=20,command=login.destroy)
+    bck_button = ttk.Button(login,text="Back",style="Logout.TButton",cursor="hand2",width=20,command=login.destroy)
     bck_button.pack(padx=10,pady=5)
 
     login.mainloop()
 
 def main_menu_window(root,company_name,user_name):
 
-    center_window(root, 450, 350)
+    center_window(root, 650, 500)
+
+    style = ttk.Style()
+    style.configure("Module.TButton", font=("Helvetica", 11),borderwidth=4,padding=(4,25))
+    style.configure("Logout.TButton", font=("Helvetica", 9),borderwidth=4,padding=2)
 
     for widget in root.winfo_children():
         widget.destroy()
 
     root.title(f"Main Menu/{company_name}/{user_name}")   
 
-    tk.Label(root,text="Main Menu",font=("Helvetica",20)).pack(padx=50,pady=5)
+    ttk.Label(root,text="Main Menu",font=("helvetica",24,"bold")).pack(padx=50,pady=20)
 
     company_profiles = client[f'company_profile_{company_name.lower().replace(" ","_")}']
     employees = company_profiles['employees']
@@ -116,7 +127,7 @@ def main_menu_window(root,company_name,user_name):
     }
 
     btn_frame = tk.Frame(root)
-    btn_frame.pack(pady=10)
+    btn_frame.pack(pady=30)
 
     modules = {
         "Sale Module": lambda: sale_module_window(root,company_name,user_name),
@@ -132,20 +143,20 @@ def main_menu_window(root,company_name,user_name):
 
     row, col = 0, 0  
     for module, command in modules.items():
-        if permissions.get(module, 0) == 1:  # Display only if value is 1
-            tk.Button(btn_frame, text=module, font=("Helvetica", 10), width=20, command=command).grid(
+        if permissions.get(module, 0) == 1:  
+            ttk.Button(btn_frame, text=module, style="Module.TButton",cursor="hand2", width=15, command=command).grid(
                 padx=10, pady=10, row=row, column=col
             )
             col += 1
-            if col > 1:  
+            if col > 3:  
                 col = 0
                 row += 1
 
     btn_frame_2 = tk.Frame(root)
     btn_frame_2.pack(pady=5)
 
-    tk.Button(btn_frame_2,text="Logout", font=("Helvetica",10),width=10, command=lambda:home_page(root)).grid(row=0,column=0,padx=5)
-    tk.Button(btn_frame_2,text="Exit", font=("Helvetica",10),width=10, command=root.destroy).grid(row=0,column=1,padx=5)
+    ttk.Button(btn_frame_2,text="Logout", style="Logout.TButton",cursor="hand2",width=10, command=lambda:home_page(root)).grid(row=0,column=0,padx=5)
+    ttk.Button(btn_frame_2,text="Exit", style="Logout.TButton",cursor="hand2",width=10, command=root.destroy).grid(row=0,column=1,padx=5)
 
 def sale_module_window(root,company_name,user_name):
     
@@ -153,23 +164,28 @@ def sale_module_window(root,company_name,user_name):
                existing_contracts, payments_temp, receipt_temp, pay_receip_temp, bank_temp, cash_temp,
                client_temp, bank_ind_temp, tax_temp, pay_receip_balance, invoice_balance, sld_stock,
                cost_goods_temp,invoice_temp,adjustment_temp,head_temp,cr_temp,db_temp)
+   
     for widget in root.winfo_children():
         widget.destroy()
 
-    center_window(root, 450, 225)
+    center_window(root, 500, 300)
 
+    style = ttk.Style()
+    style.configure("Module.TButton", font=("Helvetica", 11),borderwidth=4,padding=(4,25))
+    style.configure("Logout.TButton", font=("Helvetica", 9),borderwidth=4,padding=2)
+    
     root.title("Sale Module")
 
-    tk.Label(root,text="Sale Module",font=("Helvetica",20)).pack(padx=50,pady=5)
+    ttk.Label(root,text="Sale Module",font=("Helvetica",20,"bold")).pack(padx=50,pady=15)
 
     btn_frame = tk.Frame()
-    btn_frame.pack(fill=X, padx=33, pady=10)
+    btn_frame.pack(pady=25)
 
-    tk.Button(btn_frame, text="Sale Contract", font=("Helvetica",10),width=20, command=lambda:sale_contract_window(root,company_name,user_name)).grid(padx=10, pady=10, row=0,column=0)
-    tk.Button(btn_frame,text="Sale Invoice", font=("Helvetica",10),width=20, command=lambda:sale_invoice_window(root,company_name,user_name)).grid(padx=10,pady=10,row=0,column=1)
-    tk.Button(btn_frame,text="Sale Return",font=("Helvetica",10),width=20,command=lambda:sale_return_window(root,inventory,company_name,user_name)).grid(padx=10,pady=10,row=1,column=0)
-    tk.Button(btn_frame, text="Back",font=("Helvetica",10), width=20, command=lambda:main_menu_window(root,company_name,user_name)).grid(row=1, column=1,padx=10,pady=10)
-    tk.Button(root, text="Exit",font=("Helvetica",10), width=20, command=root.destroy).pack(padx=10,pady=5)
+    ttk.Button(btn_frame, text="Sale Contract",style="Module.TButton",cursor="hand2",width=15, command=lambda:sale_contract_window(root,company_name,user_name)).grid(padx=10, pady=10, row=0,column=0)
+    ttk.Button(btn_frame,text="Sale Invoice",style="Module.TButton",cursor="hand2",width=15, command=lambda:sale_invoice_window(root,company_name,user_name)).grid(padx=10,pady=10,row=0,column=1)
+    ttk.Button(btn_frame,text="Sale Return",style="Module.TButton",cursor="hand2",width=15,command=lambda:sale_return_window(root,inventory,company_name,user_name)).grid(padx=10,pady=10,row=0,column=2)
+    ttk.Button(root, text="Back",style="Logout.TButton",cursor="hand2", width=10, command=lambda:main_menu_window(root,company_name,user_name)).pack(padx=10,pady=5)
+    
 
 def purchase_module_window(root,company_name,user_name):
     
