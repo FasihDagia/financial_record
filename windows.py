@@ -186,32 +186,34 @@ def sale_module_window(root,company_name,user_name):
     ttk.Button(btn_frame,text="Sale Return",style="Module.TButton",cursor="hand2",width=15,command=lambda:sale_return_window(root,inventory,company_name,user_name)).grid(padx=10,pady=10,row=0,column=2)
     ttk.Button(root, text="Back",style="Logout.TButton",cursor="hand2", width=10, command=lambda:main_menu_window(root,company_name,user_name)).pack(padx=10,pady=5)
     
-
 def purchase_module_window(root,company_name,user_name):
     
     clear_temp(sale_contracts, purchase_contracts, sale_transaction, purchase_transaction, inventory_sale,
                existing_contracts, payments_temp, receipt_temp, pay_receip_temp, bank_temp, cash_temp,
                client_temp, bank_ind_temp, tax_temp, pay_receip_balance, invoice_balance, sld_stock,
                cost_goods_temp,invoice_temp,adjustment_temp,head_temp,cr_temp,db_temp)
+    
     for widget in root.winfo_children():
         widget.destroy()
 
-    center_window(root, 450, 225)
-   
+    center_window(root, 500, 300)
+    
+    style = ttk.Style()
+    style.configure("Module.TButton", font=("Helvetica", 11),borderwidth=4,padding=(4,25))
+    style.configure("Logout.TButton", font=("Helvetica", 9),borderwidth=4,padding=2)   
 
     root.title("Purchase Module")
 
-    tk.Label(root,text="Purchase Module",font=("Helvetica",20)).pack(padx=50,pady=5)
+    ttk.Label(root,text="Purchase Module",font=("Helvetica",20,"bold")).pack(padx=50,pady=15)
 
     btn_frame = tk.Frame()
-    btn_frame.pack(fill=X, padx=33, pady=10)
+    btn_frame.pack(pady=25)
 
-    tk.Button(btn_frame, text="Purchase Contract", font=("Helvetica", 10), width=20, command=lambda:purchase_contract_window(root,company_name,user_name)).grid(padx=10,pady=10,row=0,column=0)    
-    tk.Button(btn_frame,text="Purchase Invoice", font=("Helvetica",10),width=20, command=lambda:purchase_invoice_window(root,company_name,user_name)).grid(padx=10,pady=10,row=0,column=1)
-    tk.Button(btn_frame,text="Purchase Return",font=("Helvetica",10),width=20,command=lambda:purchase_return_window(root,inventory,company_name,user_name)).grid(padx=10,pady=10,row=1,column=0)
-    tk.Button(btn_frame, text="Back",font=("Helvetica",10), width=20, command=lambda:main_menu_window(root,company_name,user_name)).grid(row=1, column=1,padx=10,pady=10)
-    tk.Button(root, text="Exit",font=("Helvetica",10), width=20, command=root.destroy).pack(padx=10,pady=5)
-
+    ttk.Button(btn_frame, text="Purchase Contract", style="Module.TButton",cursor="hand2", width=16, command=lambda:purchase_contract_window(root,company_name,user_name)).grid(padx=10,pady=10,row=0,column=0)    
+    ttk.Button(btn_frame,text="Purchase Invoice", style="Module.TButton",cursor="hand2", width=15, command=lambda:purchase_invoice_window(root,company_name,user_name)).grid(padx=10,pady=10,row=0,column=1)
+    ttk.Button(btn_frame,text="Purchase Return",style="Module.TButton",cursor="hand2", width=15,command=lambda:purchase_return_window(root,inventory,company_name,user_name)).grid(padx=10,pady=10,row=0,column=2)
+    ttk.Button(root, text="Back",style="Logout.TButton",cursor="hand2", width=10, command=lambda:main_menu_window(root,company_name,user_name)).pack(padx=10,pady=5)
+    
 def payment_module_window(root,company_name,user_name):
 
     clear_temp(sale_contracts, purchase_contracts, sale_transaction, purchase_transaction, inventory_sale,
