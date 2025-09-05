@@ -26,6 +26,18 @@ def center_window(root, width, height):
     root.minsize(width, height)
     root.maxsize(width, height)
 
+def apply_alternating_colors(tree):
+    # Configure tag styles if not already done
+    tree.tag_configure("oddrow", background='#FFE5B4')
+    tree.tag_configure("evenrow", background='#FFCBA4')
+
+    # Apply alternating colors to all children
+    for i, item in enumerate(tree.get_children()):
+        if i % 2 == 0:
+            tree.item(item, tags=("evenrow",))
+        else:
+            tree.item(item, tags=("oddrow",))
+
 def home_page(root): 
     for widget in root.winfo_children():
         widget.destroy()
@@ -380,7 +392,6 @@ def financial_module_window(root,company_name,user_name):
     ttk.Button(btn_frame,text="Adjustments", style="Module.TButton",cursor="hand2",width=15,command=lambda:adjustment_window(root,company_name,user_name)).grid(padx=10,pady=10,row=0,column=0)
     ttk.Button(btn_frame,text="Back", style="Logout.TButton",cursor="hand2",width=15,command=lambda:main_menu_window(root,company_name,user_name)).grid(padx=10,pady=10,row=1,column=0)
     
-
 def sale_contract_window(root,company_name,user_name):
     
     com_profile = client[f'company_profile_{company_name.lower().replace(" ","_")}']
@@ -414,17 +425,20 @@ def sale_contract_window(root,company_name,user_name):
     style.configure("Treeview", font=("Helvetica", 8)) 
 
     tk.Label(root,text=f"New Contracts:",font=("Helvetica", 16)).pack(pady=5,)
-    table_new_contracts = ttk.Treeview(root, columns=("S.NO", "Date","Contract.NO","Party Name","Item","Quantity","Unit", "Rate", "Amount","GST","GST Amount","Further Tax","Further Tax Amount","Total Amount"), show="headings")
-    table_new_contracts.pack(fill=tk.BOTH, pady=20)
+
+    table_new_contracts = ttk.Treeview(root, columns=("S.NO", "Date","Contract.NO","Party Name","Item","Quantity","Unit", "Rate", "Amount","GST","GST Amount","Further Tax","Further Tax Amount","Total Amount"), show="headings",height=10)
+    table_new_contracts.pack(pady=20,padx=10,fill=tk.BOTH, expand=True)
 
     table_contract(table_new_contracts)
+    apply_alternating_colors(table_new_contracts)
     load_contracts(table_new_contracts,sale_contracts)
 
-    tk.Label(root,text=f"Existing Contracts:",font=("Helvetica", 16)).pack(pady=5,)
-    table_existing_contracts = ttk.Treeview(root, columns=("S.NO", "Date","Contract.NO","Party Name","Item","Quantity","Unit","Rate", "Amount","GST","GST Amount","Further Tax","Further Tax Amount","Total Amount"), show="headings")
-    table_existing_contracts.pack(fill=tk.BOTH, pady=20)
+    tk.Label(root,text=f"Existing Contracts:",font=("Helvetica", 16)).pack(pady=5)
+    table_existing_contracts = ttk.Treeview(root, columns=("S.NO", "Date","Contract.NO","Party Name","Item","Quantity","Unit","Rate", "Amount","GST","GST Amount","Further Tax","Further Tax Amount","Total Amount"), show="headings",height=10)
+    table_existing_contracts.pack(pady=20,padx=10,fill=tk.BOTH, expand=True)
 
     table_contract(table_existing_contracts)
+    apply_alternating_colors(table_existing_contracts)
     load_contracts(table_existing_contracts,existing_contracts)
 
 def sale_invoice_window(root,company_name,user_name):
