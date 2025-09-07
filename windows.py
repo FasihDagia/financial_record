@@ -26,17 +26,54 @@ def center_window(root, width, height):
     root.minsize(width, height)
     root.maxsize(width, height)
 
-def apply_alternating_colors(tree):
-    # Configure tag styles if not already done
+def create_treeview(parent, columns, widths,height):
+
+    # Frame to hold Treeview + Scrollbar
+    frame = ttk.Frame(parent)
+    frame.pack(fill="both", expand=True)
+
+    # Scrollbars
+    tree_scroll_y = ttk.Scrollbar(frame, orient="vertical")
+    tree_scroll_y.pack(side="right", fill="y")
+
+    tree_scroll_x = ttk.Scrollbar(frame, orient="horizontal")
+    tree_scroll_x.pack(side="bottom", fill="x")
+
+    # Treeview
+    tree = ttk.Treeview(
+        frame,
+        columns=columns,
+        show="headings",
+        yscrollcommand=tree_scroll_y.set,
+        xscrollcommand=tree_scroll_x.set,
+        height=height
+    )
+
+    tree.pack(fill=tk.X,padx=10)
+
+    # Configure scrollbars
+    tree_scroll_y.config(command=tree.yview)
+    tree_scroll_x.config(command=tree.xview)
+
+    # Setup columns
+    for col, w in zip(columns, widths):
+        tree.heading(col, text=col)
+        tree.column(col, width=w, anchor="center")
+
+    # Apply alternating row colors
     tree.tag_configure("oddrow", background='#FFE5B4')
     tree.tag_configure("evenrow", background='#FFCBA4')
 
-    # Apply alternating colors to all children
-    for i, item in enumerate(tree.get_children()):
-        if i % 2 == 0:
-            tree.item(item, tags=("evenrow",))
-        else:
-            tree.item(item, tags=("oddrow",))
+    # Function to insert row with alternating color
+    def insert_row(values):
+        row_count = len(tree.get_children())
+        tag = "evenrow" if row_count % 2 == 0 else "oddrow"
+        tree.insert("", "end", values=values, tags=(tag,))
+
+    # Add helper function as attribute
+    tree.insert_row = insert_row
+
+    return tree
 
 def home_page(root): 
     for widget in root.winfo_children():
@@ -405,20 +442,24 @@ def sale_contract_window(root,company_name,user_name):
     for widget in root.winfo_children():
         widget.destroy()
 
-    center_window(root, 1500, 800)
+    style = ttk.Style()
+    style.configure("Module.TButton", font=("Helvetica", 11),borderwidth=4,padding=(6))
+    style.configure("Logout.TButton", font=("Helvetica", 9),borderwidth=4,padding=2)   
+
+    center_window(root, 1500, 650)
 
     root.title("Sale Contract")
 
-    tk.Label(text="Sale Contracts",font=("Helvetica-bold",22)).pack(pady=30)
+    ttk.Label(text="Sale Contracts",font=("Helvetica-bold",22)).pack(pady=30)
 
     button_frame = tk.Frame(root)
     button_frame.pack()
 
-    tk.Button(button_frame,text='Generate Contract', width=15,command=lambda:generate_contract(root,sale_contracts,account,'Sale',sale_contract_window,inventory,customers,company_name,user_name,com_profile)).grid(row=0, column=1,padx=5)
-    tk.Button(button_frame, text= "Print Contract", width=15, command=lambda:print_contracts(root,sale_contracts,"SALE")).grid(row=0, column=2,padx=5)
-    tk.Button(button_frame, text="Save", width=15, command=lambda:save_contract(sale_contracts,account,existing_contracts,customers)).grid(row=0, column=3,padx=5)
-    tk.Button(button_frame, text="Back", width=15, command=lambda:back(root,sale_module_window,sale_contracts,inventory_sale,existing_contracts,company_name,user_name)).grid(row=0, column=4,padx=5)
-    tk.Button(button_frame, text="Exit", width=15, command=root.destroy).grid(row=0, column=5,padx=5)
+    ttk.Button(button_frame,text='Generate Contract', style="Module.TButton",cursor="hand2",width=15,command=lambda:generate_contract(root,sale_contracts,account,'Sale',sale_contract_window,inventory,customers,company_name,user_name,com_profile)).grid(row=0, column=0,padx=5)
+    ttk.Button(button_frame, text= "Print Contract",style="Module.TButton",cursor="hand2", width=15, command=lambda:print_contracts(root,sale_contracts,"SALE")).grid(row=0, column=1,padx=5)
+    ttk.Button(button_frame, text="Save",style="Module.TButton",cursor="hand2", width=15, command=lambda:save_contract(sale_contracts,account,existing_contracts,customers)).grid(row=0, column=2,padx=5)
+    ttk.Button(button_frame, text="Back",style="Logout.TButton",cursor="hand2", width=15, command=lambda:back(root,sale_module_window,sale_contracts,inventory_sale,existing_contracts,company_name,user_name)).grid(row=1, column=0,padx=5,columnspan=3,pady=7)
+    
 
     style = ttk.Style()
     style.configure("Treeview.Heading", font=("Helvetica", 10, "bold"))  
@@ -426,20 +467,18 @@ def sale_contract_window(root,company_name,user_name):
 
     tk.Label(root,text=f"New Contracts:",font=("Helvetica", 16)).pack(pady=5,)
 
-    table_new_contracts = ttk.Treeview(root, columns=("S.NO", "Date","Contract.NO","Party Name","Item","Quantity","Unit", "Rate", "Amount","GST","GST Amount","Further Tax","Further Tax Amount","Total Amount"), show="headings",height=10)
-    table_new_contracts.pack(pady=20,padx=10,fill=tk.BOTH, expand=True)
-
-    table_contract(table_new_contracts)
-    apply_alternating_colors(table_new_contracts)
+    table_contract_columns =["S.NO", "Date","Contract.NO","Party Name","Item","Quantity","Unit", "Rate", "Amount","GST","GST Amount","Further Tax","Further Tax Amount","Total Amount"]
+    table_contract_widths= [30,40,60,80,80,60,40,80,80,40,80,40,100,100] 
+    table_new_contracts = create_treeview(root, table_contract_columns, table_contract_widths,20)
     load_contracts(table_new_contracts,sale_contracts)
 
-    tk.Label(root,text=f"Existing Contracts:",font=("Helvetica", 16)).pack(pady=5)
-    table_existing_contracts = ttk.Treeview(root, columns=("S.NO", "Date","Contract.NO","Party Name","Item","Quantity","Unit","Rate", "Amount","GST","GST Amount","Further Tax","Further Tax Amount","Total Amount"), show="headings",height=10)
-    table_existing_contracts.pack(pady=20,padx=10,fill=tk.BOTH, expand=True)
+    # tk.Label(root,text=f"Existing Contracts:",font=("Helvetica", 16)).pack(pady=5)
+    # table_existing_contracts = ttk.Treeview(root, columns=("S.NO", "Date","Contract.NO","Party Name","Item","Quantity","Unit","Rate", "Amount","GST","GST Amount","Further Tax","Further Tax Amount","Total Amount"), show="headings",height=10)
+    # table_existing_contracts.pack(pady=20,padx=10,fill=tk.BOTH, expand=True)
 
-    table_contract(table_existing_contracts)
-    apply_alternating_colors(table_existing_contracts)
-    load_contracts(table_existing_contracts,existing_contracts)
+    # table_contract(table_existing_contracts)
+    # apply_alternating_colors(table_existing_contracts)
+    # load_contracts(table_existing_contracts,existing_contracts)
 
 def sale_invoice_window(root,company_name,user_name):
 
@@ -458,30 +497,32 @@ def sale_invoice_window(root,company_name,user_name):
     for widget in root.winfo_children():
         widget.destroy()
 
+    style = ttk.Style()
+    style.configure("Module.TButton", font=("Helvetica", 11),borderwidth=4,padding=(6))
+    style.configure("Logout.TButton", font=("Helvetica", 9),borderwidth=4,padding=2)   
+    style.configure("Treeview.Heading", font=("Helvetica", 10, "bold"))  
+    style.configure("Treeview", font=("Helvetica", 8)) 
+
     #basic window dimensions
     center_window(root, 1500, 800)
 
     #window title
     root.title(f"Sale Invoice")
 
-    tk.Label(root,text=f"Sale Invoice",font=("Helvetica", 18)).pack(pady=10)
+    ttk.Label(root,text=f"Sale Invoice",font=("Helvetica", 18)).pack(pady=10)
     #buttons to add,delete and update a transaction
     button_frame = tk.Frame(root)
     button_frame.pack(pady=10)
 
-    tk.Button(button_frame,text='Generate Invoice', width=15,command=lambda:generate_invoice(root,sale_transaction,account,inventory_sale,"Sale",sale_invoice_window,existing_contracts,inventory,customers,pay_receip_balance,company_name,user_name,sld_stock,cost_goods_temp,cost_goods)).grid(row=0, column=1,padx=5)
-    tk.Button(button_frame, text="Print Invoice", width=15, command=lambda:print_invoice(sale_transaction,"SALE",root)).grid(row=0,column=2,padx=5)
-    tk.Button(button_frame, text="Save", width=15, command=lambda:save(sale_transaction,account,inventory_sale,existing_contracts,contracts,inventory,pay_receip_balance,customers,'Sale',sld_stock,cost_goods_temp,cost_goods)).grid(row=0, column=3,padx=5)
-    tk.Button(button_frame, text="Back", width=15, command=lambda:back(root,sale_module_window,sale_transaction,inventory_sale,existing_contracts,company_name,user_name)).grid(row=0, column=4,padx=5)
-    tk.Button(button_frame, text="Exit", width=15, command=root.destroy).grid(row=0, column=5,padx=5)
+    ttk.Button(button_frame,text='Generate Invoice',style="Module.TButton", cursor="hand2",width=15,command=lambda:generate_invoice(root,sale_transaction,account,inventory_sale,"Sale",sale_invoice_window,existing_contracts,inventory,customers,pay_receip_balance,company_name,user_name,sld_stock,cost_goods_temp,cost_goods)).grid(row=0, column=0,padx=5)
+    ttk.Button(button_frame, text="Print Invoice",style="Module.TButton", cursor="hand2", width=15, command=lambda:print_invoice(sale_transaction,"SALE",root)).grid(row=0,column=1,padx=5)
+    ttk.Button(button_frame, text="Save",style="Module.TButton", cursor="hand2", width=15, command=lambda:save(sale_transaction,account,inventory_sale,existing_contracts,contracts,inventory,pay_receip_balance,customers,'Sale',sld_stock,cost_goods_temp,cost_goods)).grid(row=0, column=2,padx=5)
+    ttk.Button(button_frame, text="Back",style="Logout.TButton", cursor="hand2", width=15, command=lambda:back(root,sale_module_window,sale_transaction,inventory_sale,existing_contracts,company_name,user_name)).grid(row=1, column=0,padx=5,columnspan=3,pady=7)
 
     #to display Cash transaction
     display_frame = Frame()
     display_frame.pack(pady=10)
 
-    style = ttk.Style()
-    style.configure("Treeview.Heading", font=("Helvetica", 10, "bold"))  
-    style.configure("Treeview", font=("Helvetica", 8)) 
 
     tk.Label(root,text=f"Account Receivable:",font=("Helvetica", 16)).pack(pady=5,)
     table_account_receivable = ttk.Treeview(root, columns=("S.NO", "Date","Invoice.NO","Account Receivable","Item","Quantity","Unit", "Description","Rate", "Amount","GST","GST Amount","Further Tax","Further Tax Amount","Total Amount","Balance"), show="headings")
