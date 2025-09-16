@@ -26,9 +26,8 @@ def center_window(root, width, height):
     root.minsize(width, height)
     root.maxsize(width, height)
 
-def create_treeview(parent, columns, widths,height):
-
-    # Frame to hold Treeview + Scrollbar
+def create_treeview(parent, columns, widths, height):
+    # Frame to hold Treeview + Scrollbars
     frame = ttk.Frame(parent)
     frame.pack(fill="both", expand=True)
 
@@ -48,8 +47,7 @@ def create_treeview(parent, columns, widths,height):
         xscrollcommand=tree_scroll_x.set,
         height=height
     )
-
-    tree.pack(fill=tk.X,padx=10)
+    tree.pack(fill=tk.X, padx=10)
 
     # Configure scrollbars
     tree_scroll_y.config(command=tree.yview)
@@ -61,17 +59,18 @@ def create_treeview(parent, columns, widths,height):
         tree.column(col, width=w, anchor="center")
 
     # Apply alternating row colors
-    tree.tag_configure("oddrow", background='#FFE5B4')
-    tree.tag_configure("evenrow", background='#FFCBA4')
+    tree.tag_configure("oddrow", background="#FFE5B4")   # light peach
+    tree.tag_configure("evenrow", background="#FFCBA4")  # darker peach
 
-    # Function to insert row with alternating color
-    def insert_row(values):
+    # --- Override insert() to apply alternating colors automatically ---
+    original_insert = tree.insert
+
+    def colored_insert(parent, index, values=None, **kwargs):
         row_count = len(tree.get_children())
         tag = "evenrow" if row_count % 2 == 0 else "oddrow"
-        tree.insert("", "end", values=values, tags=(tag,))
+        return original_insert(parent, index, values=values, tags=(tag,), **kwargs)
 
-    # Add helper function as attribute
-    tree.insert_row = insert_row
+    tree.insert = colored_insert
 
     return tree
 
@@ -217,7 +216,7 @@ def sale_module_window(root,company_name,user_name):
     for widget in root.winfo_children():
         widget.destroy()
 
-    center_window(root, 500, 300)
+    center_window(root, 500, 400)
 
     style = ttk.Style()
     style.configure("Module.TButton", font=("Helvetica", 11),borderwidth=4,padding=(4,25))
@@ -233,6 +232,7 @@ def sale_module_window(root,company_name,user_name):
     ttk.Button(btn_frame, text="Sale Contract",style="Module.TButton",cursor="hand2",width=15, command=lambda:sale_contract_window(root,company_name,user_name)).grid(padx=10, pady=10, row=0,column=0)
     ttk.Button(btn_frame,text="Sale Invoice",style="Module.TButton",cursor="hand2",width=15, command=lambda:sale_invoice_window(root,company_name,user_name)).grid(padx=10,pady=10,row=0,column=1)
     ttk.Button(btn_frame,text="Sale Return",style="Module.TButton",cursor="hand2",width=15,command=lambda:sale_return_window(root,inventory,company_name,user_name)).grid(padx=10,pady=10,row=0,column=2)
+    ttk.Button(btn_frame,text="View Contract",style="Module.TButton",cursor="hand2",width=15,command=lambda:view_sale_contract_window(root,company_name,user_name)).grid(padx=10,pady=10,row=1,column=0)
     ttk.Button(root, text="Back",style="Logout.TButton",cursor="hand2", width=10, command=lambda:main_menu_window(root,company_name,user_name)).pack(padx=10,pady=5)
     
 def purchase_module_window(root,company_name,user_name):
@@ -433,11 +433,6 @@ def sale_contract_window(root,company_name,user_name):
     
     com_profile = client[f'company_profile_{company_name.lower().replace(" ","_")}']
     account = db[f'sale_contract']
-    existing_contract = account.find().sort("s_no", 1)
-    sno_cont = 1
-    for contract in existing_contract:
-            existing_contracts[sno_cont] = contract
-            sno_cont+=1
 
     for widget in root.winfo_children():
         widget.destroy()
@@ -445,6 +440,8 @@ def sale_contract_window(root,company_name,user_name):
     style = ttk.Style()
     style.configure("Module.TButton", font=("Helvetica", 11),borderwidth=4,padding=(6))
     style.configure("Logout.TButton", font=("Helvetica", 9),borderwidth=4,padding=2)   
+    style.configure("Treeview.Heading", font=("Helvetica", 10, "bold"))  
+    style.configure("Treeview", font=("Helvetica", 8)) 
 
     center_window(root, 1500, 650)
 
@@ -459,26 +456,47 @@ def sale_contract_window(root,company_name,user_name):
     ttk.Button(button_frame, text= "Print Contract",style="Module.TButton",cursor="hand2", width=15, command=lambda:print_contracts(root,sale_contracts,"SALE")).grid(row=0, column=1,padx=5)
     ttk.Button(button_frame, text="Save",style="Module.TButton",cursor="hand2", width=15, command=lambda:save_contract(sale_contracts,account,existing_contracts,customers)).grid(row=0, column=2,padx=5)
     ttk.Button(button_frame, text="Back",style="Logout.TButton",cursor="hand2", width=15, command=lambda:back(root,sale_module_window,sale_contracts,inventory_sale,existing_contracts,company_name,user_name)).grid(row=1, column=0,padx=5,columnspan=3,pady=7)
-    
 
-    style = ttk.Style()
-    style.configure("Treeview.Heading", font=("Helvetica", 10, "bold"))  
-    style.configure("Treeview", font=("Helvetica", 8)) 
-
-    tk.Label(root,text=f"New Contracts:",font=("Helvetica", 16)).pack(pady=5,)
-
+    ttk.Label(root,text=f"New Contracts:",font=("Helvetica", 16)).pack(pady=5,)
     table_contract_columns =["S.NO", "Date","Contract.NO","Party Name","Item","Quantity","Unit", "Rate", "Amount","GST","GST Amount","Further Tax","Further Tax Amount","Total Amount"]
     table_contract_widths= [30,40,60,80,80,60,40,80,80,40,80,40,100,100] 
     table_new_contracts = create_treeview(root, table_contract_columns, table_contract_widths,20)
     load_contracts(table_new_contracts,sale_contracts)
 
-    # tk.Label(root,text=f"Existing Contracts:",font=("Helvetica", 16)).pack(pady=5)
-    # table_existing_contracts = ttk.Treeview(root, columns=("S.NO", "Date","Contract.NO","Party Name","Item","Quantity","Unit","Rate", "Amount","GST","GST Amount","Further Tax","Further Tax Amount","Total Amount"), show="headings",height=10)
-    # table_existing_contracts.pack(pady=20,padx=10,fill=tk.BOTH, expand=True)
+def view_sale_contract_window(root,company_name,user_name):    
+    
+    account = db[f'sale_contract']
+    existing_contract = account.find().sort("s_no", 1)
+    sno_cont = 1
+    for contract in existing_contract:
+            existing_contracts[sno_cont] = contract
+            sno_cont+=1
 
-    # table_contract(table_existing_contracts)
-    # apply_alternating_colors(table_existing_contracts)
-    # load_contracts(table_existing_contracts,existing_contracts)
+    for widget in root.winfo_children():
+        widget.destroy()
+
+    style = ttk.Style()
+    style.configure("Module.TButton", font=("Helvetica", 11),borderwidth=4,padding=(6))
+    style.configure("Logout.TButton", font=("Helvetica", 9),borderwidth=4,padding=2)   
+    style.configure("Treeview.Heading", font=("Helvetica", 10, "bold"))  
+    style.configure("Treeview", font=("Helvetica", 8)) 
+
+    center_window(root, 1500, 600)
+
+    root.title("Sale Contracts")
+
+    ttk.Label(text="Sale Contracts",font=("Helvetica-bold",22)).pack(pady=30)
+
+    button_frame = tk.Frame(root)
+    button_frame.pack()
+
+    ttk.Button(button_frame, text="Back",style="Logout.TButton",cursor="hand2", width=15, command=lambda:sale_module_window(root,company_name,user_name)).grid(row=0, column=0,padx=5,columnspan=3,pady=7)
+
+    ttk.Label(root,text=f"Contract Details:",font=("Helvetica", 16)).pack(pady=5,)
+    table_contract_columns =["S.NO", "Date","Contract.NO","Party Name","Item","Quantity","Unit", "Rate", "Amount","GST","GST Amount","Further Tax","Further Tax Amount","Total Amount"]
+    table_contract_widths= [30,40,60,80,80,60,40,80,80,40,80,40,100,100] 
+    table_view_contract = create_treeview(root, table_contract_columns, table_contract_widths,20)
+    load_contracts(table_view_contract,existing_contracts)
 
 def sale_invoice_window(root,company_name,user_name):
 
